@@ -171,37 +171,22 @@ export default function HeroSection() {
           style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
           className="flex flex-col items-center text-center"
         >
-          {/* Logo with Glow */}
+          {/* Logo Section */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-            className="relative mb-12 mt-16 sm:mt-20"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="relative mb-12 mt-16 sm:mt-20 flex items-center justify-center"
           >
-            <div className="relative h-32 sm:h-44 md:h-56 w-full flex items-center justify-center">
-              {settings?.logoUrl ? (
-                <div className="relative h-full w-auto flex items-center justify-center bg-transparent">
-                  <img
-                    src={settings.logoUrl}
-                    alt="ELBA7RAWY Logo"
-                    className="h-full w-auto object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]"
-                    loading="eager"
-                  />
-                </div>
-              ) : (
-                <div className="relative h-full w-auto flex items-center justify-center bg-transparent">
-                  <Image
-                    src="/images/logo.png"
-                    alt="ELBA7RAWY Logo"
-                    width={300}
-                    height={300}
-                    className="h-full w-auto object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]"
-                    priority
-                  />
-                </div>
-              )}
-              {/* Logo Glow Effect */}
-              <div className="absolute inset-0 bg-primary/20 blur-[120px] -z-10 rounded-full scale-150 opacity-50 animate-pulse" />
+            <div className="relative h-32 sm:h-44 md:h-56 w-auto flex items-center justify-center">
+              <Image
+                src="/images/logo.png"
+                alt="ELBA7RAWY Logo"
+                width={400}
+                height={400}
+                className="h-full w-auto object-contain"
+                priority
+              />
             </div>
           </motion.div>
 
@@ -214,13 +199,13 @@ export default function HeroSection() {
             
             <h1 className="text-6xl sm:text-8xl md:text-[10rem] font-black tracking-tighter leading-[0.9] mb-8 flex items-center justify-center gap-4 flex-wrap" dir="ltr">
               <span className="text-white">ELBA</span>
-              <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-b from-primary via-amber-400 to-primary-foreground drop-shadow-[0_10px_20px_rgba(251,191,36,0.4)]">
+              <span className="relative inline-block text-primary">
                 7RAWY
                 <motion.span 
                   initial={{ width: 0 }}
                   animate={{ width: '100%' }}
-                  transition={{ delay: 1.2, duration: 0.8 }}
-                  className="absolute -bottom-3 left-0 h-2 sm:h-3 bg-gradient-to-r from-primary via-amber-400 to-primary rounded-full shadow-[0_0_30px_rgba(251,191,36,0.8)]" 
+                  transition={{ delay: 1, duration: 0.8 }}
+                  className="absolute -bottom-3 left-0 h-2 sm:h-3 bg-primary rounded-full shadow-[0_0_20px_rgba(251,191,36,0.6)]" 
                 />
               </span>
             </h1>
