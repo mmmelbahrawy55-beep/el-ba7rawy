@@ -176,55 +176,63 @@ export default function HeroSection() {
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-            className="relative mb-4 mt-6 sm:mt-8"
+            className="relative mb-12 mt-16 sm:mt-20"
           >
-            <div className="relative h-16 sm:h-20 md:h-24 w-full flex items-center justify-center">
+            <div className="relative h-32 sm:h-44 md:h-56 w-full flex items-center justify-center">
               {settings?.logoUrl ? (
-                <div className="relative h-full w-auto flex items-center justify-center bg-transparent overflow-hidden px-2 py-1">
+                <div className="relative h-full w-auto flex items-center justify-center">
                   <img
                     src={settings.logoUrl}
-                    alt="ELBA7RAWY"
-                    className="h-full w-auto object-contain"
+                    alt="ELBA7RAWY Logo"
+                    className="h-full w-auto object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]"
                     loading="eager"
                   />
                 </div>
               ) : (
-                <div className="relative h-full w-auto flex items-center justify-center bg-transparent overflow-hidden px-2 py-1">
+                <div className="relative h-full w-auto flex items-center justify-center">
                   <Image
                     src="/images/logo.png"
-                    alt="ELBA7RAWY"
-                    width={150}
-                    height={150}
-                    className="h-full w-auto object-contain"
+                    alt="ELBA7RAWY Logo"
+                    width={300}
+                    height={300}
+                    className="h-full w-auto object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]"
                     priority
                   />
                 </div>
               )}
               {/* Logo Glow Effect */}
-              <div className="absolute inset-0 bg-primary/20 blur-2xl -z-10 rounded-full scale-125 opacity-30" />
+              <div className="absolute inset-0 bg-primary/20 blur-[120px] -z-10 rounded-full scale-150 opacity-50 animate-pulse" />
             </div>
           </motion.div>
 
           {/* Hero Title */}
-          <motion.div variants={itemVariants} className="relative mb-6">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md">
-              <Sparkles className="size-2.5 text-primary" />
-              <span className="text-[8px] font-bold uppercase tracking-wider text-primary">الريادة في عالم الإعلان</span>
+          <motion.div variants={itemVariants} className="relative mb-12" dir="ltr">
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md whitespace-nowrap" dir="rtl">
+              <Sparkles className="size-4 text-primary" />
+              <span className="text-xs font-black uppercase tracking-[0.3em] text-primary">الريادة في عالم الإعلان</span>
             </div>
-            <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter text-white leading-tight mb-4">
-              ELBA <span className="text-primary relative inline-block">
+            
+            <h1 className="text-6xl sm:text-8xl md:text-[10rem] font-black tracking-tighter leading-[0.9] mb-8">
+              <span className="text-white">ELBA</span>{" "}
+              <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-b from-primary via-amber-400 to-primary-foreground drop-shadow-[0_10px_20px_rgba(251,191,36,0.4)]">
                 7RAWY
                 <motion.span 
                   initial={{ width: 0 }}
                   animate={{ width: '100%' }}
                   transition={{ delay: 1.2, duration: 0.8 }}
-                  className="absolute -bottom-2 left-0 h-1 sm:h-2 bg-primary rounded-full shadow-[0_0_15px_rgba(251,191,36,0.5)]" 
+                  className="absolute -bottom-3 left-0 h-2 sm:h-3 bg-gradient-to-r from-primary via-amber-400 to-primary rounded-full shadow-[0_0_30px_rgba(251,191,36,0.8)]" 
                 />
               </span>
-              <br />
-              <span className="text-3xl sm:text-5xl md:text-7xl text-white/90 tracking-[0.2em] drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">ADVERTISING</span>
             </h1>
-            <p className="max-w-xl mx-auto text-sm sm:text-base md:text-lg text-slate-300 font-bold leading-relaxed px-4 drop-shadow-sm">
+
+            <div className="relative inline-block">
+              <h2 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-[0.2em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-white to-slate-400 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                ADVERTISING
+              </h2>
+              <div className="absolute -inset-x-4 -inset-y-2 bg-white/5 blur-2xl -z-10 rounded-full opacity-50" />
+            </div>
+          </motion.div>
+            <p className="max-w-3xl mx-auto text-base sm:text-xl md:text-2xl text-slate-300 font-bold leading-relaxed px-6 drop-shadow-md">
               نصنع الهوية، نبني الثقة، ونقود علامتك التجارية نحو التميز من خلال حلول إعلانية مبتكرة ومتكاملة
             </p>
           </motion.div>
