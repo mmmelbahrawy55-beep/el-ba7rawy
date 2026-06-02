@@ -173,21 +173,24 @@ export default function HeroSection() {
         >
           {/* Logo Section */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
             className="relative mb-12 mt-16 sm:mt-20 flex items-center justify-center"
           >
-            <div className="relative h-32 sm:h-44 md:h-56 w-auto flex items-center justify-center">
+            <div className="relative h-32 sm:h-44 md:h-64 w-full flex items-center justify-center">
               <Image
                 src="/images/logo.png"
                 alt="ELBA7RAWY Logo"
-                width={400}
-                height={400}
-                className="h-full w-auto object-contain"
+                width={500}
+                height={500}
+                className="h-full w-auto object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]"
                 priority
+                unoptimized
               />
             </div>
+            {/* Background Glow behind logo */}
+            <div className="absolute inset-0 bg-primary/10 blur-[100px] -z-10 rounded-full scale-150 opacity-50" />
           </motion.div>
 
           {/* Hero Title */}
