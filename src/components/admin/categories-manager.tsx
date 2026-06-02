@@ -160,43 +160,113 @@ export default function CategoriesManager() {
     imageUrl: ''
   })
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setUploading(true)
+  const fetchData = useCallback(async () => {
     try {
-      const fd = new FormData()
-      fd.append('file', file)
-      const res = await fetch('/api/upload', { method: 'POST', body: fd })
-      if (res.ok) {
-        const data = await res.json()
-        setNewProduct(prev => ({ ...newProduct, imageUrl: data.url }))
-        toast.success('تم رفع الصورة')
-      }
+      setLoading(true)
+      const res = await fetch('/api/categories')
+      if (res.ok) setCategories(await res.json())
     } catch {
-      toast.error('فشل الرفع')
+      toast.error('فشل تحميل التصنيفات')
     } finally {
-      setUploading(false)
+      setLoading(false)
     }
-  }
+  }, [])
 
-  const handleAddProduct = async () => {
-    if (!newProduct.name || !newProduct.price || !selectedCategory) {
-      toast.error('يرجى ملء البيانات الأساسية')
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  const handleSave = async () => {
+    if (!formData.name || !formData.nameEn) {
+      toast.error('يرجى إدخال الاسم بالعربية والإنجليزية')
       return
     }
 
+    setSaving(true)
     try {
-      const res = await fetch('/api/products', {
-        method: 'POST',
+      const url = editingCategory ? `/api/categories/${editingCategory.id}` : '/api/categories'
+      const method = editingCategory ? 'PUT' : 'POST'
+      
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...newProduct,
-          categoryId: selectedCategory.id,
-          price: parseFloat(newProduct.price),
-          deliveryDays: parseInt(newProduct.deliveryDays),
-        }),
+        body: JSON.stringify(formData),
       })
+
+      if (res.ok) {
+        toast.success(editingCategory ? 'تم تحديث التصنيف' : 'تم إضافة التصنيف')
+        setDialogOpen(false)
+        fetchData()
+      } else {
+        toast.error('فشل الحفظ')
+      }
+    } catch {
+      toast.error('خطأ في الاتصال')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="size-6 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4 max-w-6xl mx-auto px-2">
+      {/* Header Actions */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
+        <div>
+          <h2 className="text-xl font-black text-white tracking-tighter">التصنيفات</h2>
+          <p className="text-slate-500 font-bold text-[10px] mt-0.5">إدارة أقسام الموقع الرئيسية</p>
+        </div>
+        <Button
+          size="sm"
+          onClick={() => { setEditingCategory(null); setFormData(emptyForm); setDialogOpen(true); }}
+          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg h-9 px-4 font-black text-xs shadow-lg shadow-primary/20 flex items-center gap-2 group transition-all active:scale-95"
+        >
+          <Plus className="size-3" /> تصنيف جديد
+        </Button>
+      </div>
+
+      {/* Categories Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {categories.map((cat) => (
+          <Card key={cat.id} className="bg-white/5 border-white/5 rounded-xl overflow-hidden group hover:border-primary/30 transition-all flex flex-col">
+            <CardContent className="p-4 flex flex-col h-full">
+              <div className="flex items-center justify-between mb-4">
+                <div className={`p-2.5 rounded-lg bg-white/5 text-primary border border-white/5`}>
+                  <CategoryIcon iconName={cat.icon} className="size-5" />
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <ColorDot color={cat.color} />
+                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{cat._count.products} منتج</span>
+                </div>
+              </div>
+              
+              <div className="flex-1">
+                <h3 className="text-sm font-black text-white truncate">{cat.name}</h3>
+                <p className="text-[10px] text-muted-foreground font-bold tracking-tight mt-0.5">{cat.nameEn}</p>
+              </div>
+
+              <div className="mt-4 flex items-center gap-2 pt-4 border-t border-white/5">
+                <Button variant="ghost" size="sm" onClick={() => { setEditingCategory(cat); setFormData(cat); setDialogOpen(true); }} className="flex-1 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white text-[10px] font-black">
+                  تعديل
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setDeleteId(cat.id)} className="h-8 w-8 p-0 rounded-lg bg-red-500/5 hover:bg-red-500/10 text-red-500">
+                  <Trash2 className="size-3" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
+}
 
       if (res.ok) {
         toast.success('تم إضافة المنتج للقسم بنجاح')

@@ -72,10 +72,7 @@ export default function ProjectsManager() {
   }, [])
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchProjects()
-    }, 0)
-    return () => clearTimeout(timer)
+    fetchProjects()
   }, [fetchProjects])
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,63 +138,68 @@ export default function ProjectsManager() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-8 animate-spin text-primary" />
+        <Loader2 className="size-6 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 max-w-6xl mx-auto px-2">
       {/* Header & Control Panel */}
-      <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between bg-white/5 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/10 shadow-2xl">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
         <div>
-          <h2 className="text-3xl font-black text-white tracking-tighter">معرض الأعمال</h2>
-          <p className="text-slate-500 font-bold mt-1">
-            لديك <span className="text-primary">{projects.length}</span> عمل معروض في المعرض العام للموقع
+          <h2 className="text-xl font-black text-white tracking-tighter">معرض الأعمال</h2>
+          <p className="text-slate-500 font-bold text-[10px] mt-0.5">
+            لديك <span className="text-primary">{projects.length}</span> عمل في المعرض
           </p>
         </div>
         <Button
+          size="sm"
           onClick={() => setDialogOpen(true)}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl h-14 px-8 font-black shadow-lg shadow-primary/20 flex items-center gap-3 group transition-all active:scale-95"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg h-9 px-4 font-black text-xs shadow-lg shadow-primary/20 flex items-center gap-2 group transition-all active:scale-95"
         >
-          <Plus className="size-6 group-hover:rotate-90 transition-transform duration-300" />
-          إضافة مشروع جديد
+          <Plus className="size-3 group-hover:rotate-90 transition-transform duration-300" />
+          مشروع جديد
         </Button>
       </div>
 
-      {/* Projects Grid - Masonry Bento Style */}
-      <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-        {projects.map((project, idx) => (
-          <div key={project.id} className="break-inside-avoid">
-            <Card className={`group relative overflow-hidden bg-[#0c0c0c]/50 backdrop-blur-md border border-white/10 rounded-[2.5rem] shadow-2xl hover:border-primary/30 transition-all duration-500 hover:-translate-y-2 ${
-              idx % 3 === 0 ? 'aspect-[3/4]' : idx % 2 === 0 ? 'aspect-square' : 'aspect-[4/5]'
-            }`}>
-              <div className="relative h-full w-full overflow-hidden">
-                <Image
-                  src={project.imageUrl}
-                  alt={project.title}
-                  fill
-                  className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                />
-                
-                {/* Glass Overlay on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 backdrop-blur-[2px]">
-                  <div className="flex items-center justify-between mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <Badge className="bg-primary/20 text-primary border-none px-4 py-1 rounded-full text-[10px] font-black uppercase backdrop-blur-md">
-                      {categories.find(c => c.id === project.category)?.name || project.category}
-                    </Badge>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        onClick={() => handleDelete(project.id)}
-                        className="rounded-xl size-10 bg-red-500/10 backdrop-blur-md border border-red-500/20 hover:bg-red-500 transition-all shadow-lg"
-                      >
-                        <Trash2 className="size-5" />
-                      </Button>
-                    </div>
-                  </div>
-                  <h4 className="text-xl font-black text-white leading-tight transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
+      {/* Projects Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {projects.map((project) => (
+          <Card key={project.id} className="group relative overflow-hidden bg-white/5 backdrop-blur-md border border-white/5 rounded-xl shadow-xl hover:border-primary/30 transition-all duration-500 aspect-square flex flex-col">
+            <div className="relative flex-1 overflow-hidden">
+              <img
+                src={project.imageUrl}
+                alt={project.title}
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+              />
+              
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-3">
+                <div className="flex items-center justify-between gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                  <Badge className="bg-primary/20 text-primary border-none px-2 py-0.5 rounded-md text-[8px] font-black uppercase">
+                    {categories.find(c => c.id === project.category)?.name || project.category}
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(project.id)}
+                    className="size-7 p-0 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg transition-all"
+                  >
+                    <Trash2 className="size-3" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className="p-3 bg-black/40 border-t border-white/5">
+              <h4 className="text-xs font-black text-white truncate">{project.title}</h4>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
+}
                     {project.title}
                   </h4>
                   <p className="text-slate-400 text-xs font-bold mt-2 opacity-0 group-hover:opacity-100 transition-opacity delay-100 uppercase tracking-widest">

@@ -128,30 +128,6 @@ export default function OrdersManager() {
     }
   }
 
-  const handleAssignToClient = async (orderId: string, clientId: string) => {
-    setIsAssigning(true)
-    try {
-      const res = await fetch('/api/orders', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: orderId, clientId }),
-      })
-      if (res.ok) {
-        setOrders((prev) =>
-          prev.map((o) => (o.id === orderId ? { ...o, clientId } : o))
-        )
-        if (selectedOrder?.id === orderId) {
-          setSelectedOrder(prev => prev ? { ...prev, clientId } : null)
-        }
-        toast.success('تم ربط الطلب بالعميل بنجاح')
-      }
-    } catch {
-      toast.error('فشل ربط الطلب')
-    } finally {
-      setIsAssigning(false)
-    }
-  }
-
   const filteredOrders = orders.filter((o) => {
     const matchesSearch =
       !search ||
@@ -165,39 +141,98 @@ export default function OrdersManager() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-8 animate-spin text-primary" />
+        <Loader2 className="size-6 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 max-w-6xl mx-auto px-2">
       {/* Toolbar */}
-      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between bg-white/5 backdrop-blur-md p-4 rounded-3xl border border-white/10 shadow-2xl">
-        <div className="flex flex-col sm:flex-row gap-3 flex-1">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+      <div className="flex flex-col md:flex-row gap-3 items-center justify-between bg-white/5 backdrop-blur-md p-3 rounded-xl border border-white/5 shadow-lg">
+        <div className="flex flex-1 gap-2 w-full md:w-auto">
+          <div className="relative flex-1 md:w-64">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground" />
             <Input
               value={search}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-              placeholder="بحث باسم العميل أو المنتج أو الهاتف..."
-              className="pr-11 bg-white/5 border-white/10 focus:border-primary focus:ring-primary/20 rounded-2xl h-12 font-bold text-white placeholder:text-muted-foreground/30"
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="بحث..."
+              className="bg-black/40 border-white/10 pr-9 h-9 text-xs font-bold rounded-lg"
             />
           </div>
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-full sm:w-48 bg-white/5 border-white/10 rounded-2xl h-12 font-bold text-white">
-              <SelectValue placeholder="كل الحالات" />
+            <SelectTrigger className="w-32 h-9 bg-black/40 border-white/10 text-xs font-bold rounded-lg">
+              <SelectValue placeholder="الحالة" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-white/10 bg-[#0c0c0c] text-white">
-              <SelectItem value="all">كل الحالات</SelectItem>
+            <SelectContent className="bg-[#0c0c0c] border-white/10 text-white font-arabic">
+              <SelectItem value="all">الكل</SelectItem>
               <SelectItem value="pending">معلق</SelectItem>
               <SelectItem value="in-progress">قيد التنفيذ</SelectItem>
               <SelectItem value="completed">مكتمل</SelectItem>
-              <SelectItem value="cancelled">ملغي</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-2xl border border-primary/20">
+        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-lg border border-primary/20">
+          <ShoppingCart className="size-3 text-primary" />
+          <span className="text-[10px] font-black text-white">{orders.length} طلب</span>
+        </div>
+      </div>
+
+      {/* Orders Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredOrders.map((order) => {
+          const config = statusConfig[order.status] || statusConfig.pending
+          return (
+            <Card key={order.id} className="bg-white/5 border-white/5 rounded-xl overflow-hidden hover:border-primary/30 transition-all flex flex-col">
+              <CardContent className="p-4 flex flex-col h-full">
+                <div className="flex items-center justify-between mb-3">
+                  <Badge className={`${config.color} border text-[8px] font-black rounded-md px-2 py-0.5`}>
+                    {config.label}
+                  </Badge>
+                  <span className="text-[8px] font-bold text-muted-foreground">{new Date(order.createdAt).toLocaleDateString('ar-EG')}</span>
+                </div>
+                
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <User className="size-3 text-primary" />
+                    <h4 className="text-sm font-black text-white truncate">{order.customerName}</h4>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
+                    <Package className="size-3 text-muted-foreground" />
+                    <span>{order.productName}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400" dir="ltr">
+                    <Phone className="size-3 text-muted-foreground" />
+                    <span>{order.phone}</span>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">المبلغ المتوقع</span>
+                    <span className="text-sm font-black text-emerald-500">{order.estimatedPrice?.toLocaleString() || 0} ج.م</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Select value={order.status} onValueChange={(val) => handleStatusChange(order.id, val)}>
+                      <SelectTrigger className="w-24 h-8 bg-white/5 border-white/10 text-[9px] font-black rounded-lg">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#0c0c0c] border-white/10 text-white font-arabic">
+                        <SelectItem value="pending">معلق</SelectItem>
+                        <SelectItem value="in-progress">جاري</SelectItem>
+                        <SelectItem value="completed">تم</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
           <span className="text-primary font-black text-lg">{filteredOrders.length}</span>
           <span className="text-[10px] font-black text-primary/60 uppercase tracking-widest">طلبات</span>
         </div>

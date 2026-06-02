@@ -129,29 +129,29 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
   return (
     <div className="flex min-h-screen bg-[#020202] font-arabic text-foreground selection:bg-primary/30" dir="rtl">
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 right-0 z-50 w-72 bg-[#080808] border-l border-white/5 transition-transform duration-500 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'} shadow-[10px_0_50px_rgba(0,0,0,0.5)]`}>
+      <aside className={`fixed inset-y-0 right-0 z-50 w-64 bg-[#080808] border-l border-white/5 transition-transform duration-500 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'} shadow-2xl`}>
         <div className="flex flex-col h-full">
-          <div className="p-10">
-            <h2 className="text-3xl font-black tracking-tighter text-white flex items-center gap-2">
-              <div className="size-8 bg-primary rounded-lg flex items-center justify-center text-black rotate-12 shadow-[0_0_20px_rgba(251,191,36,0.5)]">E</div>
+          <div className="p-6">
+            <h2 className="text-xl font-black tracking-tighter text-white flex items-center gap-2">
+              <div className="size-6 bg-primary rounded flex items-center justify-center text-black rotate-12 shadow-lg shadow-primary/20 text-xs">E</div>
               <span dir="ltr">ELBA<span className="text-primary">7RAWY</span></span>
             </h2>
-            <div className="flex items-center gap-2 mt-2">
-              <div className="size-1.5 rounded-full bg-green-500 animate-pulse" />
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em]">Admin Panel</p>
+            <div className="flex items-center gap-2 mt-1">
+              <div className="size-1 rounded-full bg-green-500 animate-pulse" />
+              <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Admin Control</p>
             </div>
           </div>
 
-          <nav className="flex-1 px-6 space-y-10 overflow-y-auto pb-10 custom-scrollbar">
+          <nav className="flex-1 px-4 space-y-6 overflow-y-auto pb-6 custom-scrollbar">
             {['عام', 'النظام', 'الإدارة', 'التسويق', 'المبيعات', 'أخرى'].map((cat) => (
-              <div key={cat} className="space-y-4">
-                <h3 className="px-4 text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.3em]">{cat}</h3>
-                <div className="space-y-1.5">
+              <div key={cat} className="space-y-2">
+                <h3 className="px-3 text-[8px] font-black text-muted-foreground/40 uppercase tracking-widest">{cat}</h3>
+                <div className="space-y-1">
                   {navItems.filter(item => item.category === cat).map((item) => (
                     <button
                       key={item.id}
                       onClick={() => item.id === 'logout' ? onLogout() : setActiveSection(item.id as Section)}
-                      className={`w-full flex items-center gap-3.5 px-5 py-4 rounded-[1.25rem] transition-all duration-300 group relative overflow-hidden ${
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group relative overflow-hidden ${
                         activeSection === item.id 
                           ? 'text-white' 
                           : 'text-muted-foreground/60 hover:bg-white/5 hover:text-white'
@@ -160,15 +160,12 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
                       {activeSection === item.id && (
                         <motion.div 
                           layoutId="active-bg"
-                          className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent border-r-4 border-primary"
+                          className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent border-r-2 border-primary"
                           transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                         />
                       )}
-                      <item.icon className={`size-5 relative z-10 transition-transform duration-300 group-hover:scale-110 ${activeSection === item.id ? 'text-primary' : 'text-muted-foreground/40 group-hover:text-primary'}`} />
-                      <span className="font-bold text-sm relative z-10 tracking-tight">{item.label}</span>
-                      {activeSection === item.id && (
-                        <div className="absolute left-4 size-1.5 rounded-full bg-primary shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
-                      )}
+                      <item.icon className={`size-4 relative z-10 transition-transform duration-300 group-hover:scale-110 ${activeSection === item.id ? 'text-primary' : 'text-muted-foreground/40 group-hover:text-primary'}`} />
+                      <span className="font-bold text-xs relative z-10 tracking-tight">{item.label}</span>
                     </button>
                   ))}
                 </div>
@@ -176,15 +173,15 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
             ))}
           </nav>
 
-          <div className="p-6 border-t border-white/5">
-             <div className="bg-white/5 rounded-3xl p-5 flex items-center gap-4 border border-white/5 hover:bg-white/10 transition-colors group cursor-pointer">
-                <Avatar className="size-11 border-2 border-primary/20 group-hover:border-primary transition-colors">
+          <div className="p-4 border-t border-white/5">
+             <div className="bg-white/5 rounded-2xl p-3 flex items-center gap-3 border border-white/5 hover:bg-white/10 transition-colors group cursor-pointer">
+                <Avatar className="size-8 border border-primary/20 group-hover:border-primary transition-colors">
                   <AvatarImage src={user?.avatar} />
-                  <AvatarFallback className="bg-primary text-primary-foreground font-black text-xs">{user?.name?.[0]}</AvatarFallback>
+                  <AvatarFallback className="bg-primary text-primary-foreground font-black text-[10px]">{user?.name?.[0]}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 overflow-hidden">
-                  <p className="text-sm font-black text-white truncate">{user?.name}</p>
-                  <p className="text-[10px] font-bold text-muted-foreground truncate opacity-60">{user?.email}</p>
+                  <p className="text-[10px] font-black text-white truncate">{user?.name}</p>
+                  <p className="text-[8px] font-bold text-muted-foreground truncate opacity-60">{user?.email}</p>
                 </div>
              </div>
           </div>
@@ -192,86 +189,71 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 lg:mr-72 min-h-screen flex flex-col relative">
+      <main className="flex-1 lg:mr-64 min-h-screen flex flex-col relative">
         {/* Animated Background Orbs */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[150px] rounded-full animate-pulse" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/5 blur-[150px] rounded-full animate-pulse" />
+          <div className="absolute top-0 left-0 w-[30%] h-[30%] bg-primary/5 blur-[100px] rounded-full" />
+          <div className="absolute bottom-0 right-0 w-[30%] h-[30%] bg-blue-600/5 blur-[100px] rounded-full" />
         </div>
-        
-        {/* Header */}
-        <header className="sticky top-0 z-40 bg-background/60 backdrop-blur-2xl border-b border-white/5">
-          <div className="flex items-center justify-between h-24 px-10">
-            <div className="flex items-center gap-6">
-              <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden p-3 text-muted-foreground hover:bg-white/5 rounded-2xl transition-all">
-                <Menu className="size-6" />
-              </button>
-              <div className="hidden md:flex items-center gap-4 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-muted-foreground focus-within:border-primary/30 transition-all group">
-                <Search className="size-4 group-focus-within:text-primary transition-colors" />
-                <input 
-                  type="text" 
-                  placeholder="بحث سريع في النظام..." 
-                  className="bg-transparent border-none outline-none text-xs font-bold w-64 placeholder:text-muted-foreground/30 text-white"
-                />
-              </div>
-            </div>
 
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <button className="p-3 text-muted-foreground hover:bg-white/5 rounded-2xl transition-all relative group border border-white/5">
-                  <Bell className="size-5 group-hover:scale-110 group-hover:text-primary transition-all" />
-                  <span className="absolute top-3 left-3 size-2.5 bg-primary rounded-full border-4 border-[#020202]" />
-                </button>
-                <button className="p-3 text-muted-foreground hover:bg-white/5 rounded-2xl transition-all border border-white/5 group">
-                  <Settings className="size-5 group-hover:rotate-90 transition-transform" />
-                </button>
-              </div>
-              
-              <div className="h-10 w-px bg-white/10" />
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="h-14 flex items-center gap-4 pl-3 pr-5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-[1.25rem] transition-all group shadow-xl">
-                    <div className="text-right hidden sm:block">
-                      <p className="text-xs font-black text-white">{user?.name || 'المدير'}</p>
-                      <p className="text-[9px] font-bold text-primary uppercase tracking-widest mt-0.5">Administrator</p>
-                    </div>
-                    <Avatar className="size-10 border-2 border-primary/20 group-hover:border-primary transition-all duration-300">
-                      <AvatarImage src={user?.avatar} />
-                      <AvatarFallback className="bg-primary text-primary-foreground font-black text-xs">{user?.name?.[0]}</AvatarFallback>
-                    </Avatar>
-                    <ChevronDown className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 mt-4 rounded-3xl p-3 bg-[#0c0c0c] border border-white/10 text-foreground font-arabic shadow-2xl" align="end">
-                  <DropdownMenuLabel className="font-black px-4 py-4 text-white text-lg">إعدادات الحساب</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-white/5" />
-                  <DropdownMenuItem className="rounded-2xl px-4 py-4 font-bold cursor-pointer hover:bg-white/5 focus:bg-white/5 transition-all mb-1">
-                    الملف الشخصي
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="rounded-2xl px-4 py-4 font-bold cursor-pointer hover:bg-white/5 focus:bg-white/5 transition-all">
-                    الإعدادات المتقدمة
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-white/5" />
-                  <DropdownMenuItem onClick={onLogout} className="rounded-2xl px-4 py-4 font-black text-red-500 cursor-pointer hover:bg-red-500/10 focus:bg-red-500/10 transition-all mt-1">
-                    تسجيل الخروج
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+        {/* Top Header */}
+        <header className="sticky top-0 z-40 bg-[#020202]/80 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden text-white"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              <Menu className="size-5" />
+            </Button>
+            <div>
+              <h1 className="text-lg font-black text-white tracking-tighter">
+                {navItems.find(i => i.id === activeSection)?.label}
+              </h1>
             </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+              <Search className="size-3.5 text-muted-foreground" />
+              <input 
+                type="text" 
+                placeholder="بحث سريع..." 
+                className="bg-transparent border-none outline-none text-[10px] font-bold text-white placeholder:text-muted-foreground/40 w-32"
+              />
+            </div>
+            <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-white transition-colors">
+              <Bell className="size-4" />
+              <span className="absolute top-2 right-2 size-1.5 bg-primary rounded-full" />
+            </Button>
+            <div className="h-6 w-px bg-white/5 mx-1" />
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onLogout}
+              className="text-red-500 hover:text-red-400 hover:bg-red-500/5 font-black text-[10px] gap-2"
+            >
+              <LogOut className="size-3.5" />
+              خروج
+            </Button>
           </div>
         </header>
 
-        {/* Page Content */}
-        <div className="p-10 flex-1 relative z-10 overflow-y-auto custom-scrollbar">
-          <motion.div
-            key={activeSection}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {renderContent()}
-          </motion.div>
+        {/* Content Area */}
+        <div className="p-6 relative z-10 flex-1 overflow-y-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeSection}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="h-full"
+            >
+              {renderContent()}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
 

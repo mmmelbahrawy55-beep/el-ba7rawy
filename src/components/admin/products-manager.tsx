@@ -117,6 +117,7 @@ export default function ProductsManager() {
   const [saving, setSaving] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
@@ -148,10 +149,7 @@ export default function ProductsManager() {
   }, [])
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchData()
-    }, 0)
-    return () => clearTimeout(timer)
+    fetchData()
   }, [fetchData])
 
   const filteredProducts = (Array.isArray(products) ? products : []).filter((p) => {
@@ -164,40 +162,119 @@ export default function ProductsManager() {
     return matchesSearch && matchesCategory
   }).sort((a, b) => (a?.sortOrder || 0) - (b?.sortOrder || 0))
 
-  const allProducts = Array.isArray(products) ? products : [] // Use full list for category mapping
+  const handleSave = async () => {
+    if (!formData.name || !formData.categoryId) {
+      toast.error('يرجى إكمال البيانات الأساسية')
+      return
+    }
 
-  const openAddDialog = () => {
-    setEditingProduct(null)
-    setFormData(emptyForm)
-    setDialogOpen(true)
-  }
-
-  const openEditDialog = (product: Product) => {
-    setEditingProduct(product)
-    setFormData({
-      categoryId: product.category?.id || '',
-      name: product.name || '',
-      nameEn: product.nameEn || '',
-      description: product.description || '',
-      imageUrl: product.imageUrl || '',
-      unitType: product.unitType || 'meter',
-      price: product.price || 0,
-      deliveryDays: product.deliveryDays || 3,
-      isActive: product.isActive ?? true,
-      sortOrder: product.sortOrder || 0,
-    })
-    setDialogOpen(true)
-  }
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setUploading(true)
+    setSaving(true)
     try {
-      const fd = new FormData()
-      fd.append('file', file)
-      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      const url = editingProduct ? `/api/products/${editingProduct.id}` : '/api/products'
+      const method = editingProduct ? 'PUT' : 'POST'
+      
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      if (res.ok) {
+        toast.success(editingProduct ? 'تم تحديث المنتج' : 'تم إضافة المنتج')
+        setDialogOpen(false)
+        fetchData()
+      } else {
+        toast.error('فشل في حفظ المنتج')
+      }
+    } catch (error) {
+      toast.error('خطأ في الاتصال بالسيرفر')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="size-6 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4 max-w-6xl mx-auto px-2">
+      {/* Header Actions */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-white/5 p-3 rounded-xl border border-white/5 backdrop-blur-md">
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="relative flex-1 md:w-64">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground" />
+            <Input
+              placeholder="بحث عن منتج..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="bg-black/40 border-white/10 pr-9 h-9 text-xs font-bold rounded-lg"
+            />
+          </div>
+          <Select value={filterCategory} onValueChange={setFilterCategory}>
+            <SelectTrigger className="w-32 h-9 bg-black/40 border-white/10 text-xs font-bold rounded-lg">
+              <SelectValue placeholder="التصنيف" />
+            </SelectTrigger>
+            <SelectContent className="bg-[#0c0c0c] border-white/10 text-white font-arabic">
+              <SelectItem value="all">كل الأقسام</SelectItem>
+              {categories.map(c => (
+                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button size="sm" onClick={() => { setEditingProduct(null); setFormData(emptyForm); setDialogOpen(true); }} className="bg-primary hover:bg-primary/90 text-primary-foreground h-9 rounded-lg font-black text-xs px-4 w-full md:w-auto">
+          <Plus className="size-3 ml-1.5" /> إضافة منتج
+        </Button>
+      </div>
+
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {filteredProducts.map((product) => (
+          <Card key={product.id} className="bg-white/5 border-white/5 rounded-xl overflow-hidden group hover:border-primary/30 transition-all flex flex-col">
+            <div className="relative aspect-[16/10] overflow-hidden">
+              {product.imageUrl ? (
+                <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              ) : (
+                <div className="w-full h-full bg-black/40 flex items-center justify-center">
+                  <ImageIcon className="size-8 text-white/10" />
+                </div>
+              )}
+              <div className="absolute top-2 right-2">
+                <Badge className={product.isActive ? "bg-emerald-500/20 text-emerald-400 border-none text-[8px] font-black" : "bg-red-500/20 text-red-400 border-none text-[8px] font-black"}>
+                  {product.isActive ? "نشط" : "متوقف"}
+                </Badge>
+              </div>
+            </div>
+            <CardContent className="p-3 flex-1 flex flex-col">
+              <div className="flex-1">
+                <p className="text-[8px] font-black text-primary uppercase tracking-widest mb-1">{product.category?.name}</p>
+                <h3 className="text-sm font-black text-white truncate">{product.name}</h3>
+                <div className="flex items-center gap-1.5 mt-2">
+                  <DollarSign className="size-3 text-emerald-500" />
+                  <span className="text-sm font-black text-white">{product.price.toLocaleString()}</span>
+                  <span className="text-[9px] text-muted-foreground font-bold">ج.م / {unitTypeLabels[product.unitType]}</span>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center gap-2 pt-3 border-t border-white/5">
+                <Button variant="ghost" size="sm" onClick={() => { setEditingProduct(product); setFormData({ ...product, categoryId: product.category.id }); setDialogOpen(true); }} className="flex-1 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white text-[10px] font-black">
+                  <Edit2 className="size-3 ml-1.5" /> تعديل
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setDeleteId(product.id)} className="h-8 w-8 p-0 rounded-lg bg-red-500/5 hover:bg-red-500/10 text-red-500">
+                  <Trash2 className="size-3" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
+}
       if (res.ok) {
         const data = await res.json()
         setFormData((p) => ({ ...p, imageUrl: data.url }))

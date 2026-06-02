@@ -63,7 +63,10 @@ export default function StatsCards() {
     const fetchStats = async () => {
       try {
         const res = await fetch('/api/stats')
-        if (res.ok) setStats(await res.json())
+        if (res.ok) {
+          const data = await res.json()
+          setStats(data)
+        }
       } catch (error) {
         console.error('Failed to fetch stats:', error)
       } finally {
@@ -75,14 +78,11 @@ export default function StatsCards() {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Skeleton className="md:col-span-2 md:row-span-2 h-[450px] rounded-[2.5rem] bg-white/5 border border-white/10" />
-        <Skeleton className="md:col-span-2 h-[210px] rounded-[2.5rem] bg-white/5 border border-white/10" />
-        <Skeleton className="md:col-span-2 h-[210px] rounded-[2.5rem] bg-white/5 border border-white/10" />
-        <Skeleton className="md:col-span-1 h-[200px] rounded-[2.5rem] bg-white/5 border border-white/10" />
-        <Skeleton className="md:col-span-1 h-[200px] rounded-[2.5rem] bg-white/5 border border-white/10" />
-        <Skeleton className="md:col-span-1 h-[200px] rounded-[2.5rem] bg-white/5 border border-white/10" />
-        <Skeleton className="md:col-span-1 h-[200px] rounded-[2.5rem] bg-white/5 border border-white/10" />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Skeleton className="md:col-span-2 md:row-span-2 h-[300px] rounded-2xl bg-white/5 border border-white/10" />
+        <Skeleton className="md:col-span-2 h-[140px] rounded-2xl bg-white/5 border border-white/10" />
+        <Skeleton className="md:col-span-1 h-[140px] rounded-2xl bg-white/5 border border-white/10" />
+        <Skeleton className="md:col-span-1 h-[140px] rounded-2xl bg-white/5 border border-white/10" />
       </div>
     )
   }
@@ -90,30 +90,26 @@ export default function StatsCards() {
   if (!stats) return null
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-4 animate-in fade-in duration-700">
       {/* Bento Grid Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Main Revenue Card - Large */}
-        <Card className="md:col-span-2 md:row-span-2 border border-white/5 bg-card text-foreground shadow-2xl rounded-[2.5rem] overflow-hidden group relative flex flex-col">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-50 pointer-events-none" />
-          <CardContent className="p-10 flex flex-col justify-between flex-1 relative z-10">
-            <div className="flex items-center justify-between mb-8">
-              <div className="p-5 rounded-3xl bg-white/5 text-primary group-hover:scale-110 transition-transform duration-500 shadow-lg border border-white/5">
-                <DollarSign className="size-10" />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {/* Main Revenue Card - Medium */}
+        <Card className="md:col-span-2 md:row-span-2 border border-white/5 bg-card text-foreground shadow-xl rounded-2xl overflow-hidden group relative flex flex-col">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50 pointer-events-none" />
+          <CardContent className="p-6 flex flex-col justify-between flex-1 relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-xl bg-white/5 text-primary group-hover:scale-110 transition-transform duration-500 border border-white/5">
+                <DollarSign className="size-6" />
               </div>
-              <Badge className="bg-primary/20 text-primary border-none font-black px-4 py-1.5 rounded-full text-xs uppercase tracking-widest">إجمالي الإيرادات</Badge>
+              <Badge className="bg-primary/20 text-primary border-none font-black px-3 py-1 rounded-full text-[9px] uppercase tracking-widest">الإيرادات</Badge>
             </div>
             <div className="flex-1 flex flex-col justify-center">
-              <h3 className="text-5xl sm:text-7xl font-black mb-2 tracking-tighter text-white drop-shadow-2xl">
+              <h3 className="text-4xl sm:text-5xl font-black mb-1 tracking-tighter text-white">
                 {(stats.revenue || 0).toLocaleString('ar-EG')}
               </h3>
-              <p className="text-primary font-bold text-xl uppercase tracking-[0.2em]">جنيه مصري</p>
-              <div className="flex items-center gap-2 mt-8 text-muted-foreground text-sm font-bold bg-white/5 w-fit px-5 py-2.5 rounded-2xl border border-white/5">
-                <CheckCircle2 className="size-4 text-emerald-500" />
-                تم تحصيلها من {stats.completedOrders || 0} طلب مكتمل
-              </div>
+              <p className="text-primary font-bold text-sm uppercase tracking-widest">جنيه مصري</p>
             </div>
-            <div className="mt-10 h-32 w-full opacity-30 group-hover:opacity-60 transition-opacity">
+            <div className="mt-4 h-24 w-full opacity-30 group-hover:opacity-60 transition-opacity">
                <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={stats.chartData && stats.chartData.length > 0 ? stats.chartData : stats.categoryStats || []}>
                   <defs>
@@ -122,7 +118,7 @@ export default function StatsCards() {
                       <stop offset="95%" stopColor="#fbbf24" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <Area type="monotone" dataKey={stats.chartData && stats.chartData.length > 0 ? "amount" : "revenue"} stroke="#fbbf24" fill="url(#colorRevenue)" strokeWidth={3} />
+                  <Area type="monotone" dataKey={stats.chartData && stats.chartData.length > 0 ? "amount" : "revenue"} stroke="#fbbf24" fill="url(#colorRevenue)" strokeWidth={2} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -130,40 +126,40 @@ export default function StatsCards() {
         </Card>
 
         {/* Marketing Stats Card */}
-        <Card className="md:col-span-2 border border-white/5 bg-card text-foreground shadow-2xl rounded-[2.5rem] overflow-hidden group min-h-[220px]">
-          <CardContent className="p-8 flex flex-col justify-between h-full">
-            <div className="flex items-center justify-between mb-6">
-              <div className="p-4 rounded-2xl bg-white/5 text-primary shadow-lg border border-white/5">
-                <BarChart3 className="size-8" />
+        <Card className="md:col-span-2 border border-white/5 bg-card text-foreground shadow-xl rounded-2xl overflow-hidden group">
+          <CardContent className="p-6 flex flex-col justify-between h-full">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-xl bg-white/5 text-primary border border-white/5">
+                <BarChart3 className="size-6" />
               </div>
-              <Badge className={`border-none font-black px-4 py-1.5 rounded-full text-[10px] uppercase tracking-wider ${stats.marketingStats?.aiEnabled ? "bg-emerald-500/20 text-emerald-400" : "bg-white/5 text-muted-foreground"}`}>
-                {stats.marketingStats?.aiEnabled ? "فريق AI نشط" : "فريق AI متوقف"}
+              <Badge className={`border-none font-black px-3 py-1 rounded-full text-[8px] uppercase tracking-wider ${stats.marketingStats?.aiEnabled ? "bg-emerald-500/20 text-emerald-400" : "bg-white/5 text-muted-foreground"}`}>
+                {stats.marketingStats?.aiEnabled ? "AI نشط" : "AI متوقف"}
               </Badge>
             </div>
             <div>
-              <p className="text-muted-foreground font-black text-xs uppercase tracking-[0.2em] mb-1">المنشورات التسويقية</p>
-              <div className="flex items-baseline gap-3">
-                <h4 className="text-5xl font-black text-white">{stats.marketingStats?.publishedPosts || 0}</h4>
-                <span className="text-muted-foreground text-sm font-bold uppercase tracking-widest">منشور ذكي</span>
+              <p className="text-muted-foreground font-black text-[9px] uppercase tracking-widest mb-1">المنشورات</p>
+              <div className="flex items-baseline gap-2">
+                <h4 className="text-3xl font-black text-white">{stats.marketingStats?.publishedPosts || 0}</h4>
+                <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">منشور ذكي</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Debt Card - Medium */}
-        <Card className="md:col-span-2 border border-white/5 bg-card shadow-2xl rounded-[2.5rem] overflow-hidden group min-h-[220px]">
-          <CardContent className="p-8 flex items-center gap-8 h-full">
-            <div className="p-6 rounded-[2rem] bg-red-500/10 text-red-500 group-hover:scale-110 transition-transform duration-500 shadow-lg border border-red-500/10">
-              <TrendingUp className="size-10" />
+        <Card className="md:col-span-2 border border-white/5 bg-card shadow-xl rounded-2xl overflow-hidden group">
+          <CardContent className="p-6 flex items-center gap-6 h-full">
+            <div className="p-4 rounded-xl bg-red-500/10 text-red-500 group-hover:scale-110 transition-transform duration-500 border border-red-500/10">
+              <TrendingUp className="size-8" />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">إجمالي المديونيات</p>
-              <h3 className="text-4xl font-black text-white tracking-tight">{(stats.totalDebts || 0).toLocaleString('ar-EG')} ج.م</h3>
-              <div className="w-full bg-white/5 h-2.5 rounded-full mt-6 overflow-hidden border border-white/5">
+              <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">المديونيات</p>
+              <h3 className="text-2xl font-black text-white tracking-tight">{(stats.totalDebts || 0).toLocaleString('ar-EG')} ج.م</h3>
+              <div className="w-full bg-white/5 h-1.5 rounded-full mt-3 overflow-hidden border border-white/5">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min(100, (stats.totalDebts / (stats.revenue + stats.totalDebts || 1)) * 100)}%` }}
-                  className="bg-red-500 h-full rounded-full shadow-[0_0_15px_rgba(239,68,68,0.6)]"
+                  className="bg-red-500 h-full rounded-full"
                 />
               </div>
             </div>
@@ -171,30 +167,34 @@ export default function StatsCards() {
         </Card>
 
         {/* Orders Card - Small */}
-        <Card className="md:col-span-1 border border-white/5 bg-card shadow-2xl rounded-[2.5rem] overflow-hidden group hover:bg-primary transition-all duration-500">
-          <CardContent className="p-8 flex flex-col justify-between h-full relative overflow-hidden">
-            <div className="p-4 rounded-2xl bg-white/5 text-purple-400 w-fit group-hover:bg-black/20 group-hover:text-white transition-colors border border-white/5">
-              <ShoppingCart className="size-8" />
+        <Card className="md:col-span-1 border border-white/5 bg-card shadow-xl rounded-2xl overflow-hidden group hover:bg-primary transition-all duration-500">
+          <CardContent className="p-6 flex flex-col justify-between h-full relative overflow-hidden">
+            <div className="p-3 rounded-xl bg-white/5 text-purple-400 w-fit group-hover:bg-black/20 group-hover:text-white transition-colors border border-white/5">
+              <ShoppingCart className="size-6" />
             </div>
-            <div className="mt-8 relative z-10">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1 group-hover:text-black/60 transition-colors">إجمالي الطلبات</p>
-              <h3 className="text-4xl font-black text-white group-hover:text-black transition-colors">{stats.totalOrders}</h3>
+            <div className="mt-4 relative z-10">
+              <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1 group-hover:text-black/60 transition-colors">الطلبات</p>
+              <h3 className="text-3xl font-black text-white group-hover:text-black transition-colors">{stats.totalOrders}</h3>
             </div>
           </CardContent>
         </Card>
 
         {/* Products Card - Small */}
-        <Card className="md:col-span-1 border border-white/5 bg-card shadow-2xl rounded-[2.5rem] overflow-hidden group hover:bg-blue-600 transition-all duration-500">
-          <CardContent className="p-8 flex flex-col justify-between h-full">
-            <div className="p-4 rounded-2xl bg-white/5 text-blue-400 w-fit group-hover:bg-black/20 group-hover:text-white transition-colors border border-white/5">
-              <Package className="size-8" />
+        <Card className="md:col-span-1 border border-white/5 bg-card shadow-xl rounded-2xl overflow-hidden group hover:bg-blue-600 transition-all duration-500">
+          <CardContent className="p-6 flex flex-col justify-between h-full">
+            <div className="p-3 rounded-xl bg-white/5 text-blue-400 w-fit group-hover:bg-black/20 group-hover:text-white transition-colors border border-white/5">
+              <Package className="size-6" />
             </div>
-            <div className="mt-8">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1 group-hover:text-black/60 transition-colors">المنتجات</p>
-              <h3 className="text-4xl font-black text-white group-hover:text-black transition-colors">{stats.totalProducts}</h3>
+            <div className="mt-4">
+              <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1 group-hover:text-black/60 transition-colors">المنتجات</p>
+              <h3 className="text-3xl font-black text-white group-hover:text-black transition-colors">{stats.totalProducts}</h3>
             </div>
           </CardContent>
         </Card>
+      </div>
+    </div>
+  )
+}
 
         {/* Categories Card - Small */}
         <Card className="md:col-span-1 border border-white/5 bg-card shadow-2xl rounded-[2.5rem] overflow-hidden group hover:bg-emerald-600 transition-all duration-500">

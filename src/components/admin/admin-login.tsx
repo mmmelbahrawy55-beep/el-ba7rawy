@@ -19,7 +19,6 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [loginType, setLoginType] = useState<'admin' | 'client'>('admin')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -57,147 +56,91 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
     }
   }
 
-  const handleGoogleLogin = async () => {
-    try {
-      const res = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider: 'google' }),
-      })
-
-      const data = await res.json()
-      if (res.ok) {
-        onLogin({
-          id: data.id,
-          email: data.email,
-          name: data.name,
-          avatar: data.avatar,
-        })
-      } else {
-        toast.error(data.error || 'غير متاح حالياً')
-      }
-    } catch {
-      toast.error('حدث خطأ في الاتصال')
-    }
-  }
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-background p-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-[#050505] p-4"
     >
-      {/* Dynamic Background */}
+      {/* Background Decor */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[150px] animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[150px] animate-pulse delay-1000" />
-        <div className="absolute inset-0 bg-[url('/images/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+        <div className="absolute top-[-10%] right-[-5%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[50%] h-[50%] bg-blue-600/5 rounded-full blur-[120px]" />
       </div>
 
-      <div className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 w-full max-w-sm">
         {/* Back button */}
-        <motion.button
+        <button
           onClick={onBack}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-all mb-12 mr-auto font-black group"
+          className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-all mb-8 mr-auto font-black text-[10px] uppercase tracking-widest"
         >
-          <ArrowRight className="size-5 group-hover:translate-x-1 transition-transform" />
-          <span className="text-sm uppercase tracking-widest">العودة للموقع</span>
-        </motion.button>
+          <ArrowRight className="size-4" /> العودة للموقع
+        </button>
 
         {/* Brand Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="text-center mb-12"
-        >
-          <div className="bg-transparent size-28 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 border border-border group hover:border-primary/50 transition-all duration-500">
+        <div className="text-center mb-8">
+          <div className="size-20 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4 border border-white/10 shadow-2xl">
             <img
-              src="/images/logo.png"
-              alt="البحراوي"
-              className="w-24 h-24 object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.1)] group-hover:scale-110 transition-transform duration-500"
+              src="https://el-ba7rawy-no3c.vercel.app/images/logo.png"
+              alt="Logo"
+              className="w-14 h-14 object-contain"
             />
           </div>
-          <h1 className="text-4xl font-black text-foreground mb-3 tracking-tighter">بوابة الوصول</h1>
-          <p className="text-primary font-black text-[11px] uppercase tracking-[0.4em] opacity-80">Access Gateway</p>
-        </motion.div>
+          <h1 className="text-2xl font-black text-white tracking-tighter">تسجيل الدخول</h1>
+          <p className="text-primary font-black text-[8px] uppercase tracking-[0.3em] mt-1">Admin Access</p>
+        </div>
 
         {/* Login Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-        >
-          <Card className="bg-card border border-border shadow-2xl rounded-[2.5rem] overflow-hidden">
-            <CardHeader className="pb-4 pt-8 px-8 text-center">
-              <h2 className="text-xl font-black text-foreground">
-                تسجيل الدخول
-              </h2>
-              <p className="text-muted-foreground text-[10px] font-bold mt-1 tracking-tight">
-                أدخل بيانات حسابك للمتابعة
-              </p>
-            </CardHeader>
-            <CardContent className="px-8 pb-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Email */}
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mr-2">
-                    البريد الإلكتروني أو الهاتف
-                  </Label>
-                  <div className="relative group">
-                    <Mail className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                    <Input
-                      id="email"
-                      type="text"
-                      value={email}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                      placeholder="example@domain.com"
-                      className="pr-12 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/10 rounded-xl h-12 font-black text-sm"
-                      dir="ltr"
-                      required
-                    />
-                  </div>
+        <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl rounded-2xl overflow-hidden border-2">
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mr-1">البريد الإلكتروني</Label>
+                <div className="relative group">
+                  <Mail className="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder=""
+                    className="pr-10 bg-black/40 border-white/10 text-white h-10 font-bold text-xs rounded-xl focus:ring-primary/20"
+                    dir="ltr"
+                    required
+                  />
                 </div>
+              </div>
 
-                {/* Password */}
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mr-2">
-                    كلمة المرور
-                  </Label>
-                  <div className="relative group">
-                    <Lock className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                    <Input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="pr-12 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/10 rounded-xl h-12 font-black text-sm"
-                      dir="ltr"
-                      required
-                    />
-                  </div>
+              <div className="space-y-1.5">
+                <Label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mr-1">كلمة المرور</Label>
+                <div className="relative group">
+                  <Lock className="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+                  <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder=""
+                    className="pr-10 bg-black/40 border-white/10 text-white h-10 font-bold text-xs rounded-xl focus:ring-primary/20"
+                    dir="ltr"
+                    required
+                  />
                 </div>
+              </div>
 
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-black py-6 text-base rounded-xl shadow-xl shadow-primary/20 transition-all active:scale-95 group"
-                >
-                  {isLoading ? (
-                    <Loader2 className="size-6 animate-spin" />
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      دخول للنظام
-                      <ArrowRight className="size-5 rotate-180 group-hover:-translate-x-1 transition-transform" />
-                    </span>
-                  )}
-                </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-black h-11 rounded-xl shadow-lg transition-all active:scale-95 text-xs"
+              >
+                {isLoading ? <Loader2 className="size-4 animate-spin" /> : "دخول للنظام"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </motion.div>
+  )
+}
 
                 {/* Register Link */}
                 <div className="text-center mt-4">

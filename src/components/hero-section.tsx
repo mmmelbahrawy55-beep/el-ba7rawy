@@ -180,14 +180,14 @@ export default function HeroSection() {
           >
             <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-[400px] md:h-[400px]">
               <img
-                src="https://el-ba7rawy-no3c.vercel.app/images/logo.png"
-                alt="ELBA7RAWY Logo"
+                src={settings?.logoUrl || "https://el-ba7rawy-no3c.vercel.app/images/logo.png"}
+                alt={settings?.siteName || "ELBA7RAWY Logo"}
                 className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.5)] block"
                 loading="eager"
               />
             </div>
             {/* Background Glow behind logo */}
-            <div className="absolute inset-0 bg-[#fbbf24]/10 blur-[100px] -z-10 rounded-full scale-150 opacity-50" />
+            <div className="absolute inset-0 bg-primary/10 blur-[100px] -z-10 rounded-full scale-150 opacity-50" />
           </motion.div>
 
           {/* Hero Title */}
@@ -198,6 +198,34 @@ export default function HeroSection() {
             </div>
             
             <h1 className="text-6xl sm:text-8xl md:text-[10rem] font-black tracking-tighter leading-[0.9] mb-8 flex items-center justify-center gap-4 flex-wrap" dir="ltr">
+              <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">ELBA</span>
+              <span className="text-primary relative">
+                7RAWY
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: '100%' }}
+                  transition={{ delay: 1, duration: 1 }}
+                  className="absolute -bottom-2 left-0 h-2 bg-primary/30 blur-sm rounded-full"
+                />
+                <div className="absolute -bottom-1 left-0 w-full h-1 bg-primary rounded-full shadow-[0_0_20px_#fbbf24]" />
+              </span>
+            </h1>
+
+            <div className="flex flex-col items-center gap-4">
+              <motion.span 
+                initial={{ opacity: 0, tracking: '0.1em' }}
+                animate={{ opacity: 1, tracking: '0.5em' }}
+                transition={{ duration: 1.5, delay: 0.5 }}
+                className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase tracking-[0.5em] drop-shadow-lg"
+              >
+                ADVERTISING
+              </motion.span>
+              <div className="h-px w-32 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+              <p className="text-lg sm:text-xl font-bold text-slate-400 max-w-2xl mx-auto leading-relaxed px-4">
+                {settings?.siteName || "البحراوي للدعاية والإعلان"} - نبتكر لنميزك في سوق العمل
+              </p>
+            </div>
+          </motion.div>
               <span className="text-white">ELBA</span>
               <span className="relative inline-block text-[#fbbf24]">
                 7RAWY

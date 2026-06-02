@@ -131,33 +131,6 @@ export default function PlatformSystem() {
     remainingAmount: '',
   })
 
-  // New Supplier Form State
-  const [newSupplier, setNewSupplier] = useState({
-    name: '',
-    phone: '',
-    category: '',
-    paidAmount: '',
-    remainingAmount: '',
-  })
-
-  // New Transaction Form State
-  const [newTransaction, setNewTransaction] = useState({
-    type: 'payment' as 'payment' | 'debt' | 'expense',
-    amount: '',
-    description: '',
-    status: 'completed' as 'completed' | 'pending',
-  })
-
-  // New Order Form State
-  const [newOrder, setNewOrder] = useState({
-    productName: '',
-    categoryName: '',
-    quantity: '',
-    size: '',
-    details: '',
-    estimatedPrice: '',
-  })
-
   // Load data from API
   const fetchClients = async () => {
     try {
@@ -196,8 +169,140 @@ export default function PlatformSystem() {
     }
   }
 
-  const handleAddSupplier = async () => {
-    if (!newSupplier.name || !newSupplier.phone) {
+  useEffect(() => {
+    fetchClients()
+    
+    // Fetch system health
+    fetch('/api/health').then(res => res.json()).then(data => setSystemHealth(data)).catch(() => {})
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="size-6 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4 max-w-6xl mx-auto px-2">
+      <Tabs defaultValue="clients" className="w-full">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/5 p-3 rounded-xl border border-white/5 mb-4 backdrop-blur-md">
+          <TabsList className="bg-black/40 border border-white/10 p-1 h-10 rounded-lg">
+            <TabsTrigger value="clients" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-1.5 text-xs font-black transition-all">العملاء</TabsTrigger>
+            <TabsTrigger value="suppliers" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-1.5 text-xs font-black transition-all">الموردين</TabsTrigger>
+            <TabsTrigger value="system" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-1.5 text-xs font-black transition-all">النظام</TabsTrigger>
+          </TabsList>
+
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="relative flex-1 md:w-64">
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground" />
+              <Input
+                placeholder="بحث..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-black/40 border-white/10 pr-9 h-9 text-xs font-bold rounded-lg focus:ring-primary/20"
+              />
+            </div>
+            <Button size="sm" onClick={() => setIsAddClientOpen(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground h-9 rounded-lg font-black text-xs px-4">
+              <Plus className="size-3 ml-1.5" /> عميل جديد
+            </Button>
+          </div>
+        </div>
+
+        <TabsContent value="clients" className="mt-0 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            {/* Quick Stats */}
+            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-primary mb-1">
+                <Users className="size-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">إجمالي العملاء</span>
+              </div>
+              <p className="text-xl font-black text-white">{clients.length}</p>
+            </Card>
+            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-emerald-500 mb-1">
+                <DollarSign className="size-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">المحصل</span>
+              </div>
+              <p className="text-xl font-black text-white">{clients.reduce((acc, c) => acc + c.totalPaid, 0).toLocaleString()} ج.م</p>
+            </Card>
+            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-red-500 mb-1">
+                <TrendingUp className="size-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">المديونيات</span>
+              </div>
+              <p className="text-xl font-black text-white">{clients.reduce((acc, c) => acc + c.totalDebt, 0).toLocaleString()} ج.م</p>
+            </Card>
+            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-blue-500 mb-1">
+                <Package className="size-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">إجمالي الطلبات</span>
+              </div>
+              <p className="text-xl font-black text-white">{clients.reduce((acc, c) => acc + c.totalOrders, 0)}</p>
+            </Card>
+          </div>
+
+          <Card className="bg-white/5 border-white/5 rounded-xl overflow-hidden backdrop-blur-md">
+            <Table>
+              <TableHeader className="bg-black/40">
+                <TableRow className="border-white/5 hover:bg-transparent">
+                  <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">العميل</TableHead>
+                  <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">التواصل</TableHead>
+                  <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">الطلبات</TableHead>
+                  <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">الحالة المالية</TableHead>
+                  <TableHead className="text-left text-[10px] font-black text-muted-foreground uppercase py-3">إجراءات</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {clients.filter(c => c.name.includes(searchQuery) || c.phone.includes(searchQuery)).map((client) => (
+                  <TableRow key={client.id} className="border-white/5 hover:bg-white/5 transition-colors group">
+                    <TableCell className="py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-xs">{client.name[0]}</div>
+                        <span className="font-bold text-xs text-white">{client.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[10px] font-bold text-white flex items-center gap-1.5"><Phone className="size-2.5 text-muted-foreground" /> {client.phone}</span>
+                        <span className="text-[8px] text-muted-foreground">{client.email || 'لا يوجد بريد'}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <Badge variant="outline" className="bg-white/5 border-white/10 text-[9px] font-black rounded-md px-2 py-0.5">{client.totalOrders} طلب</Badge>
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center justify-between text-[9px] font-bold">
+                          <span className="text-emerald-500">تم دفع: {client.totalPaid.toLocaleString()}</span>
+                        </div>
+                        <div className="w-24 bg-black/40 h-1 rounded-full overflow-hidden">
+                          <div 
+                            className="bg-emerald-500 h-full" 
+                            style={{ width: `${(client.totalPaid / (client.totalPaid + client.totalDebt || 1)) * 100}%` }}
+                          />
+                        </div>
+                        {client.totalDebt > 0 && (
+                          <span className="text-red-500 text-[9px] font-bold">متبقي: {client.totalDebt.toLocaleString()}</span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-3 text-left">
+                      <Button variant="ghost" size="sm" onClick={() => setSelectedClient(client)} className="h-8 w-8 p-0 hover:bg-white/10 rounded-lg text-muted-foreground hover:text-white transition-colors">
+                        <ExternalLink className="size-3.5" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
       toast.error('يرجى ملء البيانات الأساسية للمورد')
       return
     }

@@ -44,9 +44,23 @@ export default function SettingsManager() {
         if (res.ok) {
           const data = await res.json()
           setSettings(data)
+        } else {
+          throw new Error('API error')
         }
-      } catch {
-        toast.error('فشل تحميل الإعدادات')
+      } catch (err) {
+        console.error('Settings fetch error:', err)
+        // Fallback settings if API fails
+        setSettings({
+          siteName: "البحراوي للدعاية والإعلان",
+          siteNameEn: "ELBAHRAWY ADVERTISING",
+          logoUrl: "/images/logo.png",
+          whatsapp: "01120053007",
+          email: "admin@elbahrawy.com",
+          address: "العاشر من رمضان، الشرقية",
+          facebook: "https://facebook.com",
+          instagram: "https://instagram.com",
+        })
+        toast.error('تم تحميل الإعدادات الافتراضية')
       } finally {
         setLoading(false)
       }
@@ -66,7 +80,8 @@ export default function SettingsManager() {
       if (res.ok) {
         toast.success('تم حفظ الإعدادات بنجاح')
       } else {
-        toast.error('فشل حفظ الإعدادات')
+        const data = await res.json()
+        toast.error(data.error || 'فشل حفظ الإعدادات')
       }
     } catch {
       toast.error('حدث خطأ في الاتصال')
@@ -83,11 +98,11 @@ export default function SettingsManager() {
     try {
       const fd = new FormData()
       fd.append('file', file)
-      fd.append('folder', 'branding') // تحديد مجلد خاص بالهوية البصرية
+      fd.append('folder', 'branding')
       
-      const res = await fetch('/api/upload', { 
-        method: 'POST', 
-        body: fd 
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: fd
       })
       
       const data = await res.json()
@@ -100,7 +115,7 @@ export default function SettingsManager() {
       }
     } catch (error) {
       console.error('Upload error:', error)
-      toast.error('حدث خطأ أثناء الرفع، يرجى المحاولة مرة أخرى')
+      toast.error('حدث خطأ أثناء الرفع')
     } finally {
       setUploading(false)
     }
@@ -109,7 +124,7 @@ export default function SettingsManager() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-8 animate-spin text-primary" />
+        <Loader2 className="size-6 animate-spin text-primary" />
       </div>
     )
   }
@@ -117,198 +132,180 @@ export default function SettingsManager() {
   if (!settings) return null
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10">
-      {/* Header - Bento Style */}
-      <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between bg-white/5 backdrop-blur-md p-10 rounded-[3rem] border border-white/10 shadow-xl relative overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+    <div className="max-w-5xl mx-auto space-y-4 px-4">
+      {/* Header - Compact */}
+      <div className="flex items-center justify-between bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-lg relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
         <div className="relative z-10">
-          <h2 className="text-4xl font-black text-white tracking-tighter">إعدادات المنصة</h2>
-          <p className="text-muted-foreground font-bold mt-2">إدارة الهوية البصرية، بيانات التواصل، والروابط الاجتماعية</p>
+          <h2 className="text-xl font-black text-white tracking-tighter">إعدادات المنصة</h2>
+          <p className="text-muted-foreground text-[10px] font-bold">إدارة الهوية والبيانات</p>
         </div>
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground font-black px-10 h-14 rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95 group relative z-10"
+          size="sm"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-lg shadow-lg transition-all active:scale-95 group relative z-10 text-xs h-9 px-4"
         >
-          {saving ? <Loader2 className="size-6 animate-spin ml-2" /> : <Save className="size-6 ml-2 group-hover:rotate-12 transition-transform" />}
-          حفظ التغييرات
+          {saving ? <Loader2 className="size-3 animate-spin ml-2" /> : <Save className="size-3 ml-2 group-hover:rotate-12 transition-transform" />}
+          حفظ الإعدادات
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Identity Section - Bento Large */}
-        <Card className="lg:col-span-2 border border-white/10 bg-white/5 backdrop-blur-md shadow-xl rounded-[3rem] overflow-hidden group">
-          <CardContent className="p-10 space-y-10">
-            <div className="flex items-center gap-4 text-primary">
-              <div className="p-3 rounded-2xl bg-primary/10">
-                <Globe className="size-6" />
-              </div>
-              <h3 className="text-2xl font-black text-white">هوية الموقع</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Main Info - Bento Small */}
+        <Card className="md:col-span-2 border border-white/5 bg-white/5 backdrop-blur-md rounded-xl overflow-hidden">
+          <CardContent className="p-4 space-y-4">
+            <div className="flex items-center gap-2 text-primary">
+              <Globe className="size-4" />
+              <h3 className="text-sm font-black text-white">الهوية البصرية</h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-3">
-                <Label className="text-muted-foreground font-black text-xs uppercase tracking-widest mr-2">اسم المنصة (عربي)</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest mr-1">الاسم (عربي)</Label>
                 <Input
                   value={settings.siteName}
                   onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
-                  className="bg-white/5 border-white/10 rounded-2xl h-14 font-black text-lg focus:ring-primary/20 shadow-sm text-white"
+                  className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
                 />
               </div>
-              <div className="space-y-3">
-                <Label className="text-muted-foreground font-black text-xs uppercase tracking-widest mr-2">اسم المنصة (إنجليزي)</Label>
+              <div className="space-y-1.5">
+                <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest mr-1">الاسم (EN)</Label>
                 <Input
                   value={settings.siteNameEn}
                   onChange={(e) => setSettings({ ...settings, siteNameEn: e.target.value })}
-                  className="bg-white/5 border-white/10 rounded-2xl h-14 font-black text-lg focus:ring-primary/20 shadow-sm text-white"
+                  className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
                   dir="ltr"
                 />
               </div>
             </div>
 
-            <div className="pt-6">
-              <Label className="text-muted-foreground font-black text-xs uppercase tracking-widest mr-2 mb-4 block">شعار العلامة التجارية</Label>
-              <div className="flex flex-col sm:flex-row items-center gap-8 bg-white/5 p-8 rounded-[2.5rem] border border-white/5">
-                <div className="size-32 rounded-[2rem] bg-[#0c0c0c] shadow-inner flex items-center justify-center overflow-hidden relative group/logo border border-white/10">
+            <div className="pt-2">
+              <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest mr-1 mb-2 block">الشعار</Label>
+              <div className="flex items-center gap-4 bg-white/5 p-3 rounded-lg border border-white/5">
+                <div className="size-16 rounded-lg bg-black flex items-center justify-center overflow-hidden border border-white/10">
                   {settings.logoUrl ? (
-                    <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-contain p-4 group-hover/logo:scale-110 transition-transform duration-500 brightness-110" />
+                    <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-contain p-2" />
                   ) : (
-                    <div className="flex flex-col items-center gap-2 text-white/10">
-                      <SettingsIcon className="size-10" />
-                      <span className="text-[10px] font-black uppercase">NO LOGO</span>
-                    </div>
-                  )}
-                  {uploading && (
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center">
-                      <Loader2 className="size-8 animate-spin text-primary" />
-                    </div>
+                    <ImageIcon className="size-6 text-white/10" />
                   )}
                 </div>
-                <div className="flex-1 space-y-4 w-full">
-                  <p className="text-sm font-bold text-muted-foreground leading-relaxed text-center sm:text-right">
-                    يفضل استخدام شعار بخلفية شفافة (PNG) وبجودة عالية لضمان ظهوره بشكل ممتاز في جميع أقسام الموقع.
-                  </p>
-                  <label className="block cursor-pointer">
-                    <Input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} />
-                    <div className="h-14 rounded-2xl border-2 border-dashed border-white/10 hover:border-primary/50 hover:bg-primary/5 transition-all flex items-center justify-center gap-3 group/btn">
-                      <ImageIcon className="size-5 text-white/20 group-hover/btn:text-primary transition-colors" />
-                      <span className="text-sm font-black text-muted-foreground group-hover/btn:text-primary">رفع شعار جديد</span>
-                    </div>
-                  </label>
+                <div className="flex-1 space-y-2">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="hidden"
+                    id="logo-upload"
+                  />
+                  <Label
+                    htmlFor="logo-upload"
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white text-[10px] font-black cursor-pointer transition-all border border-white/10 w-full justify-center"
+                  >
+                    {uploading ? <Loader2 className="size-3 animate-spin" /> : <ImageIcon className="size-3" />}
+                    {uploading ? 'جاري الرفع...' : 'تغيير الشعار'}
+                  </Label>
+                  <p className="text-[8px] text-muted-foreground text-center">PNG, JPG (Max 2MB)</p>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* AI Settings - Gemini Key */}
-        <Card className="lg:col-span-2 border border-white/10 bg-white/5 backdrop-blur-md shadow-xl rounded-[3rem] overflow-hidden group">
-          <CardContent className="p-10 space-y-10">
-            <div className="flex items-center gap-4 text-primary">
-              <div className="p-3 rounded-2xl bg-primary/10">
-                <SettingsIcon className="size-6" />
-              </div>
-              <h3 className="text-2xl font-black text-white">إعدادات الذكاء الاصطناعي</h3>
+        {/* Contact - Bento Side */}
+        <Card className="border border-white/5 bg-white/5 backdrop-blur-md rounded-xl overflow-hidden">
+          <CardContent className="p-4 space-y-4">
+            <div className="flex items-center gap-2 text-primary">
+              <MessageCircle className="size-4" />
+              <h3 className="text-sm font-black text-white">بيانات التواصل</h3>
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <Label className="text-muted-foreground font-black text-xs uppercase tracking-widest mr-2">Gemini API Key</Label>
-                <div className="relative">
-                  <Input
-                    type="password"
-                    value={settings.geminiKey || ''}
-                    onChange={(e) => setSettings({ ...settings, geminiKey: e.target.value })}
-                    placeholder="أدخل مفتاح Gemini هنا..."
-                    className="bg-white/5 border-white/10 rounded-2xl h-14 font-bold text-lg focus:ring-primary/20 shadow-sm text-white"
-                    dir="ltr"
-                  />
-                  <div className="mt-4 p-4 rounded-2xl bg-primary/5 border border-primary/10">
-                    <p className="text-xs text-muted-foreground font-bold leading-relaxed">
-                      يتم استخدام هذا المفتاح لتفعيل نظام المحادثة الذكي (Chat AI). تأكد من الحصول على المفتاح من منصة Google AI Studio.
-                    </p>
-                  </div>
-                </div>
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest flex items-center gap-1.5">
+                  <MessageCircle className="size-3" /> واتساب
+                </Label>
+                <Input
+                  value={settings.whatsapp || ''}
+                  onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
+                  placeholder="01xxxxxxxxx"
+                  className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest flex items-center gap-1.5">
+                  <Mail className="size-3" /> البريد
+                </Label>
+                <Input
+                  value={settings.email || ''}
+                  onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+                  className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest flex items-center gap-1.5">
+                  <MapPin className="size-3" /> العنوان
+                </Label>
+                <Input
+                  value={settings.address || ''}
+                  onChange={(e) => setSettings({ ...settings, address: e.target.value })}
+                  className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
+                />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Contact Info - Bento Small */}
-        <Card className="lg:col-span-1 border border-white/10 bg-white/5 backdrop-blur-md text-white shadow-xl rounded-[3rem] overflow-hidden relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-30" />
-          <CardContent className="p-10 space-y-8 relative z-10">
-            <div className="flex items-center gap-4 text-primary">
-              <div className="p-3 rounded-2xl bg-white/5 shadow-sm border border-white/5">
-                <MessageCircle className="size-6" />
-              </div>
-              <h3 className="text-2xl font-black">بيانات التواصل</h3>
+        {/* Social - Bento Side */}
+        <Card className="border border-white/5 bg-white/5 backdrop-blur-md rounded-xl overflow-hidden">
+          <CardContent className="p-4 space-y-4">
+            <div className="flex items-center gap-2 text-primary">
+              <Globe className="size-4" />
+              <h3 className="text-sm font-black text-white">التواصل الاجتماعي</h3>
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label className="text-muted-foreground font-black text-[10px] uppercase tracking-[0.2em] mr-2">واتساب</Label>
-                <div className="relative">
-                  <MessageCircle className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-white/20" />
-                  <Input
-                    value={settings.whatsapp || ''}
-                    onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
-                    className="bg-white/5 border-white/10 rounded-xl h-12 pr-10 font-bold text-white"
-                    dir="ltr"
-                  />
-                </div>
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest flex items-center gap-1.5">
+                  <Facebook className="size-3" /> فيسبوك
+                </Label>
+                <Input
+                  value={settings.facebook || ''}
+                  onChange={(e) => setSettings({ ...settings, facebook: e.target.value })}
+                  className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
+                />
               </div>
-
-              <div className="space-y-2">
-                <Label className="text-muted-foreground font-black text-[10px] uppercase tracking-[0.2em] mr-2">البريد الإلكتروني</Label>
-                <div className="relative">
-                  <Mail className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-white/20" />
-                  <Input
-                    value={settings.email || ''}
-                    onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-                    className="bg-white/5 border-white/10 rounded-xl h-12 pr-10 font-bold text-white"
-                    dir="ltr"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-muted-foreground font-black text-[10px] uppercase tracking-[0.2em] mr-2">المقر</Label>
-                <div className="relative">
-                  <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-white/20" />
-                  <Input
-                    value={settings.address || ''}
-                    onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-                    className="bg-white/5 border-white/10 rounded-xl h-12 pr-10 font-bold text-white"
-                  />
-                </div>
+              <div className="space-y-1.5">
+                <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest flex items-center gap-1.5">
+                  <Instagram className="size-3" /> انستجرام
+                </Label>
+                <Input
+                  value={settings.instagram || ''}
+                  onChange={(e) => setSettings({ ...settings, instagram: e.target.value })}
+                  className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
+                />
               </div>
             </div>
+          </CardContent>
+        </Card>
 
-            <div className="pt-8 border-t border-white/10">
-              <Label className="text-muted-foreground font-black text-[10px] uppercase tracking-[0.2em] mr-2 mb-4 block">منصات التواصل</Label>
-              <div className="space-y-4">
-                <div className="relative">
-                  <Facebook className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-white/20" />
-                  <Input
-                    value={settings.facebook || ''}
-                    onChange={(e) => setSettings({ ...settings, facebook: e.target.value })}
-                    className="bg-white/5 border-white/10 rounded-xl h-12 pr-10 font-bold text-white"
-                    dir="ltr"
-                    placeholder="رابط فيسبوك"
-                  />
-                </div>
-                <div className="relative">
-                  <Instagram className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-white/20" />
-                  <Input
-                    value={settings.instagram || ''}
-                    onChange={(e) => setSettings({ ...settings, instagram: e.target.value })}
-                    className="bg-white/5 border-white/10 rounded-xl h-12 pr-10 font-bold text-white"
-                    dir="ltr"
-                    placeholder="رابط انستجرام"
-                  />
-                </div>
-              </div>
+        {/* AI Key - Bento Side */}
+        <Card className="md:col-span-2 border border-white/5 bg-white/5 backdrop-blur-md rounded-xl overflow-hidden">
+          <CardContent className="p-4 space-y-4">
+            <div className="flex items-center gap-2 text-primary">
+              <Loader2 className="size-4" />
+              <h3 className="text-sm font-black text-white">إعدادات الذكاء الاصطناعي</h3>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest">Gemini API Key</Label>
+              <Input
+                type="password"
+                value={settings.geminiKey || ''}
+                onChange={(e) => setSettings({ ...settings, geminiKey: e.target.value })}
+                placeholder="AIzaSy..."
+                className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
+              />
+              <p className="text-[8px] text-muted-foreground">يستخدم لتوليد المنشورات التسويقية والردود الذكية</p>
             </div>
           </CardContent>
         </Card>
