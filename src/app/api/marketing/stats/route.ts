@@ -35,7 +35,7 @@ export async function GET() {
     ])
 
     // Calculate weekly engagement for the chart
-    const weeklyData = []
+    const weeklyData: any[] = []
     for (let i = 6; i >= 0; i--) {
       const date = subDays(today, i)
       const dateStr = format(date, 'yyyy-MM-dd')
