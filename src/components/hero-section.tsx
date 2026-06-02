@@ -178,15 +178,12 @@ export default function HeroSection() {
             transition={{ duration: 0.8 }}
             className="relative mb-12 mt-16 sm:mt-20 flex items-center justify-center"
           >
-            <div className="relative h-32 sm:h-44 md:h-64 w-full flex items-center justify-center">
-              <Image
+            <div className="relative h-32 sm:h-44 md:h-64 w-auto flex items-center justify-center">
+              <img
                 src="/images/logo.png"
                 alt="ELBA7RAWY Logo"
-                width={500}
-                height={500}
                 className="h-full w-auto object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]"
-                priority
-                unoptimized
+                loading="eager"
               />
             </div>
             {/* Background Glow behind logo */}
