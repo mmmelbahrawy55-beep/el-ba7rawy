@@ -1,0 +1,291 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  role      String   @default("admin")
+  provider  String   @default("email")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Setting {
+  id         String   @id @default("site-settings")
+  siteName   String   @default("البحراوي للدعاية والإعلان")
+  siteNameEn String   @default("El Bahrawy Advertising")
+  logoUrl    String?
+  whatsapp   String?
+  email      String?
+  address    String?
+  facebook   String?
+  instagram  String?
+  updatedAt  DateTime @updatedAt
+}
+
+model Category {
+  id               String     @id @default(cuid())
+  name             String
+  nameEn           String
+  icon             String     @default("Printer")
+  color            String     @default("blue")
+  sortOrder        Int        @default(0)
+  isActive         Boolean    @default(true)
+  parentCategoryId String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  parentCategory   Category?  @relation("SubCategories", fields: [parentCategoryId], references: [id])
+  subCategories    Category[] @relation("SubCategories")
+  products         Product[]
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  name         String
+  nameEn       String   @default("")
+  description  String?
+  price        Float
+  unitType     String   @default("meter")
+  imageUrl     String?
+  categoryId   String
+  isAvailable  Boolean  @default(true)
+  deliveryDays Int      @default(3)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  orders       Order[]
+  category     Category @relation(fields: [categoryId], references: [id])
+}
+
+model Order {
+  id             String   @id @default(cuid())
+  clientId       String?
+  customerName   String
+  phone          String
+  productId      String?
+  productName    String
+  categoryName   String
+  quantity       String?
+  size           String?
+  details        String?
+  estimatedPrice Float?
+  deliveryDays   Int      @default(3)
+  status         String   @default("pending")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  product        Product? @relation(fields: [productId], references: [id])
+  client         Client?  @relation(fields: [clientId], references: [id])
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  title     String
+  titleEn   String
+  imageUrl  String
+  category  String   @default("flex")
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String
+  details   String?
+  userId    String?
+  userEmail String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+model Partner {
+  id         String   @id @default(cuid())
+  name       String
+  imageUrl   String
+  websiteUrl String?
+  isActive   Boolean  @default(true)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  subject   String?
+  message   String
+  status    String   @default("unread")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id           String        @id @default(cuid())
+  name         String
+  phone        String        @unique
+  email        String?
+  totalOrders  Int           @default(0)
+  totalPaid    Float         @default(0)
+  totalDebt    Float         @default(0)
+  status       String        @default("active")
+  lastActivity DateTime      @default(now())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  address      String?       @default("")
+  notes        String?       @default("")
+  orders       Order[]
+  transactions Transaction[]
+}
+
+model SocialAccount {
+  id             String               @id @default(cuid())
+  platform       String
+  accountName    String
+  accountId      String?              @unique
+  accessToken    String?
+  refreshToken   String?
+  grantedScopes  String?
+  missingScopes  String?
+  isActive       Boolean              @default(true)
+  lastVerified   DateTime             @default(now())
+  profilePicture String?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  analytics      MarketingAnalytics[]
+  posts          MarketingPost[]
+}
+
+model SocialLinkingLog {
+  id           String   @id @default(cuid())
+  platform     String
+  action       String
+  status       String
+  errorMessage String?
+  userId       String?
+  ipAddress    String?
+  details      String?
+  createdAt    DateTime @default(now())
+
+  @@index([platform])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model MarketingPost {
+  id           String              @id @default(cuid())
+  accountId    String
+  content      String
+  imageUrl     String?
+  scheduledFor DateTime?
+  publishedAt  DateTime?
+  status       String              @default("draft")
+  aiGenerated  Boolean             @default(false)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  performance  MarketingAnalytics?
+  account      SocialAccount       @relation(fields: [accountId], references: [id])
+}
+
+model MarketingAIConfig {
+  id               String    @id @default("marketing-ai-config")
+  isEnabled        Boolean   @default(false)
+  postingFrequency String    @default("daily")
+  targetAudience   String?
+  brandVoice       String    @default("professional")
+  autoReply        Boolean   @default(true)
+  keywords         String?
+  lastRun          DateTime?
+  updatedAt        DateTime  @updatedAt
+  executionPlan    String?
+  sops             String?
+  strategy         String?
+  teamInfo         String?
+}
+
+model MarketingAnalytics {
+  id        String         @id @default(cuid())
+  accountId String
+  postId    String?        @unique
+  views     Int            @default(0)
+  likes     Int            @default(0)
+  shares    Int            @default(0)
+  comments  Int            @default(0)
+  date      DateTime       @default(now())
+  post      MarketingPost? @relation(fields: [postId], references: [id])
+  account   SocialAccount  @relation(fields: [accountId], references: [id])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  clientId    String
+  type        String   @default("payment")
+  amount      Float
+  description String
+  status      String   @default("completed")
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model Supplier {
+  id           String                @id @default(cuid())
+  name         String
+  phone        String                @unique
+  category     String?
+  notes        String?               @default("")
+  totalPaid    Float                 @default(0)
+  totalDebt    Float                 @default(0)
+  status       String                @default("active")
+  lastActivity DateTime              @default(now())
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  transactions SupplierTransaction[]
+}
+
+model SupplierTransaction {
+  id          String   @id @default(cuid())
+  supplierId  String
+  type        String   @default("payment")
+  amount      Float
+  description String
+  status      String   @default("completed")
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  supplier    Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  role      String
+  content   String
+  userId    String?
+  timestamp DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@index([timestamp])
+  @@index([role])
+}
+
+model AIKnowledgeBase {
+  id        String   @id @default(cuid())
+  category  String
+  topic     String
+  content   String
+  source    String?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([category])
+  @@index([topic])
+}
