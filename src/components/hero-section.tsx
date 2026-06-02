@@ -178,26 +178,27 @@ export default function HeroSection() {
             transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
             className="relative mb-4 mt-12 sm:mt-16 md:mt-20"
           >
-            <div className="relative h-40 sm:h-52 md:h-64 w-full flex items-center justify-center">
+            <div className="relative h-24 sm:h-36 md:h-48 w-full flex items-center justify-center">
               {settings?.logoUrl ? (
-                <div className="relative h-full w-auto flex items-center justify-center bg-white rounded-3xl overflow-hidden px-6 py-2 shadow-2xl">
+                <div className="relative h-full w-auto flex items-center justify-center bg-white rounded-2xl overflow-hidden px-3 py-1 shadow-xl">
                   <img
                     src={settings.logoUrl}
                     alt="ELBA7RAWY"
-                    className="h-full w-auto object-contain brightness-110 contrast-125"
+                    className="h-full w-auto object-contain"
                     loading="eager"
                   />
                 </div>
               ) : (
-                <Image
-                  src="/images/logo.png"
-                  alt="ELBA7RAWY"
-                  width={400}
-                  height={400}
-                  className="h-full w-auto object-contain drop-shadow-[0_0_50px_rgba(251,191,36,0.4)]"
-                  priority
-                  loading="eager"
-                />
+                <div className="relative h-full w-auto flex items-center justify-center bg-white rounded-2xl overflow-hidden px-4 py-2 shadow-xl">
+                  <Image
+                    src="/images/logo.png"
+                    alt="ELBA7RAWY"
+                    width={300}
+                    height={300}
+                    className="h-full w-auto object-contain"
+                    priority
+                  />
+                </div>
               )}
             </div>
           </motion.div>
@@ -216,10 +217,10 @@ export default function HeroSection() {
             </motion.div>
 
             <motion.h1 
-              className="text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] font-black text-white mb-10 tracking-tight leading-[1.1] flex flex-col items-center"
+              className="text-3xl sm:text-5xl md:text-7xl lg:text-[6rem] font-black text-white mb-6 tracking-tight leading-[1.2] flex flex-col items-center"
               variants={itemVariants}
             >
-              <div className="flex flex-row items-center justify-center gap-4 sm:gap-6" dir="ltr">
+              <div className="flex flex-row items-center justify-center gap-2 sm:gap-4" dir="ltr">
                 <span className="relative inline-block drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">
                   ELBA
                 </span>
@@ -227,13 +228,13 @@ export default function HeroSection() {
                   7RAWY
                 </span>
               </div>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-primary bg-[length:200%_auto] animate-shimmer text-3xl sm:text-5xl md:text-7xl lg:text-9xl uppercase tracking-[0.25em] sm:tracking-[0.4em] font-black mt-10 sm:mt-14 block opacity-90">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-primary bg-[length:200%_auto] animate-shimmer text-xl sm:text-3xl md:text-5xl lg:text-6xl uppercase tracking-[0.2em] sm:tracking-[0.3em] font-black mt-4 sm:mt-6 block opacity-90">
                 Advertising
               </span>
             </motion.h1>
 
             <motion.p 
-              className="text-xl sm:text-2xl md:text-4xl text-slate-400 mb-12 sm:mb-20 max-w-5xl mx-auto leading-[1.6] font-bold px-4"
+              className="text-lg sm:text-xl md:text-3xl text-slate-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-[1.5] font-bold px-4"
               variants={itemVariants}
             >
               {settings?.description || "نصنع الهوية، نبني الثقة، ونقود علامتك التجارية نحو مستقبل مشرق بإبداع لا يعرف الحدود."}

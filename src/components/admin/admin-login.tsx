@@ -135,38 +135,12 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
           transition={{ delay: 0.25 }}
         >
           <Card className="bg-card border border-border shadow-2xl rounded-[3.5rem] overflow-hidden">
-            {/* Login Type Selector */}
-            <div className="flex border-b border-border">
-              <button
-                onClick={() => setLoginType('admin')}
-                className={`flex-1 py-6 font-black text-xs uppercase tracking-widest transition-all ${
-                  loginType === 'admin' 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                }`}
-              >
-                صاحب الشركة
-              </button>
-              <button
-                onClick={() => setLoginType('client')}
-                className={`flex-1 py-6 font-black text-xs uppercase tracking-widest transition-all ${
-                  loginType === 'client' 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                }`}
-              >
-                دخول العملاء
-              </button>
-            </div>
-
             <CardHeader className="pb-6 pt-10 px-10 text-center">
               <h2 className="text-2xl font-black text-foreground">
-                {loginType === 'admin' ? 'تسجيل دخول صاحب الشركة' : 'تسجيل دخول العملاء'}
+                تسجيل الدخول
               </h2>
               <p className="text-muted-foreground text-sm font-bold mt-2 tracking-tight">
-                {loginType === 'admin' 
-                  ? 'أدخل بياناتك للوصول للوحة التحكم الآمنة' 
-                  : 'تابع مشاريعك وطلباتك من خلال حسابك الخاص'}
+                أدخل بيانات حسابك للمتابعة
               </p>
             </CardHeader>
             <CardContent className="px-12 pb-12">
@@ -183,7 +157,7 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
                       type="text"
                       value={email}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                      placeholder={loginType === 'admin' ? 'admin@elbahrawy.com' : '01xxxxxxxxx'}
+                      placeholder="admin@elbahrawy.com أو 01xxxxxxxxx"
                       className="pr-14 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/10 rounded-2xl h-16 font-black text-lg"
                       dir="ltr"
                       required
@@ -221,11 +195,25 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
                     <Loader2 className="size-8 animate-spin" />
                   ) : (
                     <span className="flex items-center gap-3">
-                      {loginType === 'admin' ? 'دخول للنظام' : 'دخول حسابي'}
+                      دخول للنظام
                       <ArrowRight className="size-6 rotate-180 group-hover:-translate-x-1 transition-transform" />
                     </span>
                   )}
                 </Button>
+
+                {/* Register Link */}
+                <div className="text-center mt-6">
+                  <p className="text-muted-foreground text-sm font-bold">
+                    ليس لديك حساب؟{' '}
+                    <button 
+                      type="button"
+                      className="text-primary hover:underline"
+                      onClick={() => toast.info('يرجى التواصل مع الإدارة لإنشاء حساب جديد')}
+                    >
+                      أنشئ حساباً الآن
+                    </button>
+                  </p>
+                </div>
               </form>
 
               {/* Divider */}

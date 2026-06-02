@@ -92,7 +92,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="relative aspect-square order-1 lg:order-2 max-w-[550px] mx-auto lg:ml-0 lg:mr-auto"
+              className="relative aspect-square order-1 lg:order-2 max-w-[500px] mx-auto lg:ml-0 lg:mr-auto"
             >
               <div className="absolute inset-0 bg-primary/10 blur-[120px] rounded-full animate-pulse" />
               <div className="relative h-full w-full rounded-[2rem] overflow-hidden flex items-center justify-center bg-white border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] group">
@@ -100,17 +100,18 @@ export default function AboutPage() {
                   <img
                     src={settings.logoUrl}
                     alt={settings?.siteName || "البحراوي للدعاية والإعلان"}
-                    className="w-full h-full object-cover brightness-110 contrast-125 group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-contain p-4"
                   />
                 ) : (
-                  <Image
-                    src="/images/logo.png"
-                    alt="البحراوي للدعاية والإعلان"
-                    width={600}
-                    height={600}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    priority
-                  />
+                  <div className="relative w-full h-full p-8">
+                    <Image
+                      src="/images/logo.png"
+                      alt="البحراوي للدعاية والإعلان"
+                      fill
+                      className="object-contain"
+                      priority
+                    />
+                  </div>
                 )}
               </div>
             </motion.div>
