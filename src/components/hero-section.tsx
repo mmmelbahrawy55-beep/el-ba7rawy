@@ -211,7 +211,7 @@ export default function HeroSection() {
             </h1>
 
             <div className="relative inline-block">
-              <h2 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-[0.2em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-primary via-amber-200 to-primary-foreground drop-shadow-[0_0_20px_rgba(251,191,36,0.4)]">
+              <h2 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-[0.2em] uppercase text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
                 ADVERTISING
               </h2>
               <div className="absolute -inset-x-8 -inset-y-4 bg-primary/5 blur-3xl -z-10 rounded-full opacity-40" />
