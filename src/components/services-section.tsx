@@ -143,26 +143,26 @@ const ProductCard: React.FC<{
       className={className}
     >
       <motion.div
-        whileHover={{ y: -12, transition: { duration: 0.4 } }}
+        whileHover={{ y: -8, transition: { duration: 0.4 } }}
         className="h-full group"
       >
-        <Card className="relative overflow-hidden bg-white/5 backdrop-blur-2xl border-white/5 hover:border-primary/50 transition-all duration-700 rounded-[3rem] h-full flex flex-col shadow-2xl shadow-black/40 hover:shadow-primary/20 border-2">
+        <Card className="relative overflow-hidden bg-white/5 backdrop-blur-2xl border-white/5 hover:border-primary/50 transition-all duration-700 rounded-[2rem] h-full flex flex-col shadow-2xl shadow-black/40 hover:shadow-primary/20 border-2">
           {/* Badge Overlay */}
-          <div className="absolute top-8 right-8 z-20 flex flex-col gap-3">
+          <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
             {product.isHot && (
-              <Badge className="bg-primary text-primary-foreground border-none px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl shadow-primary/40 flex items-center gap-2">
-                <Zap className="size-3 fill-current" />
+              <Badge className="bg-primary text-primary-foreground border-none px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-2xl shadow-primary/40 flex items-center gap-2">
+                <Zap className="size-2.5 fill-current" />
                 الأكثر طلباً
               </Badge>
             )}
             {product.discount && (
-              <Badge className="bg-blue-600 text-white border-none px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl shadow-blue-500/40">
+              <Badge className="bg-blue-600 text-white border-none px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-2xl shadow-blue-500/40">
                 خصم {product.discount}
               </Badge>
             )}
           </div>
 
-          <div className="relative aspect-[16/11] overflow-hidden">
+          <div className="relative aspect-[16/10] overflow-hidden">
             <Image
               src={product.imageUrl || 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=800'}
               alt={product.name}
@@ -172,65 +172,62 @@ const ProductCard: React.FC<{
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-700" />
             
-            <div className="absolute bottom-8 left-8 right-8 flex flex-col gap-3 transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700">
-               <div className="flex items-center gap-3 text-white/90 text-xs font-black">
-                 <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
-                   <ShieldCheck className="size-4 text-primary" />
+            <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-2 transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700">
+               <div className="flex items-center gap-2 text-white/90 text-[10px] font-black">
+                 <div className="size-6 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+                   <ShieldCheck className="size-3 text-primary" />
                  </div>
                  <span>ضمان الجودة والتركيب</span>
                </div>
-               <div className="flex items-center gap-3 text-white/90 text-xs font-black">
-                 <div className="size-8 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-                   <Clock className="size-4 text-blue-400" />
+               <div className="flex items-center gap-2 text-white/90 text-[10px] font-black">
+                 <div className="size-6 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+                   <Clock className="size-3 text-blue-400" />
                  </div>
                  <span>تسليم خلال {product.deliveryDays} يوم</span>
                </div>
             </div>
           </div>
 
-          <CardContent className="p-10 flex-1 flex flex-col text-right">
-            <h4 className="text-3xl font-black text-white mb-4 group-hover:text-primary transition-colors duration-500 tracking-tighter">
+          <CardContent className="p-6 flex-1 flex flex-col text-right">
+            <h4 className="text-xl sm:text-2xl font-black text-white mb-2 group-hover:text-primary transition-colors duration-500 tracking-tighter">
               {product.name}
             </h4>
 
-            <div className="flex items-center justify-end gap-4 mb-8">
+            <div className="flex items-center justify-end gap-3 mb-6">
                {price ? (
-                 <div className="flex items-baseline gap-2">
-                   <span className="text-xs font-black text-slate-500 uppercase tracking-widest">{price.split(' ').slice(1).join(' ')}</span>
-                   <span className="text-primary font-black text-4xl drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]">{price.split(' ')[0]}</span>
+                 <div className="flex items-baseline gap-1.5">
+                   <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{price.split(' ').slice(1).join(' ')}</span>
+                   <span className="text-primary font-black text-2xl sm:text-3xl drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]">{price.split(' ')[0]}</span>
                  </div>
                ) : (
-                 <span className="text-slate-500 font-black italic text-sm">يحدد حسب المقاس</span>
+                 <span className="text-slate-500 text-xs font-black">السعر عند الطلب</span>
                )}
             </div>
 
-            {product.description && (
-              <p className="text-slate-400 text-base leading-relaxed mb-10 flex-1 line-clamp-2 font-bold">
-                {product.description}
-              </p>
-            )}
+            <p className="text-slate-400 text-sm font-bold mb-6 line-clamp-2 leading-relaxed h-10">
+              {product.description || "نقدم حلولاً إعلانية مبتكرة بأعلى جودة وأفضل الأسعار"}
+            </p>
 
-            <div className="grid grid-cols-2 gap-6 mt-auto">
+            <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between gap-3">
               <Button 
                 variant="outline" 
-                className="w-full border-white/10 text-slate-400 hover:bg-white/10 h-16 rounded-2xl font-black text-sm transition-all duration-300 border-2"
+                size="sm"
+                className="flex-1 rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black h-10"
                 asChild
               >
                 <Link href={`/services/${categoryId}`}>
                   التفاصيل
                 </Link>
               </Button>
-              <a 
-                href={whatsappUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-full"
+              <Button 
+                size="sm"
+                className="flex-1 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-[10px] font-black h-10"
+                asChild
               >
-                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-16 rounded-2xl flex items-center justify-center gap-3 font-black text-sm shadow-2xl shadow-primary/30 transition-all hover:scale-105 active:scale-[0.98]">
-                  <MessageCircle className="size-5" />
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                   اطلب الآن
-                </Button>
-              </a>
+                </a>
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -248,19 +245,19 @@ function SectionHeading() {
   return (
     <motion.div
       ref={ref}
-      className="text-center mb-24 sm:mb-32"
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+      className="text-center mb-10 sm:mb-12"
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.8 }}
     >
-      <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-[0.4em] mb-8 backdrop-blur-md">
-        <Layers className="size-4" />
+      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] mb-4 backdrop-blur-md">
+        <Layers className="size-3" />
         <span>خدماتنا الإبداعية</span>
       </div>
-      <h2 className="text-6xl sm:text-8xl font-black text-white tracking-tight mb-12 leading-[1.3] max-w-5xl mx-auto">
-        نحن نصنع <span className="text-primary drop-shadow-[0_0_30px_rgba(251,191,36,0.4)]">المستقبل</span> البصري لعلامتك
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight mb-4 leading-tight max-w-4xl mx-auto">
+        نحن نصنع <span className="text-primary drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">المستقبل</span> البصري لعلامتك
       </h2>
-      <p className="text-slate-400 max-w-4xl mx-auto text-xl sm:text-3xl font-bold leading-[1.8] px-4">
+      <p className="text-slate-400 max-w-2xl mx-auto text-xs sm:text-sm md:text-base font-bold leading-relaxed px-4">
         استكشف عالمنا من الحلول الطباعية والإعلانية المبتكرة التي تجمع بين دقة التنفيذ وجمال التصميم.
       </p>
     </motion.div>
@@ -363,17 +360,17 @@ export default function ServicesSection() {
   })
 
   return (
-    <section id="services" className="py-32 sm:py-48 bg-[#050505] relative overflow-hidden transition-colors duration-500">
+    <section id="services" className="py-20 sm:py-32 bg-[#050505] relative overflow-hidden transition-colors duration-500">
       {/* Noise Overlay */}
       <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
       {/* Background patterns */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 blur-[150px] rounded-full translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 blur-[150px] rounded-full -translate-x-1/2 translate-y-1/2" />
+        <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-blue-500/5 blur-[120px] rounded-full" />
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <SectionHeading />
 
         <div className="space-y-16">

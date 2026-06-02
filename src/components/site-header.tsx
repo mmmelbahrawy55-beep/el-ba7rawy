@@ -121,7 +121,7 @@ export default function SiteHeader() {
           }`}
         >
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-20 sm:h-24">
+            <div className="flex items-center justify-between h-16 sm:h-20">
               {/* Left side: Navigation links for desktop */}
               <nav className="hidden lg:flex items-center gap-1 flex-1">
                 {navLinks.slice(0, 3).map((link, index) => (
@@ -134,35 +134,53 @@ export default function SiteHeader() {
                     <Link
                       href={link.href}
                       onClick={(e) => handleNavClick(e as any, link.href)}
-                      className={`px-4 py-2 text-sm font-bold transition-all duration-300 no-underline relative group ${
+                      className={`px-3 py-1.5 text-xs font-bold transition-all duration-300 no-underline relative group ${
                           isScrolled ? 'text-muted-foreground hover:text-primary' : 'text-slate-400 hover:text-primary'
                         }`}
                     >
                       {link.label}
-                      <span className="absolute -bottom-1 left-4 right-4 h-0.5 bg-primary scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
+                      <span className="absolute -bottom-1 left-3 right-3 h-0.5 bg-primary scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
                     </Link>
                   </motion.div>
                 ))}
               </nav>
 
-              {/* Center: Brand Name */}
+              {/* Center: Brand Logo */}
               <div className="flex justify-center flex-1 lg:flex-none">
                 <Link href="/" className="relative group">
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    className="flex items-center"
                   >
-                    <h1 className="text-2xl sm:text-3xl font-black tracking-tighter text-foreground">
-                      ELBA<span className="text-primary">7RAWY</span>
-                    </h1>
+                    {settings?.logoUrl ? (
+                      <img
+                        src={settings.logoUrl}
+                        alt="ELBA7RAWY"
+                        className="h-8 sm:h-10 w-auto object-contain"
+                      />
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src="/images/logo.png"
+                          alt="ELBA7RAWY"
+                          width={32}
+                          height={32}
+                          className="h-6 sm:h-8 w-auto object-contain"
+                        />
+                        <h1 className="text-lg sm:text-xl font-black tracking-tighter text-foreground hidden sm:block">
+                          ELBA<span className="text-primary">7RAWY</span>
+                        </h1>
+                      </div>
+                    )}
                     <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
                   </motion.div>
                 </Link>
               </div>
 
               {/* Right side: Action buttons and mobile menu */}
-              <div className="flex items-center justify-end flex-1 gap-4">
-                <div className="hidden lg:flex items-center gap-4">
+              <div className="flex items-center justify-end flex-1 gap-3">
+                <div className="hidden lg:flex items-center gap-3">
                   {navLinks.slice(3).map((link, index) => (
                     <motion.div
                       key={link.href}
@@ -173,12 +191,12 @@ export default function SiteHeader() {
                       <Link
                         href={link.href}
                         onClick={(e) => handleNavClick(e as any, link.href)}
-                        className={`px-4 py-2 text-sm font-bold transition-all duration-300 no-underline relative group ${
+                        className={`px-3 py-1.5 text-xs font-bold transition-all duration-300 no-underline relative group ${
                             isScrolled ? 'text-muted-foreground hover:text-primary' : 'text-slate-400 hover:text-primary'
                           }`}
                       >
                         {link.label}
-                        <span className="absolute -bottom-1 left-4 right-4 h-0.5 bg-primary scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
+                        <span className="absolute -bottom-1 left-3 right-3 h-0.5 bg-primary scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
                       </Link>
                     </motion.div>
                   ))}
@@ -187,9 +205,9 @@ export default function SiteHeader() {
                   
                   <Link
                     href="/admin"
-                    className="flex items-center gap-2 px-5 py-2.5 text-sm font-black bg-primary text-primary-foreground border border-primary rounded-2xl transition-all duration-300 hover:bg-primary/90 shadow-lg shadow-primary/10"
+                    className="flex items-center gap-2 px-4 py-2 text-xs font-black bg-primary text-primary-foreground border border-primary rounded-xl transition-all duration-300 hover:bg-primary/90 shadow-lg shadow-primary/10"
                   >
-                    <ShieldCheck className="size-4.5" />
+                    <ShieldCheck className="size-4" />
                     تسجيل الدخول
                   </Link>
                 </div>

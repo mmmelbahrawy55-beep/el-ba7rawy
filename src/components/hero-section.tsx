@@ -176,11 +176,11 @@ export default function HeroSection() {
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-            className="relative mb-4 mt-12 sm:mt-16 md:mt-20"
+            className="relative mb-4 mt-6 sm:mt-8"
           >
-            <div className="relative h-24 sm:h-36 md:h-48 w-full flex items-center justify-center">
+            <div className="relative h-16 sm:h-20 md:h-24 w-full flex items-center justify-center">
               {settings?.logoUrl ? (
-                <div className="relative h-full w-auto flex items-center justify-center bg-white rounded-2xl overflow-hidden px-3 py-1 shadow-xl">
+                <div className="relative h-full w-auto flex items-center justify-center bg-transparent overflow-hidden px-2 py-1">
                   <img
                     src={settings.logoUrl}
                     alt="ELBA7RAWY"
@@ -189,87 +189,67 @@ export default function HeroSection() {
                   />
                 </div>
               ) : (
-                <div className="relative h-full w-auto flex items-center justify-center bg-white rounded-2xl overflow-hidden px-4 py-2 shadow-xl">
+                <div className="relative h-full w-auto flex items-center justify-center bg-transparent overflow-hidden px-2 py-1">
                   <Image
                     src="/images/logo.png"
                     alt="ELBA7RAWY"
-                    width={300}
-                    height={300}
+                    width={150}
+                    height={150}
                     className="h-full w-auto object-contain"
                     priority
                   />
                 </div>
               )}
+              {/* Logo Glow Effect */}
+              <div className="absolute inset-0 bg-primary/20 blur-2xl -z-10 rounded-full scale-125 opacity-30" />
             </div>
           </motion.div>
 
-          {/* Title and Description */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="max-w-6xl mx-auto"
+          {/* Hero Title */}
+          <motion.div variants={itemVariants} className="relative mb-6">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md">
+              <Sparkles className="size-2.5 text-primary" />
+              <span className="text-[8px] font-bold uppercase tracking-wider text-primary">الريادة في عالم الإعلان</span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-tight mb-3">
+              ELBA <span className="text-primary">7RAWY</span>
+              <br />
+              <span className="text-2xl sm:text-4xl md:text-5xl text-slate-400">ADVERTISING</span>
+            </h1>
+            <p className="max-w-xl mx-auto text-xs sm:text-sm md:text-base text-slate-400 font-medium leading-relaxed px-4">
+              نصنع الهوية، نبني الثقة، ونقود علامتك التجارية نحو التميز من خلال حلول إعلانية مبتكرة ومتكاملة
+            </p>
+          </motion.div>
+
+          {/* Buttons */}
+          <motion.div 
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-12 sm:mb-16 px-4"
+            variants={itemVariants}
           >
-            <motion.div variants={itemVariants} className="mb-6">
-              <span className="px-6 py-2 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-black uppercase tracking-[0.4em] inline-block mb-8 backdrop-blur-md">
-                الريادة في عالم الإعلان
-              </span>
-            </motion.div>
-
-            <motion.h1 
-              className="text-3xl sm:text-5xl md:text-7xl lg:text-[6rem] font-black text-white mb-6 tracking-tight leading-[1.2] flex flex-col items-center"
-              variants={itemVariants}
+            <Button 
+              size="lg" 
+              className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl sm:rounded-2xl px-6 sm:px-10 h-12 sm:h-14 text-base sm:text-lg font-black shadow-lg shadow-primary/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden"
+              asChild
             >
-              <div className="flex flex-row items-center justify-center gap-2 sm:gap-4" dir="ltr">
-                <span className="relative inline-block drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-                  ELBA
-                </span>
-                <span className="text-primary relative drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
-                  7RAWY
-                </span>
-              </div>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-primary bg-[length:200%_auto] animate-shimmer text-xl sm:text-3xl md:text-5xl lg:text-6xl uppercase tracking-[0.2em] sm:tracking-[0.3em] font-black mt-4 sm:mt-6 block opacity-90">
-                Advertising
-              </span>
-            </motion.h1>
-
-            <motion.p 
-              className="text-lg sm:text-xl md:text-3xl text-slate-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-[1.5] font-bold px-4"
-              variants={itemVariants}
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine" />
+                <MessageCircle className="ml-2 sm:ml-3 size-5 sm:size-6 group-hover:rotate-12 transition-transform" />
+                ابدأ رحلة نجاحك
+              </a>
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              onClick={scrollToCalculator}
+              className="w-full sm:w-auto border-white/10 bg-white/5 hover:bg-white/10 text-white rounded-xl sm:rounded-2xl px-6 sm:px-10 h-12 sm:h-14 text-base sm:text-lg font-black backdrop-blur-xl hover:scale-105 hover:-translate-y-1 transition-all duration-300 border-2"
             >
-              {settings?.description || "نصنع الهوية، نبني الثقة، ونقود علامتك التجارية نحو مستقبل مشرق بإبداع لا يعرف الحدود."}
-            </motion.p>
-
-            {/* Buttons */}
-            <motion.div 
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-16 sm:mb-24 px-4"
-              variants={itemVariants}
-            >
-              <Button 
-                size="lg" 
-                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-[1.5rem] sm:rounded-[2rem] px-8 sm:px-12 h-16 sm:h-20 text-xl sm:text-2xl font-black shadow-[0_25px_50px_-12px_rgba(251,191,36,0.4)] hover:scale-105 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden"
-                asChild
-              >
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine" />
-                  <MessageCircle className="ml-3 sm:ml-4 size-6 sm:size-7 group-hover:rotate-12 transition-transform" />
-                  ابدأ رحلة نجاحك
-                </a>
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                onClick={scrollToCalculator}
-                className="w-full sm:w-auto border-white/10 bg-white/5 hover:bg-white/10 text-white rounded-[1.5rem] sm:rounded-[2rem] px-8 sm:px-12 h-16 sm:h-20 text-xl sm:text-2xl font-black backdrop-blur-xl hover:scale-105 hover:-translate-y-1 transition-all duration-300 border-2"
-              >
-                احصل على عرض سعر
-              </Button>
-            </motion.div>
+              احصل على عرض سعر
+            </Button>
           </motion.div>
 
           {/* Stats in a Bento Grid Style */}
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 w-full max-w-6xl px-4"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 w-full max-w-5xl px-4"
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -283,13 +263,13 @@ export default function HeroSection() {
             ].map((stat, i) => (
               <motion.div 
                 key={i} 
-                whileHover={{ y: -10, scale: 1.02 }}
-                className={`relative p-6 sm:p-8 md:p-10 rounded-[2rem] sm:rounded-[3rem] border border-white/10 bg-white/5 backdrop-blur-2xl transition-all duration-500 group overflow-hidden`}
+                whileHover={{ y: -5, scale: 1.02 }}
+                className={`relative p-4 sm:p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-2xl transition-all duration-500 group overflow-hidden`}
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                 <div className="relative z-10">
-                  <p className={`text-3xl sm:text-5xl md:text-6xl font-black mb-2 sm:mb-3 tracking-tighter ${stat.textColor} group-hover:scale-110 transition-transform duration-500`}>{stat.value}</p>
-                  <p className="text-[10px] sm:text-xs md:text-sm font-black text-slate-400 uppercase tracking-[0.1em] sm:tracking-[0.2em]">{stat.label}</p>
+                  <p className={`text-2xl sm:text-3xl md:text-4xl font-black mb-1.5 sm:mb-2 tracking-tighter ${stat.textColor} group-hover:scale-110 transition-transform duration-500`}>{stat.value}</p>
+                  <p className="text-[8px] sm:text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-wider">{stat.label}</p>
                 </div>
               </motion.div>
             ))}

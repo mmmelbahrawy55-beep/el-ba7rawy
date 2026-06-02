@@ -37,18 +37,18 @@ function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
         <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-all duration-700 rounded-[3rem] blur-3xl -z-10`} />
         
         <Card
-          className="h-full border-white/5 bg-white/5 backdrop-blur-2xl rounded-[3rem] overflow-hidden group transition-all duration-500 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 relative z-10 border-2"
+          className="h-full border-white/5 bg-white/5 backdrop-blur-2xl rounded-[2rem] overflow-hidden group transition-all duration-500 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 relative z-10 border-2"
         >
-          <CardContent className="p-10 flex flex-col items-center text-center gap-8">
-            <div className={`p-6 rounded-3xl ${feature.iconBg} group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 shadow-2xl shadow-black/40 border border-white/5`}>
+          <CardContent className="p-4 sm:p-6 flex flex-col items-center text-center gap-4">
+            <div className={`p-3 rounded-xl ${feature.iconBg} group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 shadow-xl shadow-black/40 border border-white/5`}>
               {feature.icon}
             </div>
 
-            <div className="space-y-4">
-              <h3 className="text-2xl sm:text-3xl font-black text-white group-hover:text-primary transition-colors duration-300 tracking-tighter">
+            <div className="space-y-2">
+              <h3 className="text-lg sm:text-xl font-black text-white group-hover:text-primary transition-colors duration-300 tracking-tighter">
                 {feature.title}
               </h3>
-              <p className="text-slate-400 text-lg font-bold leading-relaxed">
+              <p className="text-slate-400 text-xs sm:text-sm font-bold leading-relaxed">
                 {feature.description}
               </p>
             </div>
@@ -74,18 +74,18 @@ function SectionHeading() {
   return (
     <motion.div
       ref={ref}
-      className="text-center mb-24"
+      className="text-center mb-10 sm:mb-12"
       initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
     >
-      <span className="px-6 py-2 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-black uppercase tracking-[0.4em] inline-block mb-8 backdrop-blur-md">
+      <span className="px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-[8px] sm:text-[10px] font-black uppercase tracking-[0.4em] inline-block mb-4 backdrop-blur-md">
         لماذا نحن؟
       </span>
-      <h2 className="text-6xl sm:text-8xl font-black text-white mb-12 tracking-tight leading-[1.3]">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-4 tracking-tight leading-tight">
         قوتنا تكمن في <span className="text-primary drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">التفاصيل</span>
       </h2>
-      <p className="text-slate-400 text-xl sm:text-3xl max-w-5xl mx-auto leading-[1.8] font-bold px-4">
+      <p className="text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-bold px-4">
         نحن لا نصنع مجرد لوحات إعلانية، نحن نصنع واجهة تعكس هوية مشروعك وتجذب عملاءك من النظرة الأولى.
       </p>
     </motion.div>
@@ -108,28 +108,28 @@ export default function WhyChooseUs() {
 
   const features: Feature[] = [
     {
-      icon: <Award className="size-10" />,
+      icon: <Award className="size-6 sm:size-8" />,
       title: 'خبرة عريقة واحترافية',
       description: `نمتلك خبرة تمتد لأكثر من ${experienceYears} عاماً في سوق الدعاية المصري، نفذنا خلالها آلاف المشاريع الناجحة.`,
       gradient: 'from-amber-500/30 to-orange-600/10',
       iconBg: 'bg-amber-500/10 text-amber-500',
     },
     {
-      icon: <BrainCircuit className="size-10" />,
+      icon: <BrainCircuit className="size-6 sm:size-8" />,
       title: 'حلول إبداعية ذكية',
       description: 'لا نكتفي بالطباعة فقط، بل نبتكر لك تصاميم وحلولاً هندسية تجعل إعلانك يتحدث عن علامتك التجارية.',
       gradient: 'from-blue-500/30 to-indigo-600/10',
       iconBg: 'bg-blue-500/10 text-blue-500',
     },
     {
-      icon: <Clock className="size-10" />,
+      icon: <Clock className="size-6 sm:size-8" />,
       title: 'سرعة التنفيذ الفائقة',
       description: 'نحن نقدّر وقتك، لذا نلتزم بأدق المواعيد مع الحفاظ على أعلى معايير الجودة في كل تفصيلة.',
       gradient: 'from-emerald-500/30 to-teal-600/10',
       iconBg: 'bg-emerald-500/10 text-emerald-500',
     },
     {
-      icon: <BadgePercent className="size-10" />,
+      icon: <BadgePercent className="size-6 sm:size-8" />,
       title: 'أفضل قيمة مقابل سعر',
       description: 'نقدم حلولاً تناسب جميع الميزانيات مع الحفاظ على جودة الخامات ودقة الألوان المعهودة.',
       gradient: 'from-rose-500/30 to-pink-600/10',
@@ -138,7 +138,7 @@ export default function WhyChooseUs() {
   ]
 
   return (
-    <section id="why-choose-us" className="py-32 sm:py-48 bg-[#050505] relative overflow-hidden transition-colors duration-500">
+    <section id="why-choose-us" className="py-20 sm:py-32 bg-[#050505] relative overflow-hidden transition-colors duration-500">
       {/* Noise Overlay */}
       <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 

@@ -53,35 +53,35 @@ export default function FAQSection() {
       .catch(() => setFaqs(fallbackFaqs))
   }, [])
   return (
-    <section className="py-32 sm:py-48 bg-[#050505] relative overflow-hidden transition-colors duration-500">
+    <section className="py-20 sm:py-32 bg-[#050505] relative overflow-hidden transition-colors duration-500">
       {/* Noise Overlay */}
       <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
       {/* Background Decor */}
-      <div className="absolute top-1/2 left-0 w-[800px] h-[800px] bg-primary/10 blur-[180px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+      <div className="absolute top-1/2 left-0 w-64 h-64 bg-primary/5 blur-[120px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
       <div className="container px-4 mx-auto relative z-10">
-        <div className="text-center max-w-4xl mx-auto mb-24 sm:mb-32">
+        <div className="text-center max-w-4xl mx-auto mb-16 sm:mb-20">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-[0.4em] mb-8 backdrop-blur-md">
+            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] sm:text-xs font-black uppercase tracking-[0.4em] mb-6 backdrop-blur-md">
               <HelpCircle className="size-4" />
               مركز المعرفة
             </div>
-            <h2 className="text-6xl sm:text-8xl font-black mb-12 text-white tracking-tight leading-[1.3]">
-              إجابات <span className="text-primary drop-shadow-[0_0_30px_rgba(251,191,36,0.4)]">تريح</span> بالك
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 text-white tracking-tight leading-tight">
+              إجابات <span className="text-primary drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">تريح</span> بالك
             </h2>
-            <p className="text-slate-400 text-xl sm:text-3xl font-bold leading-[1.8] max-w-4xl mx-auto px-4">
+            <p className="text-slate-400 text-sm sm:text-base md:text-lg font-bold leading-relaxed max-w-3xl mx-auto px-4">
               كل ما تحتاج معرفته عن خدماتنا الاحترافية، فترات التنفيذ، والضمان الذهبي الذي نقدمه.
             </p>
           </motion.div>
         </div>
 
-        <div className="max-w-5xl mx-auto">
-          <Accordion type="single" collapsible className="space-y-8">
+        <div className="max-w-4xl mx-auto">
+          <Accordion type="single" collapsible className="space-y-6">
             {faqs.map((faq, index) => (
               <motion.div
                 key={index}
@@ -91,13 +91,13 @@ export default function FAQSection() {
               >
                 <AccordionItem 
                   value={`item-${index}`}
-                  className="bg-white/5 backdrop-blur-3xl border-white/5 rounded-[3rem] px-12 overflow-hidden hover:border-primary/40 transition-all duration-700 group data-[state=open]:border-primary/50 data-[state=open]:bg-white/10 shadow-2xl shadow-black/60 border-2"
+                  className="bg-white/5 backdrop-blur-3xl border-white/5 rounded-[2rem] px-6 sm:px-8 overflow-hidden hover:border-primary/40 transition-all duration-700 group data-[state=open]:border-primary/50 data-[state=open]:bg-white/10 shadow-2xl shadow-black/60 border-2"
                 >
-                  <AccordionTrigger className="text-right text-2xl font-black text-white hover:no-underline py-10 group-hover:text-primary transition-colors data-[state=open]:text-primary tracking-tighter">
+                  <AccordionTrigger className="text-right text-lg sm:text-xl font-black text-white hover:no-underline py-6 group-hover:text-primary transition-colors data-[state=open]:text-primary tracking-tighter">
                     <span className="flex-1 leading-tight">{faq.question}</span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-slate-400 text-xl leading-relaxed pb-12 text-right font-bold">
-                    <div className="pt-6 border-t border-white/5">
+                  <AccordionContent className="text-slate-400 text-sm sm:text-base leading-relaxed pb-8 text-right font-bold">
+                    <div className="pt-4 border-t border-white/5">
                       {faq.answer}
                     </div>
                   </AccordionContent>

@@ -61,18 +61,18 @@ export default function SiteFooter() {
     : WHATSAPP_URL;
 
   return (
-    <footer className="bg-background text-foreground pt-24 pb-12 border-t border-border relative overflow-hidden transition-colors duration-500">
+    <footer className="bg-background text-foreground pt-12 pb-6 border-t border-border relative overflow-hidden transition-colors duration-500">
       {/* Background Glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-primary/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-primary/5 blur-[80px] rounded-full pointer-events-none" />
 
       <div className="container px-4 mx-auto relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           
           {/* Brand Card - Bento Large */}
-          <div className="lg:col-span-2 bg-card/50 p-10 rounded-[3rem] border border-border backdrop-blur-sm flex flex-col justify-between group hover:border-primary/20 transition-all duration-500 shadow-2xl shadow-black/20">
+          <div className="lg:col-span-2 bg-card/50 p-5 sm:p-6 rounded-xl border border-border backdrop-blur-sm flex flex-col justify-between group hover:border-primary/20 transition-all duration-500 shadow-xl shadow-black/10">
             <div>
               {settings?.logoUrl ? (
-                <div className="relative h-20 w-auto mb-10 flex items-center justify-start group-hover:scale-105 transition-transform duration-500 bg-white mix-blend-screen rounded-2xl px-4 py-1">
+                <div className="relative h-10 w-auto mb-4 flex items-center justify-start group-hover:scale-105 transition-transform duration-500 bg-white mix-blend-screen rounded-lg px-2 py-0.5">
                   <img
                     src={settings.logoUrl}
                     alt="El Bahrawy"
@@ -81,21 +81,21 @@ export default function SiteFooter() {
                 </div>
               ) : (
                 <Image
-                  src="/images/logo.png"
+                  src="/logo.png"
                   alt="El Bahrawy"
-                  width={180}
-                  height={180}
-                  className="h-20 w-auto object-contain drop-shadow-[0_0_20px_rgba(251,191,36,0.3)] mb-10 group-hover:scale-105 transition-transform duration-500 dark:brightness-0 dark:invert"
+                  width={100}
+                  height={100}
+                  className="h-10 w-auto object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)] mb-4 group-hover:scale-105 transition-transform duration-500"
                 />
               )}
-              <h3 className="text-4xl font-black mb-6 tracking-tighter text-foreground">
+              <h3 className="text-xl font-black mb-2 tracking-tighter text-foreground">
                 ELBA<span className="text-primary">7RAWY</span>
               </h3>
-              <p className="text-muted-foreground text-lg font-medium leading-relaxed max-w-md">
+              <p className="text-muted-foreground text-xs font-medium leading-relaxed max-w-md">
                 {settings?.description || "نقدم حلولاً إعلانية مبتكرة تجمع بين الإبداع الفني وأحدث تقنيات الطباعة والذكاء الاصطناعي."}
               </p>
             </div>
-            <div className="flex gap-4 mt-10">
+            <div className="flex gap-2 mt-6">
               {[
                 { Icon: Facebook, href: settings?.facebook || '#', color: 'hover:bg-blue-600' },
                 { Icon: Instagram, href: settings?.instagram || '#', color: 'hover:bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-500' },
@@ -107,21 +107,21 @@ export default function SiteFooter() {
                   href={social.href} 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`size-12 rounded-2xl bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-white transition-all duration-300 ${social.color}`}
+                  className={`size-8 rounded-lg bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-white transition-all duration-300 ${social.color}`}
                 >
-                  <social.Icon className="size-5" />
+                  <social.Icon className="size-4" />
                 </a>
               ))}
             </div>
           </div>
 
           {/* Quick Links - Bento Small */}
-          <div className="bg-card/50 p-10 rounded-[3rem] border border-border backdrop-blur-sm hover:border-primary/20 transition-all duration-500 shadow-2xl shadow-black/20">
-            <h4 className="text-xl font-black mb-8 text-primary uppercase tracking-widest flex items-center gap-3">
-              <div className="w-8 h-1 bg-primary rounded-full" />
+          <div className="bg-card/50 p-5 sm:p-6 rounded-xl border border-border backdrop-blur-sm hover:border-primary/20 transition-all duration-500 shadow-xl shadow-black/10">
+            <h4 className="text-base font-black mb-4 text-primary uppercase tracking-widest flex items-center gap-2">
+              <div className="w-4 h-0.5 bg-primary rounded-full" />
               روابط
             </h4>
-            <nav className="flex flex-col gap-5">
+            <nav className="flex flex-col gap-3">
               {[
                 { label: 'الرئيسية', id: '' },
                 { label: 'خدماتنا', id: 'services' },
@@ -132,9 +132,9 @@ export default function SiteFooter() {
                 <Link 
                   key={i} 
                   href={`/${link.id ? '#' + link.id : ''}`} 
-                  className="text-muted-foreground hover:text-primary transition-all font-bold no-underline flex items-center gap-3 group"
+                  className="text-muted-foreground hover:text-primary transition-all font-bold no-underline flex items-center gap-2 group text-xs"
                 >
-                  <div className="size-2 rounded-full bg-border group-hover:bg-primary group-hover:scale-150 transition-all" />
+                  <div className="size-1 rounded-full bg-border group-hover:bg-primary group-hover:scale-150 transition-all" />
                   {link.label}
                 </Link>
               ))}
@@ -142,38 +142,38 @@ export default function SiteFooter() {
           </div>
 
           {/* Contact - Bento Small */}
-          <div className="bg-secondary p-10 rounded-[3rem] border border-border hover:border-primary/20 transition-all duration-500 relative overflow-hidden group shadow-2xl shadow-black/40">
+          <div className="bg-secondary p-5 sm:p-6 rounded-xl border border-border hover:border-primary/20 transition-all duration-500 relative overflow-hidden group shadow-xl shadow-black/20">
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <h4 className="text-xl font-black mb-8 text-primary uppercase tracking-widest flex items-center gap-3 relative z-10">
-              <div className="w-8 h-1 bg-primary rounded-full" />
+            <h4 className="text-base font-black mb-4 text-primary uppercase tracking-widest flex items-center gap-2 relative z-10">
+              <div className="w-4 h-0.5 bg-primary rounded-full" />
               تواصـل
             </h4>
-            <div className="space-y-8 relative z-10">
-              <a href={`tel:${settings?.phone || '+201120053007'}`} className="flex items-center gap-5 text-muted-foreground hover:text-primary transition-all no-underline group/item">
-                <div className="size-14 rounded-2xl bg-white/5 flex items-center justify-center group-hover/item:bg-primary/10 group-hover/item:scale-110 transition-all border border-white/5">
-                  <Phone className="size-6" />
+            <div className="space-y-4 relative z-10">
+              <a href={`tel:${settings?.phone || '+201120053007'}`} className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-all no-underline group/item">
+                <div className="size-8 rounded-lg bg-white/5 flex items-center justify-center group-hover/item:bg-primary/10 group-hover/item:scale-110 transition-all border border-white/5">
+                  <Phone className="size-4" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">اتصل بنا</p>
-                  <p className="font-black text-white text-lg" dir="ltr">{settings?.phone || '+201120053007'}</p>
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">اتصل بنا</p>
+                  <p className="font-black text-white text-sm" dir="ltr">{settings?.phone || '+201120053007'}</p>
                 </div>
               </a>
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-5 text-muted-foreground hover:text-green-400 transition-all no-underline group/item">
-                <div className="size-14 rounded-2xl bg-white/5 flex items-center justify-center group-hover/item:bg-green-400/10 group-hover/item:scale-110 transition-all border border-white/5">
-                  <MessageCircle className="size-6" />
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-muted-foreground hover:text-green-400 transition-all no-underline group/item">
+                <div className="size-8 rounded-lg bg-white/5 flex items-center justify-center group-hover/item:bg-green-400/10 group-hover/item:scale-110 transition-all border border-white/5">
+                  <MessageCircle className="size-4" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">واتساب</p>
-                  <p className="font-black text-white text-lg" dir="ltr">{settings?.whatsapp || '+201120053007'}</p>
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">واتساب</p>
+                  <p className="font-black text-white text-sm" dir="ltr">{settings?.whatsapp || '+201120053007'}</p>
                 </div>
               </a>
-              <div className="flex items-center gap-5 text-muted-foreground group/item">
-                <div className="size-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
-                  <MapPin className="size-6" />
+              <div className="flex items-center gap-3 text-muted-foreground group/item">
+                <div className="size-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/5">
+                  <MapPin className="size-4" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">المقر</p>
-                  <p className="font-bold text-white text-sm leading-tight">{settings?.address || 'العاشر من رمضان / الزقازيق، الشرقية'}</p>
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">المقر</p>
+                  <p className="font-bold text-white text-[10px] leading-tight">{settings?.address || 'العاشر من رمضان / الزقازيق، الشرقية'}</p>
                 </div>
               </div>
             </div>
@@ -181,20 +181,20 @@ export default function SiteFooter() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-12 border-t border-border flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-4">
-            <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden">
+        <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden">
                {settings?.logoUrl ? (
-                 <img src={settings.logoUrl} alt="Small Logo" className="w-6 h-6 object-contain brightness-0 invert opacity-50" />
+                 <img src={settings.logoUrl} alt="Small Logo" className="w-5 h-5 object-contain brightness-0 invert opacity-50" />
                ) : (
-                 <Image src="/images/logo.png" alt="Small Logo" width={24} height={24} className="brightness-0 invert opacity-50" />
+                 <Image src="/images/logo.png" alt="Small Logo" width={20} height={20} className="opacity-50" />
                )}
             </div>
-            <p className="text-muted-foreground text-sm font-bold tracking-tight">
+            <p className="text-muted-foreground text-xs font-bold tracking-tight">
               © {new Date().getFullYear()} {settings?.siteName || 'البحراوي للدعاية والإعلان'}. جميع الحقوق محفوظة.
             </p>
           </div>
-          <div className="flex items-center gap-2 text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em]">
+          <div className="flex items-center gap-2 text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em]">
             <span>تصميم وتنفيذ</span>
             <span className="text-primary/50">El Bahrawy Team</span>
           </div>

@@ -115,12 +115,12 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
           transition={{ delay: 0.15 }}
           className="text-center mb-12"
         >
-          <div className="bg-card size-28 rounded-[2.5rem] shadow-xl flex items-center justify-center mx-auto mb-8 border border-border group hover:border-primary/50 transition-all duration-500">
+          <div className="bg-transparent size-28 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 border border-border group hover:border-primary/50 transition-all duration-500">
             <Image
               src="/images/logo.png"
               alt="البحراوي"
-              width={70}
-              height={70}
+              width={100}
+              height={100}
               className="object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.1)] group-hover:scale-110 transition-transform duration-500"
             />
           </div>

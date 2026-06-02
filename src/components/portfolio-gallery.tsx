@@ -293,43 +293,43 @@ export default function PortfolioGallery() {
   };
 
   return (
-    <section id="portfolio" className="py-32 sm:py-48 bg-[#050505] relative overflow-hidden transition-colors duration-500">
+    <section id="portfolio" className="py-20 sm:py-32 bg-[#050505] relative overflow-hidden transition-colors duration-500">
       {/* Noise Overlay */}
       <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
       {/* Background Decor */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-primary/10 blur-[180px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/5 blur-[180px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-0 w-64 h-64 bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-24 sm:mb-32">
-          <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-[0.4em] mb-8 backdrop-blur-md">
-            <Search className="size-4" />
+        <div className="text-center mb-10 sm:mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[8px] sm:text-[10px] font-black uppercase tracking-[0.4em] mb-4 backdrop-blur-md">
+            <Search className="size-3" />
             <span>معرض أعمالنا</span>
           </div>
-          <h2 className="text-6xl sm:text-8xl font-black text-white tracking-tight mb-12 leading-[1.3] max-w-5xl mx-auto">
-            تاريخنا يكتبه <span className="text-primary drop-shadow-[0_0_30px_rgba(251,191,36,0.4)]">الإبداع</span> والتنفيذ
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight mb-4 leading-tight max-w-4xl mx-auto">
+            تاريخنا يكتبه <span className="text-primary drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">الإبداع</span> والتنفيذ
           </h2>
-          <p className="text-slate-400 max-w-4xl mx-auto text-xl sm:text-3xl font-bold leading-[1.8] px-4">
+          <p className="text-slate-400 max-w-2xl mx-auto text-xs sm:text-sm md:text-base font-bold leading-relaxed px-4">
             نفخر بكوننا الشريك الإعلاني لمئات العلامات التجارية الكبرى، حيث نحول الرؤى إلى واقع ملموس يبهر الأنظار.
           </p>
         </div>
 
-        <div className="flex flex-col items-center gap-16">
+        <div className="flex flex-col items-center gap-8">
           {/* Search & Tabs Row */}
-          <div className="w-full max-w-6xl flex flex-col lg:row gap-8 items-center bg-white/5 p-10 rounded-[3.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl">
+          <div className="w-full max-w-4xl flex flex-col lg:flex-row gap-4 items-center bg-white/5 p-4 sm:p-6 rounded-2xl border border-white/5 backdrop-blur-3xl shadow-2xl">
             {/* Tabs UI */}
             <Tabs
               defaultValue="all"
               className="w-full lg:flex-1"
               onValueChange={setActiveTab}
             >
-              <TabsList className="grid grid-cols-5 w-full bg-[#0c0c0c] p-2 border border-white/5 rounded-3xl h-20 sm:h-24">
+              <TabsList className="grid grid-cols-5 w-full bg-[#0c0c0c] p-1 border border-white/5 rounded-xl h-12 sm:h-14">
                 {CATEGORY_TABS.map((tab) => (
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    className="rounded-2xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-2xl text-xs sm:text-base font-black transition-all duration-500 text-slate-500 hover:text-slate-300"
+                    className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-2xl text-[8px] sm:text-xs font-black transition-all duration-500 text-slate-500 hover:text-slate-300"
                   >
                     {tab.label}
                   </TabsTrigger>
@@ -338,13 +338,13 @@ export default function PortfolioGallery() {
             </Tabs>
 
             {/* Search Input */}
-            <div className="relative w-full lg:w-96">
-              <Search className="absolute right-6 top-1/2 -translate-y-1/2 size-6 text-slate-500" />
+            <div className="relative w-full lg:w-64">
+              <Search className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-slate-500" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث في المشاريع..."
-                className="pr-16 h-20 sm:h-24 rounded-3xl border-white/5 bg-[#0c0c0c] font-black text-lg focus:ring-primary/30 transition-all text-white border-2"
+                className="pr-10 h-12 sm:h-14 rounded-xl border-white/5 bg-[#0c0c0c] font-black text-xs focus:ring-primary/30 transition-all text-white border-2"
               />
             </div>
           </div>
@@ -361,7 +361,7 @@ export default function PortfolioGallery() {
                   initial="hidden"
                   animate="visible"
                   exit="hidden"
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8"
                 >
                   {filteredProjects.map((project, idx) => (
                     <motion.div
@@ -370,7 +370,7 @@ export default function PortfolioGallery() {
                       layout
                     >
                       <div 
-                        className={`group relative overflow-hidden rounded-[3rem] bg-white/5 border border-white/5 hover:border-primary/50 transition-all duration-700 cursor-pointer shadow-2xl shadow-black/40 border-2 ${
+                        className={`group relative overflow-hidden rounded-[2rem] bg-white/5 border border-white/5 hover:border-primary/50 transition-all duration-700 cursor-pointer shadow-2xl shadow-black/40 border-2 ${
                           idx % 4 === 0 ? 'aspect-[4/5]' : idx % 3 === 0 ? 'aspect-square' : 'aspect-[4/3]'
                         }`}
                         onClick={() => setLightboxProject(project)}
@@ -384,28 +384,28 @@ export default function PortfolioGallery() {
                         />
                         
                         {/* Glass Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 flex flex-col justify-end p-10 backdrop-blur-[4px] group-hover:backdrop-blur-none">
-                          <Badge className="w-fit bg-primary text-primary-foreground border-none mb-4 px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl shadow-primary/40">
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 flex flex-col justify-end p-6 backdrop-blur-[4px] group-hover:backdrop-blur-none">
+                          <Badge className="w-fit bg-primary text-primary-foreground border-none mb-3 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-2xl shadow-primary/40">
                             {CATEGORY_LABELS[project.category as ProjectCategory] || project.category}
                           </Badge>
-                          <h3 className="text-2xl font-black text-white leading-tight mb-6 tracking-tighter">
+                          <h3 className="text-xl font-black text-white leading-tight mb-4 tracking-tighter">
                             {project.titleAr}
                           </h3>
-                          <div className="flex gap-4 translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
+                          <div className="flex gap-3 translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
                             <Button 
-                              size="lg" 
+                              size="sm" 
                               variant="secondary" 
-                              className="rounded-2xl font-black text-sm h-14 bg-white/10 text-white hover:bg-white/20 border-white/10 border backdrop-blur-md"
+                              className="rounded-xl font-black text-[10px] h-10 bg-white/10 text-white hover:bg-white/20 border-white/10 border backdrop-blur-md"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setLightboxProject(project);
                               }}
                             >
-                              تكبير الصورة
+                              تكبير
                             </Button>
                             <Button 
-                              size="lg" 
-                              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl font-black text-sm h-14 shadow-2xl shadow-primary/30"
+                              size="sm" 
+                              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-black text-[10px] h-10 shadow-2xl shadow-primary/30"
                               asChild
                             >
                               <Link href={`/portfolio/${project.id}`}>
@@ -415,8 +415,8 @@ export default function PortfolioGallery() {
                           </div>
                         </div>
 
-                        <div className="absolute top-8 right-8 size-14 rounded-2xl bg-white/10 backdrop-blur-2xl border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-700 transform translate-x-6 group-hover:translate-x-0">
-                          <Layers className="size-6 text-white" />
+                        <div className="absolute top-6 right-6 size-10 rounded-xl bg-white/10 backdrop-blur-2xl border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-700 transform translate-x-6 group-hover:translate-x-0">
+                          <Layers className="size-5 text-white" />
                         </div>
                       </div>
                     </motion.div>
@@ -429,12 +429,12 @@ export default function PortfolioGallery() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="py-32 text-center"
+                className="py-20 text-center"
               >
-                <div className="size-32 rounded-[2.5rem] bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 shadow-2xl mx-auto mb-8">
-                  <Search className="size-16" />
+                <div className="size-24 rounded-[2rem] bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 shadow-2xl mx-auto mb-6">
+                  <Search className="size-12" />
                 </div>
-                <p className="text-slate-500 font-black text-2xl tracking-tighter">لا توجد أعمال تطابق بحثك حالياً</p>
+                <p className="text-slate-500 font-black text-xl tracking-tighter">لا توجد أعمال تطابق بحثك حالياً</p>
               </motion.div>
             )}
           </div>
