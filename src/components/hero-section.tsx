@@ -176,22 +176,18 @@ export default function HeroSection() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="relative mb-12 mt-16 sm:mt-20 flex items-center justify-center"
+            className="relative mb-12 mt-16 sm:mt-20 flex items-center justify-center w-full"
           >
-            <div className="relative w-[250px] sm:w-[350px] md:w-[450px] aspect-square flex items-center justify-center">
+            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-[400px] md:h-[400px]">
               <img
-                src="/images/logo.png"
+                src={`/images/logo.png?v=${Date.now()}`}
                 alt="ELBA7RAWY Logo"
-                className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.5)]"
+                className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.5)] block"
                 loading="eager"
-                onError={(e) => {
-                  // Fallback to other logo if primary fails
-                  (e.target as HTMLImageElement).src = '/images/logo-full.png';
-                }}
               />
             </div>
             {/* Background Glow behind logo */}
-            <div className="absolute inset-0 bg-primary/20 blur-[100px] -z-10 rounded-full scale-150 opacity-50" />
+            <div className="absolute inset-0 bg-[#fbbf24]/10 blur-[100px] -z-10 rounded-full scale-150 opacity-50" />
           </motion.div>
 
           {/* Hero Title */}
@@ -203,13 +199,13 @@ export default function HeroSection() {
             
             <h1 className="text-6xl sm:text-8xl md:text-[10rem] font-black tracking-tighter leading-[0.9] mb-8 flex items-center justify-center gap-4 flex-wrap" dir="ltr">
               <span className="text-white">ELBA</span>
-              <span className="relative inline-block text-primary">
+              <span className="relative inline-block text-[#fbbf24]">
                 7RAWY
                 <motion.span 
                   initial={{ width: 0 }}
                   animate={{ width: '100%' }}
                   transition={{ delay: 1, duration: 0.8 }}
-                  className="absolute -bottom-3 left-0 h-2 sm:h-3 bg-primary rounded-full shadow-[0_0_20px_rgba(251,191,36,0.6)]" 
+                  className="absolute -bottom-3 left-0 h-2 sm:h-3 bg-[#fbbf24] rounded-full shadow-[0_0_20px_rgba(251,191,36,0.6)]" 
                 />
               </span>
             </h1>
@@ -218,10 +214,10 @@ export default function HeroSection() {
               <h2 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-[0.2em] uppercase text-white drop-shadow-[0_0_30px_rgba(251,191,36,0.5)]">
                 ADVERTISING
               </h2>
-              <div className="absolute -inset-x-12 -inset-y-6 bg-primary/10 blur-3xl -z-10 rounded-full opacity-30" />
+              <div className="absolute -inset-x-12 -inset-y-6 bg-[#fbbf24]/20 blur-3xl -z-10 rounded-full opacity-40" />
             </div>
 
-            <p className="max-w-3xl mx-auto text-base sm:text-xl md:text-2xl text-slate-300 font-bold leading-relaxed px-6 drop-shadow-md mt-8">
+            <p className="max-w-3xl mx-auto text-base sm:text-xl md:text-2xl text-slate-300 font-bold leading-relaxed px-6 drop-shadow-md mt-12">
               نصنع الهوية، نبني الثقة، ونقود علامتك التجارية نحو التميز من خلال حلول إعلانية مبتكرة ومتكاملة
             </p>
           </motion.div>

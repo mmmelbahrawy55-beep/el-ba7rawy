@@ -104,12 +104,10 @@ export default function AboutPage() {
                   />
                 ) : (
                   <div className="relative w-full h-full p-8">
-                    <Image
+                    <img
                       src="/images/logo.png"
                       alt="البحراوي للدعاية والإعلان"
-                      fill
-                      className="object-contain"
-                      priority
+                      className="w-full h-full object-contain"
                     />
                   </div>
                 )}

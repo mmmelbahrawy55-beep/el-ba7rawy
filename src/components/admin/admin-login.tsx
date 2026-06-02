@@ -116,12 +116,10 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
           className="text-center mb-12"
         >
           <div className="bg-transparent size-28 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 border border-border group hover:border-primary/50 transition-all duration-500">
-            <Image
+            <img
               src="/images/logo.png"
               alt="البحراوي"
-              width={100}
-              height={100}
-              className="object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.1)] group-hover:scale-110 transition-transform duration-500"
+              className="w-24 h-24 object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.1)] group-hover:scale-110 transition-transform duration-500"
             />
           </div>
           <h1 className="text-4xl font-black text-foreground mb-3 tracking-tighter">بوابة الوصول</h1>

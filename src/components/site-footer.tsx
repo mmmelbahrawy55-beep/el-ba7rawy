@@ -80,11 +80,9 @@ export default function SiteFooter() {
                   />
                 </div>
               ) : (
-                <Image
-                  src="/logo.png"
+                <img
+                  src="/images/logo.png"
                   alt="El Bahrawy"
-                  width={100}
-                  height={100}
                   className="h-10 w-auto object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)] mb-4 group-hover:scale-105 transition-transform duration-500"
                 />
               )}
@@ -187,7 +185,7 @@ export default function SiteFooter() {
                {settings?.logoUrl ? (
                  <img src={settings.logoUrl} alt="Small Logo" className="w-5 h-5 object-contain brightness-0 invert opacity-50" />
                ) : (
-                 <Image src="/images/logo.png" alt="Small Logo" width={20} height={20} className="opacity-50" />
+                 <img src="/images/logo.png" alt="Small Logo" className="w-5 h-5 object-contain opacity-50" />
                )}
             </div>
             <p className="text-muted-foreground text-xs font-bold tracking-tight">
