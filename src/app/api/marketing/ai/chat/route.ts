@@ -203,7 +203,12 @@ export async function POST(req: Request) {
     });
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey);
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey && process.env.NODE_ENV === 'production') {
+    console.error('GEMINI_API_KEY is missing');
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey || 'fake_key')
   
   try {
     // 🛡️ SECURITY: Rate Limiting
