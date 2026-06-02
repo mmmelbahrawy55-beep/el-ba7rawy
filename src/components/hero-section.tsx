@@ -178,16 +178,20 @@ export default function HeroSection() {
             transition={{ duration: 0.8 }}
             className="relative mb-12 mt-16 sm:mt-20 flex items-center justify-center"
           >
-            <div className="relative h-32 sm:h-44 md:h-64 w-auto flex items-center justify-center">
+            <div className="relative w-[250px] sm:w-[350px] md:w-[450px] aspect-square flex items-center justify-center">
               <img
                 src="/images/logo.png"
                 alt="ELBA7RAWY Logo"
-                className="h-full w-auto object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]"
+                className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.5)]"
                 loading="eager"
+                onError={(e) => {
+                  // Fallback to other logo if primary fails
+                  (e.target as HTMLImageElement).src = '/images/logo-full.png';
+                }}
               />
             </div>
             {/* Background Glow behind logo */}
-            <div className="absolute inset-0 bg-primary/10 blur-[100px] -z-10 rounded-full scale-150 opacity-50" />
+            <div className="absolute inset-0 bg-primary/20 blur-[100px] -z-10 rounded-full scale-150 opacity-50" />
           </motion.div>
 
           {/* Hero Title */}
@@ -211,10 +215,10 @@ export default function HeroSection() {
             </h1>
 
             <div className="relative inline-block">
-              <h2 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-[0.2em] uppercase text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
+              <h2 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-[0.2em] uppercase text-white drop-shadow-[0_0_30px_rgba(251,191,36,0.5)]">
                 ADVERTISING
               </h2>
-              <div className="absolute -inset-x-8 -inset-y-4 bg-primary/5 blur-3xl -z-10 rounded-full opacity-40" />
+              <div className="absolute -inset-x-12 -inset-y-6 bg-primary/10 blur-3xl -z-10 rounded-full opacity-30" />
             </div>
 
             <p className="max-w-3xl mx-auto text-base sm:text-xl md:text-2xl text-slate-300 font-bold leading-relaxed px-6 drop-shadow-md mt-8">
