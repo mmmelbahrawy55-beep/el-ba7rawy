@@ -155,7 +155,7 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
                       type="text"
                       value={email}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                      placeholder="admin@elbahrawy.com أو 01xxxxxxxxx"
+                      placeholder="example@domain.com"
                       className="pr-14 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/10 rounded-2xl h-16 font-black text-lg"
                       dir="ltr"
                       required

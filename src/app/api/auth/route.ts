@@ -3,12 +3,23 @@ import { db } from "@/lib/db";
 
 // Use environment variables for production security
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@elbahrawy.com";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123456";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password } = body as { email: string; password: string };
+    const { email, password, provider } = body as { email?: string; password?: string; provider?: string };
+
+    // Google Login Logic (Mock for now, can be integrated with NextAuth or Supabase)
+    if (provider === 'google') {
+      // In a real scenario, we would verify the google token here
+      return NextResponse.json({ 
+        id: 'google-client',
+        email: 'client@gmail.com',
+        name: 'عميل جوجل',
+        role: 'client'
+      });
+    }
 
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       // Find or create admin user in database for activity logging
