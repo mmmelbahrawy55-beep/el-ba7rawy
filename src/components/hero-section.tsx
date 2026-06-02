@@ -211,12 +211,20 @@ export default function HeroSection() {
               <Sparkles className="size-2.5 text-primary" />
               <span className="text-[8px] font-bold uppercase tracking-wider text-primary">الريادة في عالم الإعلان</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white leading-tight mb-3">
-              ELBA <span className="text-primary">7RAWY</span>
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter text-white leading-tight mb-4">
+              ELBA <span className="text-primary relative inline-block">
+                7RAWY
+                <motion.span 
+                  initial={{ width: 0 }}
+                  animate={{ width: '100%' }}
+                  transition={{ delay: 1.2, duration: 0.8 }}
+                  className="absolute -bottom-2 left-0 h-1 sm:h-2 bg-primary rounded-full shadow-[0_0_15px_rgba(251,191,36,0.5)]" 
+                />
+              </span>
               <br />
-              <span className="text-2xl sm:text-4xl md:text-5xl text-slate-400">ADVERTISING</span>
+              <span className="text-3xl sm:text-5xl md:text-7xl text-white/90 tracking-[0.2em] drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">ADVERTISING</span>
             </h1>
-            <p className="max-w-xl mx-auto text-xs sm:text-sm md:text-base text-slate-400 font-medium leading-relaxed px-4">
+            <p className="max-w-xl mx-auto text-sm sm:text-base md:text-lg text-slate-300 font-bold leading-relaxed px-4 drop-shadow-sm">
               نصنع الهوية، نبني الثقة، ونقود علامتك التجارية نحو التميز من خلال حلول إعلانية مبتكرة ومتكاملة
             </p>
           </motion.div>

@@ -153,26 +153,11 @@ export default function SiteHeader() {
                     whileTap={{ scale: 0.95 }}
                     className="flex items-center"
                   >
-                    {settings?.logoUrl ? (
-                      <img
-                        src={settings.logoUrl}
-                        alt="ELBA7RAWY"
-                        className="h-8 sm:h-10 w-auto object-contain"
-                      />
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <Image
-                          src="/images/logo.png"
-                          alt="ELBA7RAWY"
-                          width={32}
-                          height={32}
-                          className="h-6 sm:h-8 w-auto object-contain"
-                        />
-                        <h1 className="text-lg sm:text-xl font-black tracking-tighter text-foreground hidden sm:block">
-                          ELBA<span className="text-primary">7RAWY</span>
-                        </h1>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <h1 className="text-lg sm:text-xl font-black tracking-tighter text-foreground">
+                        ELBA<span className="text-primary">7RAWY</span>
+                      </h1>
+                    </div>
                     <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
                   </motion.div>
                 </Link>
