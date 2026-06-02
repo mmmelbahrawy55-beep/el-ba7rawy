@@ -180,7 +180,7 @@ export default function HeroSection() {
           >
             <div className="relative h-32 sm:h-44 md:h-56 w-full flex items-center justify-center">
               {settings?.logoUrl ? (
-                <div className="relative h-full w-auto flex items-center justify-center">
+                <div className="relative h-full w-auto flex items-center justify-center bg-transparent">
                   <img
                     src={settings.logoUrl}
                     alt="ELBA7RAWY Logo"
@@ -189,7 +189,7 @@ export default function HeroSection() {
                   />
                 </div>
               ) : (
-                <div className="relative h-full w-auto flex items-center justify-center">
+                <div className="relative h-full w-auto flex items-center justify-center bg-transparent">
                   <Image
                     src="/images/logo.png"
                     alt="ELBA7RAWY Logo"
@@ -206,14 +206,14 @@ export default function HeroSection() {
           </motion.div>
 
           {/* Hero Title */}
-          <motion.div variants={itemVariants} className="relative mb-12" dir="ltr">
-            <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md whitespace-nowrap" dir="rtl">
+          <motion.div variants={itemVariants} className="relative mb-12 flex flex-col items-center">
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md whitespace-nowrap">
               <Sparkles className="size-4 text-primary" />
               <span className="text-xs font-black uppercase tracking-[0.3em] text-primary">الريادة في عالم الإعلان</span>
             </div>
             
-            <h1 className="text-6xl sm:text-8xl md:text-[10rem] font-black tracking-tighter leading-[0.9] mb-8">
-              <span className="text-white">ELBA</span>{" "}
+            <h1 className="text-6xl sm:text-8xl md:text-[10rem] font-black tracking-tighter leading-[0.9] mb-8 flex items-center gap-4">
+              <span className="text-white">ELBA</span>
               <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-b from-primary via-amber-400 to-primary-foreground drop-shadow-[0_10px_20px_rgba(251,191,36,0.4)]">
                 7RAWY
                 <motion.span 
@@ -226,10 +226,10 @@ export default function HeroSection() {
             </h1>
 
             <div className="relative inline-block">
-              <h2 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-[0.2em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-white to-slate-400 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+              <h2 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-[0.2em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-primary via-amber-200 to-primary-foreground drop-shadow-[0_0_20px_rgba(251,191,36,0.4)]">
                 ADVERTISING
               </h2>
-              <div className="absolute -inset-x-4 -inset-y-2 bg-white/5 blur-2xl -z-10 rounded-full opacity-50" />
+              <div className="absolute -inset-x-8 -inset-y-4 bg-primary/5 blur-3xl -z-10 rounded-full opacity-40" />
             </div>
           </motion.div>
             <p className="max-w-3xl mx-auto text-base sm:text-xl md:text-2xl text-slate-300 font-bold leading-relaxed px-6 drop-shadow-md">
