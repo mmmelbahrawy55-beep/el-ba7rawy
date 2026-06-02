@@ -180,7 +180,7 @@ export default function HeroSection() {
           >
             <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-[400px] md:h-[400px]">
               <img
-                src={`/images/logo.png?v=${Date.now()}`}
+                src="https://el-ba7rawy-no3c.vercel.app/images/logo.png"
                 alt="ELBA7RAWY Logo"
                 className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.5)] block"
                 loading="eager"
