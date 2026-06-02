@@ -132,31 +132,31 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
         >
-          <Card className="bg-card border border-border shadow-2xl rounded-[3.5rem] overflow-hidden">
-            <CardHeader className="pb-6 pt-10 px-10 text-center">
-              <h2 className="text-2xl font-black text-foreground">
+          <Card className="bg-card border border-border shadow-2xl rounded-[2.5rem] overflow-hidden">
+            <CardHeader className="pb-4 pt-8 px-8 text-center">
+              <h2 className="text-xl font-black text-foreground">
                 تسجيل الدخول
               </h2>
-              <p className="text-muted-foreground text-sm font-bold mt-2 tracking-tight">
+              <p className="text-muted-foreground text-[10px] font-bold mt-1 tracking-tight">
                 أدخل بيانات حسابك للمتابعة
               </p>
             </CardHeader>
-            <CardContent className="px-12 pb-12">
-              <form onSubmit={handleSubmit} className="space-y-8">
+            <CardContent className="px-8 pb-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Email */}
-                <div className="space-y-3">
-                  <Label htmlFor="email" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mr-2">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mr-2">
                     البريد الإلكتروني أو الهاتف
                   </Label>
                   <div className="relative group">
-                    <Mail className="absolute right-5 top-1/2 -translate-y-1/2 size-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Mail className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                     <Input
                       id="email"
                       type="text"
                       value={email}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                       placeholder="example@domain.com"
-                      className="pr-14 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/10 rounded-2xl h-16 font-black text-lg"
+                      className="pr-12 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/10 rounded-xl h-12 font-black text-sm"
                       dir="ltr"
                       required
                     />
@@ -164,19 +164,19 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
                 </div>
 
                 {/* Password */}
-                <div className="space-y-3">
-                  <Label htmlFor="password" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mr-2">
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mr-2">
                     كلمة المرور
                   </Label>
                   <div className="relative group">
-                    <Lock className="absolute right-5 top-1/2 -translate-y-1/2 size-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Lock className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                     <Input
                       id="password"
                       type="password"
                       value={password}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="pr-14 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/10 rounded-2xl h-16 font-black text-lg"
+                      className="pr-12 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/10 rounded-xl h-12 font-black text-sm"
                       dir="ltr"
                       required
                     />
@@ -187,21 +187,21 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-black py-8 text-xl rounded-[2rem] shadow-xl shadow-primary/20 transition-all active:scale-95 group"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-black py-6 text-base rounded-xl shadow-xl shadow-primary/20 transition-all active:scale-95 group"
                 >
                   {isLoading ? (
-                    <Loader2 className="size-8 animate-spin" />
+                    <Loader2 className="size-6 animate-spin" />
                   ) : (
-                    <span className="flex items-center gap-3">
+                    <span className="flex items-center gap-2">
                       دخول للنظام
-                      <ArrowRight className="size-6 rotate-180 group-hover:-translate-x-1 transition-transform" />
+                      <ArrowRight className="size-5 rotate-180 group-hover:-translate-x-1 transition-transform" />
                     </span>
                   )}
                 </Button>
 
                 {/* Register Link */}
-                <div className="text-center mt-6">
-                  <p className="text-muted-foreground text-sm font-bold">
+                <div className="text-center mt-4">
+                  <p className="text-muted-foreground text-[11px] font-bold">
                     ليس لديك حساب؟{' '}
                     <button 
                       type="button"
@@ -215,12 +215,12 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
               </form>
 
               {/* Divider */}
-              <div className="relative my-10">
+              <div className="relative my-8">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t border-border" />
                 </div>
-                <div className="relative flex justify-center text-[10px]">
-                  <span className="px-6 bg-card text-muted-foreground font-black uppercase tracking-[0.3em]">SECURE AUTH</span>
+                <div className="relative flex justify-center text-[9px]">
+                  <span className="px-4 bg-card text-muted-foreground font-black uppercase tracking-[0.2em]">SECURE AUTH</span>
                 </div>
               </div>
 
@@ -228,9 +228,9 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
               <Button
                 variant="outline"
                 onClick={handleGoogleLogin}
-                className="w-full bg-card border-border text-muted-foreground hover:bg-muted hover:text-foreground py-8 rounded-[2rem] font-black transition-all flex gap-4"
+                className="w-full bg-card border-border text-muted-foreground hover:bg-muted hover:text-foreground py-6 rounded-xl font-black transition-all flex gap-3 text-sm"
               >
-                <svg className="size-6" viewBox="0 0 24 24">
+                <svg className="size-5" viewBox="0 0 24 24">
                   <path
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
                     fill="#4285F4"
