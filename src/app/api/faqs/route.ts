@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 
 export async function GET() {
   try {
-    const faqs = await db.fAQ.findMany({
+    const faqs = await db.faq.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: 'asc' }
     })
@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const faq = await db.fAQ.create({ data: body })
+    const faq = await db.faq.create({ data: body })
     return NextResponse.json(faq)
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create faq' }, { status: 500 })
