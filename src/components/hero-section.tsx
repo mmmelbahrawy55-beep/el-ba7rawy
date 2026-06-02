@@ -212,7 +212,7 @@ export default function HeroSection() {
               <span className="text-xs font-black uppercase tracking-[0.3em] text-primary">الريادة في عالم الإعلان</span>
             </div>
             
-            <h1 className="text-6xl sm:text-8xl md:text-[10rem] font-black tracking-tighter leading-[0.9] mb-8 flex items-center gap-4">
+            <h1 className="text-6xl sm:text-8xl md:text-[10rem] font-black tracking-tighter leading-[0.9] mb-8 flex items-center justify-center gap-4 flex-wrap" dir="ltr">
               <span className="text-white">ELBA</span>
               <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-b from-primary via-amber-400 to-primary-foreground drop-shadow-[0_10px_20px_rgba(251,191,36,0.4)]">
                 7RAWY
@@ -231,8 +231,8 @@ export default function HeroSection() {
               </h2>
               <div className="absolute -inset-x-8 -inset-y-4 bg-primary/5 blur-3xl -z-10 rounded-full opacity-40" />
             </div>
-          </motion.div>
-            <p className="max-w-3xl mx-auto text-base sm:text-xl md:text-2xl text-slate-300 font-bold leading-relaxed px-6 drop-shadow-md">
+
+            <p className="max-w-3xl mx-auto text-base sm:text-xl md:text-2xl text-slate-300 font-bold leading-relaxed px-6 drop-shadow-md mt-8">
               نصنع الهوية، نبني الثقة، ونقود علامتك التجارية نحو التميز من خلال حلول إعلانية مبتكرة ومتكاملة
             </p>
           </motion.div>
