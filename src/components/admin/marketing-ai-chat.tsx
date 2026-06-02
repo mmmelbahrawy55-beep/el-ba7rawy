@@ -524,7 +524,7 @@ export default function MarketingAIChat() {
                               <span className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em]">
                                 {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                               </span>
-                              {message.latency > 0 && (
+                              {message.latency !== undefined && message.latency > 0 && (
                                 <Badge variant="outline" className="bg-emerald-500/5 text-emerald-500/50 border-emerald-500/10 text-[8px] font-black">
                                   {message.latency}ms (90% faster)
                                 </Badge>
