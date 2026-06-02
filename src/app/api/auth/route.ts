@@ -22,43 +22,53 @@ export async function POST(request: Request) {
     }
 
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      // Find or create admin user in database for activity logging
-      let user = await db.user.findUnique({
-        where: { email: ADMIN_EMAIL }
-      });
+      // Mock user for when database is not ready or fails
+      const mockUser = {
+        id: 'admin-id',
+        email: ADMIN_EMAIL,
+        name: "محمد البحراوي",
+        role: "admin",
+        avatar: null
+      };
 
-      if (!user) {
-        user = await db.user.create({
-          data: {
+      try {
+        // Try database operation but don't crash if it fails
+        const user = await db.user.upsert({
+          where: { email: ADMIN_EMAIL },
+          update: {},
+          create: {
             email: ADMIN_EMAIL,
             name: "محمد البحراوي",
             role: "admin",
           }
         });
+        
+        Object.assign(mockUser, user);
+
+        await db.activityLog.create({
+          data: {
+            action: 'ADMIN_LOGIN',
+            details: `تسجيل دخول المسؤول: ${mockUser.name}`,
+            userEmail: mockUser.email,
+            userId: mockUser.id
+          }
+        }).catch(e => console.error("Activity log failed", e));
+      } catch (dbError) {
+        console.error("Database auth failed, using mock:", dbError);
       }
 
       const token = Buffer.from(JSON.stringify({
-        userId: user.id,
+        userId: mockUser.id,
         role: "admin",
         exp: Date.now() + 24 * 60 * 60 * 1000,
       })).toString("base64");
 
       const response = NextResponse.json({
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
+        id: mockUser.id,
+        email: mockUser.email,
+        name: mockUser.name,
+        avatar: mockUser.avatar,
         token,
-      });
-
-      // Log the login event
-      await db.activityLog.create({
-        data: {
-          action: 'ADMIN_LOGIN',
-          details: `تسجيل دخول المسؤول: ${user.name}`,
-          userEmail: user.email,
-          userId: user.id
-        }
       });
 
       response.cookies.set("admin_token", token, {
