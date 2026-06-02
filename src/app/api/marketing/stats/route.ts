@@ -47,9 +47,9 @@ export async function GET() {
       
       weeklyData.push({
         name: format(date, 'EEEE'),
-        reach,
-        clicks
-      })
+        reach: reach || 0,
+        clicks: clicks || 0
+      } as any)
     }
 
     // Platform performance
