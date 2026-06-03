@@ -117,7 +117,13 @@ export default function SettingsManager() {
             if (saveRes.ok) {
               toast.success('تم رفع وحفظ الشعار بنجاح (محلياً)')
             } else {
-              toast.error('فشل حفظ الإعدادات في قاعدة البيانات')
+              const errorData = await saveRes.json()
+              const details = errorData.details || ''
+              if (details.includes('too long') || details.includes('limit')) {
+                toast.error('صورة الشعار كبيرة جداً، يرجى اختيار صورة أصغر من 500 كيلوبايت')
+              } else {
+                toast.error(errorData.error || 'فشل حفظ الإعدادات في قاعدة البيانات')
+              }
             }
           } catch (err) {
             toast.error('حدث خطأ أثناء الحفظ')

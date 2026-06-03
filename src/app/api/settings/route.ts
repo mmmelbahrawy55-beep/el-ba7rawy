@@ -79,8 +79,13 @@ export async function PUT(request: Request) {
       ...updated,
       geminiKey: body.geminiKey,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Settings Update Error:", error);
-    return NextResponse.json({ error: "Failed to update settings" }, { status: 500 });
+    const errorMessage = error?.message || "Internal Database Error";
+    return NextResponse.json({ 
+      error: "فشل في تحديث قاعدة البيانات", 
+      details: errorMessage,
+      code: error?.code 
+    }, { status: 500 });
   }
 }
