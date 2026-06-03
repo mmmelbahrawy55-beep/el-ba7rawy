@@ -86,6 +86,13 @@ const navItems: NavItem[] = [
 export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
   const [activeSection, setActiveSection] = useState<Section>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [logoSource, setLogoSource] = useState('/images/logo.png')
+
+  useEffect(() => {
+    fetch('/api/settings').then(res => res.json()).then(data => {
+      if (data.logoUrl) setLogoSource(data.logoUrl)
+    }).catch(() => {})
+  }, [])
 
   const renderContent = () => {
     switch (activeSection) {
@@ -131,8 +138,9 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
             <h2 className="text-lg font-black tracking-tighter text-white flex items-center gap-3">
               <div className="relative size-8 flex items-center justify-center">
                 <img
-                  src="/images/logo.png"
+                  src={logoSource}
                   alt="ELBA7RAWY Logo"
+                  onError={() => setLogoSource('/images/logo.png')}
                   className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(251,191,36,0.2)]"
                 />
               </div>
@@ -211,7 +219,12 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
             </Button>
             <div className="flex items-center gap-2">
               <div className="lg:hidden size-6 flex items-center justify-center">
-                <img src="/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
+                <img 
+                  src={logoSource} 
+                  alt="Logo" 
+                  onError={() => setLogoSource('/images/logo.png')}
+                  className="w-full h-full object-contain" 
+                />
               </div>
               <h1 className="text-base font-black text-white tracking-tighter">
                 {navItems.find(i => i.id === activeSection)?.label}

@@ -18,6 +18,13 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [logoSource, setLogoSource] = useState('/images/logo.png')
+
+  useEffect(() => {
+    fetch('/api/settings').then(res => res.json()).then(data => {
+      if (data.logoUrl) setLogoSource(data.logoUrl)
+    }).catch(() => {})
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -85,8 +92,9 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
         <div className="text-center mb-8">
           <div className="size-20 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4 border border-white/10 shadow-2xl">
             <img
-              src="/images/logo.png"
+              src={logoSource}
               alt="Logo"
+              onError={() => setLogoSource('/images/logo.png')}
               className="w-14 h-14 object-contain"
             />
           </div>

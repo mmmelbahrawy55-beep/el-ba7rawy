@@ -35,6 +35,7 @@ export default function SettingsManager() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [logoPreview, setLogoPreview] = useState('/images/logo.png')
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -43,6 +44,7 @@ export default function SettingsManager() {
         if (res.ok) {
           const data = await res.json()
           setSettings(data)
+          if (data.logoUrl) setLogoPreview(data.logoUrl)
         } else {
           throw new Error('API error')
         }
@@ -203,13 +205,18 @@ export default function SettingsManager() {
             <div className="pt-2">
               <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest mr-1 mb-2 block">الشعار</Label>
               <div className="flex flex-col md:flex-row gap-4 bg-white/5 p-3 rounded-lg border border-white/5 items-start">
-                <div className="relative size-16 rounded-lg bg-black flex items-center justify-center overflow-hidden border border-white/10 group/logo">
-                  {settings.logoUrl ? (
-                    <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-contain p-2" />
+                <div className="relative size-32 rounded-3xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center group/logo">
+                  {settings?.logoUrl || logoPreview ? (
+                    <img
+                      src={settings?.logoUrl || logoPreview}
+                      alt="Logo Preview"
+                      onError={() => setLogoPreview('/images/logo.png')}
+                      className="w-full h-full object-contain p-4"
+                    />
                   ) : (
-                    <div className="flex flex-col items-center gap-1 text-muted-foreground">
-                      <img src="/images/logo.png" alt="Default Logo" className="w-8 h-8 object-contain opacity-50" />
-                      <span className="text-[6px] font-black uppercase">Default</span>
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                      <img src="/images/logo.png" alt="Default Logo" className="w-16 h-16 object-contain opacity-50" />
+                      <span className="text-[9px] font-black uppercase">Default</span>
                     </div>
                   )}
                   {uploading && (
