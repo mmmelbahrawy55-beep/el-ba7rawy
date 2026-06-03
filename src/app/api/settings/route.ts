@@ -40,24 +40,26 @@ export async function PUT(request: Request) {
     console.log("Saving settings with body size:", JSON.stringify(body).length);
 
     // Validate body size for Prisma/Postgres limits (Base64 can be large)
-    if (JSON.stringify(body).length > 4 * 1024 * 1024) { // 4MB limit
+    // Reducing limit slightly to be safer with database string limits
+    if (JSON.stringify(body).length > 2 * 1024 * 1024) { // 2MB limit
       return NextResponse.json({ 
         error: "حجم البيانات كبير جداً", 
-        details: "الرجاء اختيار صورة شعار أصغر حجماً" 
+        details: "الرجاء اختيار صورة شعار أصغر حجماً (أقل من 1 ميجا)" 
       }, { status: 413 });
     }
 
     const dataToUpdate = {
-      siteName: body.siteName,
-      siteNameEn: body.siteNameEn,
-      logoUrl: body.logoUrl,
-      whatsapp: body.whatsapp,
-      email: body.email,
-      address: body.address,
-      facebook: body.facebook,
-      instagram: body.instagram,
+      siteName: body.siteName || "البحراوي للدعاية والإعلان",
+      siteNameEn: body.siteNameEn || "El Bahrawy Advertising",
+      logoUrl: body.logoUrl || null,
+      whatsapp: body.whatsapp || null,
+      email: body.email || null,
+      address: body.address || null,
+      facebook: body.facebook || null,
+      instagram: body.instagram || null,
     };
 
+    console.log("Upserting settings with ID: site-settings");
     const updated = await db.setting.upsert({
       where: { id: "site-settings" },
       update: dataToUpdate,
@@ -66,21 +68,27 @@ export async function PUT(request: Request) {
         ...dataToUpdate,
       },
     });
+    console.log("Settings upserted successfully");
 
     // Update Gemini Key in AI Config if provided
     if (body.geminiKey !== undefined) {
-      await db.marketingAIConfig.upsert({
-        where: { id: "marketing-ai-config" },
-        update: {
-          keywords: body.geminiKey,
-          isEnabled: !!body.geminiKey,
-        },
-        create: {
-          id: "marketing-ai-config",
-          keywords: body.geminiKey,
-          isEnabled: !!body.geminiKey,
-        },
-      });
+      try {
+        await db.marketingAIConfig.upsert({
+          where: { id: "marketing-ai-config" },
+          update: {
+            keywords: body.geminiKey,
+            isEnabled: !!body.geminiKey,
+          },
+          create: {
+            id: "marketing-ai-config",
+            keywords: body.geminiKey,
+            isEnabled: !!body.geminiKey,
+          },
+        });
+      } catch (aiError) {
+        console.error("AI Config Update Error (Non-blocking):", aiError);
+        // We don't block settings update if AI config fails
+      }
     }
 
     return NextResponse.json({
