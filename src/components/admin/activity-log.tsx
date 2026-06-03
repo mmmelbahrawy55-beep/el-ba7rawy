@@ -13,9 +13,9 @@ import {
   Trash2,
   AlertCircle
 } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
+import { Card, CardContent } from '../ui/card'
+import { Badge } from '../ui/badge'
+import { Input } from '../ui/input'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
 

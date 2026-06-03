@@ -8,9 +8,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+} from "../ui/dialog"
+import { Button } from '../ui/button'
+import { Badge } from '../ui/badge'
 import { AlertCircle, Facebook, CheckCircle2, ShieldCheck, RefreshCw, XCircle, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
