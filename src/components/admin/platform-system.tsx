@@ -208,133 +208,8 @@ export default function PlatformSystem() {
     fetchClients()
   }, [])
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-6 animate-spin text-primary" />
-      </div>
-    )
-  }
-
-  return (
-    <div className="space-y-4 max-w-6xl mx-auto px-2">
-      <Tabs defaultValue="clients" className="w-full">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/5 p-3 rounded-xl border border-white/5 mb-4 backdrop-blur-md">
-          <TabsList className="bg-black/40 border border-white/10 p-1 h-10 rounded-lg">
-            <TabsTrigger value="clients" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-1.5 text-xs font-black transition-all">العملاء</TabsTrigger>
-            <TabsTrigger value="suppliers" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-1.5 text-xs font-black transition-all">الموردين</TabsTrigger>
-            <TabsTrigger value="system" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-1.5 text-xs font-black transition-all">النظام</TabsTrigger>
-          </TabsList>
-
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            <div className="relative flex-1 md:w-64">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground" />
-              <Input
-                placeholder="بحث..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-black/40 border-white/10 pr-9 h-9 text-xs font-bold rounded-lg focus:ring-primary/20"
-              />
-            </div>
-            <Button size="sm" onClick={() => setIsAddClientOpen(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground h-9 rounded-lg font-black text-xs px-4">
-              <Plus className="size-3 ml-1.5" /> عميل جديد
-            </Button>
-          </div>
-        </div>
-
-        <TabsContent value="clients" className="mt-0 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-            {/* Quick Stats */}
-            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
-              <div className="flex items-center gap-2 text-primary mb-1">
-                <Users className="size-3" />
-                <span className="text-[9px] font-black uppercase tracking-widest">إجمالي العملاء</span>
-              </div>
-              <p className="text-xl font-black text-white">{clients.length}</p>
-            </Card>
-            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
-              <div className="flex items-center gap-2 text-emerald-500 mb-1">
-                <DollarSign className="size-3" />
-                <span className="text-[9px] font-black uppercase tracking-widest">المحصل</span>
-              </div>
-              <p className="text-xl font-black text-white">{clients.reduce((acc, c) => acc + c.totalPaid, 0).toLocaleString()} ج.م</p>
-            </Card>
-            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
-              <div className="flex items-center gap-2 text-red-500 mb-1">
-                <TrendingUp className="size-3" />
-                <span className="text-[9px] font-black uppercase tracking-widest">المديونيات</span>
-              </div>
-              <p className="text-xl font-black text-white">{clients.reduce((acc, c) => acc + c.totalDebt, 0).toLocaleString()} ج.م</p>
-            </Card>
-            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
-              <div className="flex items-center gap-2 text-blue-500 mb-1">
-                <Package className="size-3" />
-                <span className="text-[9px] font-black uppercase tracking-widest">إجمالي الطلبات</span>
-              </div>
-              <p className="text-xl font-black text-white">{clients.reduce((acc, c) => acc + c.totalOrders, 0)}</p>
-            </Card>
-          </div>
-
-          <Card className="bg-white/5 border-white/5 rounded-xl overflow-hidden backdrop-blur-md">
-            <Table>
-              <TableHeader className="bg-black/40">
-                <TableRow className="border-white/5 hover:bg-transparent">
-                  <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">العميل</TableHead>
-                  <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">التواصل</TableHead>
-                  <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">الطلبات</TableHead>
-                  <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">الحالة المالية</TableHead>
-                  <TableHead className="text-left text-[10px] font-black text-muted-foreground uppercase py-3">إجراءات</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {clients.filter(c => c.name.includes(searchQuery) || c.phone.includes(searchQuery)).map((client) => (
-                  <TableRow key={client.id} className="border-white/5 hover:bg-white/5 transition-colors group">
-                    <TableCell className="py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-xs">{client.name[0]}</div>
-                        <span className="font-bold text-xs text-white">{client.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-3">
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-[10px] font-bold text-white flex items-center gap-1.5"><Phone className="size-2.5 text-muted-foreground" /> {client.phone}</span>
-                        <span className="text-[8px] text-muted-foreground">{client.email || 'لا يوجد بريد'}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-3">
-                      <Badge variant="outline" className="bg-white/5 border-white/10 text-[9px] font-black rounded-md px-2 py-0.5">{client.totalOrders} طلب</Badge>
-                    </TableCell>
-                    <TableCell className="py-3">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center justify-between text-[9px] font-bold">
-                          <span className="text-emerald-500">تم دفع: {client.totalPaid.toLocaleString()}</span>
-                        </div>
-                        <div className="w-24 bg-black/40 h-1 rounded-full overflow-hidden">
-                          <div 
-                            className="bg-emerald-500 h-full" 
-                            style={{ width: `${(client.totalPaid / (client.totalPaid + client.totalDebt || 1)) * 100}%` }}
-                          />
-                        </div>
-                        {client.totalDebt > 0 && (
-                          <span className="text-red-500 text-[9px] font-bold">متبقي: {client.totalDebt.toLocaleString()}</span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-3 text-left">
-                      <Button variant="ghost" size="sm" onClick={() => setSelectedClient(client)} className="h-8 w-8 p-0 hover:bg-white/10 rounded-lg text-muted-foreground hover:text-white transition-colors">
-                        <ExternalLink className="size-3.5" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  )
-}
+  const handleAddSupplier = async () => {
+    if (!newSupplier.name || !newSupplier.phone) {
       toast.error('يرجى ملء البيانات الأساسية للمورد')
       return
     }
@@ -416,7 +291,6 @@ export default function PlatformSystem() {
       toast.error('حدث خطأ أثناء الإضافة')
     }
   }
-
 
   const handleDownloadBackup = async () => {
     setIsBackupLoading(true)
@@ -702,331 +576,344 @@ export default function PlatformSystem() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-10 animate-spin text-primary" />
+        <Loader2 className="size-6 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-      <div className="space-y-8 pb-20">
-      <div className="flex items-center justify-between mb-12">
-        <div>
-          <h1 className="text-3xl font-black text-white mb-2">سيستم المنصة</h1>
-          <p className="text-muted-foreground font-bold">إدارة البنية التحتية لـ {settings?.siteName || 'ELBA7RAWY'}</p>
-        </div>
-      </div>
-        {/* Header Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-none shadow-sm bg-white/5 backdrop-blur-md border border-white/10 overflow-hidden group hover:shadow-md transition-all duration-300">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="bg-blue-500/10 p-3 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                <Users className="size-6 text-blue-500" />
-              </div>
-              <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 font-bold">إجمالي العملاء</Badge>
-            </div>
-            <div className="mt-4">
-              <h3 className="text-3xl font-black text-white">{stats.totalClients}</h3>
-              <p className="text-xs text-muted-foreground font-bold mt-1">عميل مسجل في المنصة</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-none shadow-sm bg-white/5 backdrop-blur-md border border-white/10 overflow-hidden group hover:shadow-md transition-all duration-300">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="bg-emerald-500/10 p-3 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                <DollarSign className="size-6 text-emerald-500" />
-              </div>
-              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 font-bold">إجمالي التحصيل</Badge>
-            </div>
-            <div className="mt-4">
-              <h3 className="text-3xl font-black text-white">{stats.totalRevenue.toLocaleString()} ج.م</h3>
-              <p className="text-xs text-emerald-500 font-bold mt-1 flex items-center gap-1">
-                <ArrowUpRight className="size-3" />
-                صافي الإيرادات
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-none shadow-sm bg-white/5 backdrop-blur-md border border-white/10 overflow-hidden group hover:shadow-md transition-all duration-300">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="bg-red-500/10 p-3 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                <AlertCircle className="size-6 text-red-500" />
-              </div>
-              <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/20 font-bold">إجمالي المديونية</Badge>
-            </div>
-            <div className="mt-4">
-              <h3 className="text-3xl font-black text-white">{stats.totalDebt.toLocaleString()} ج.م</h3>
-              <p className="text-xs text-red-500 font-bold mt-1 flex items-center gap-1">
-                <ArrowDownRight className="size-3" />
-                ديون معلقة
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-none shadow-sm bg-white/5 backdrop-blur-md border border-white/10 overflow-hidden group hover:shadow-md transition-all duration-300">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="bg-amber-500/10 p-3 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                <TrendingUp className="size-6 text-amber-500" />
-              </div>
-              <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20 font-bold">إجمالي الطلبات</Badge>
-            </div>
-            <div className="mt-4">
-              <h3 className="text-3xl font-black text-white">{stats.activeOrders}</h3>
-              <p className="text-xs text-muted-foreground font-bold mt-1">عملية مسجلة</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
+    <div className="space-y-4 max-w-6xl mx-auto px-2">
       <Tabs defaultValue="clients" className="w-full">
-        <div className="flex justify-center mb-8">
-          <TabsList className="bg-white/5 p-1 rounded-2xl h-14 w-full max-w-2xl border border-white/10 backdrop-blur-md">
-            <TabsTrigger value="clients" className="rounded-xl font-black text-sm flex-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              إدارة العملاء
-            </TabsTrigger>
-            <TabsTrigger value="suppliers" className="rounded-xl font-black text-sm flex-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Briefcase className="size-4 ml-2" />
-              شركات التوريد
-            </TabsTrigger>
-            <TabsTrigger value="maintenance" className="rounded-xl font-black text-sm flex-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Activity className="size-4 ml-2" />
-              صيانة النظام
-            </TabsTrigger>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/5 p-3 rounded-xl border border-white/5 mb-4 backdrop-blur-md">
+          <TabsList className="bg-black/40 border border-white/10 p-1 h-10 rounded-lg">
+            <TabsTrigger value="clients" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-1.5 text-xs font-black transition-all">العملاء</TabsTrigger>
+            <TabsTrigger value="suppliers" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-1.5 text-xs font-black transition-all">الموردين</TabsTrigger>
+            <TabsTrigger value="system" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-1.5 text-xs font-black transition-all">النظام</TabsTrigger>
           </TabsList>
-        </div>
 
-        <TabsContent value="suppliers" className="space-y-8 animate-in fade-in duration-500">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="relative flex-1 min-w-[300px]">
-              <Search className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              <Input 
-                placeholder="ابحث عن شركة أو مورد..." 
-                className="pr-11 h-12 bg-white/5 border-white/10 rounded-xl font-bold text-white placeholder:text-muted-foreground/30"
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="relative flex-1 md:w-64">
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground" />
+              <Input
+                placeholder="بحث..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-black/40 border-white/10 pr-9 h-9 text-xs font-bold rounded-lg focus:ring-primary/20"
               />
             </div>
-            <Dialog open={isAddSupplierOpen} onOpenChange={setIsAddSupplierOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 h-12 font-bold shadow-lg shadow-primary/20 flex gap-2">
-                  <Plus className="size-5" />
-                  إضافة شركة توريد
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="font-arabic bg-[#0c0c0c] border-white/10 text-white" dir="rtl">
-                <DialogHeader>
-                  <DialogTitle className="text-right font-black">إضافة شركة توريد جديدة</DialogTitle>
-                  <DialogDescription className="text-right">أدخل بيانات الشركة والمبالغ المستحقة.</DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label className="text-right font-bold">اسم الشركة / المورد</Label>
-                    <Input 
-                      placeholder="أدخل اسم الشركة" 
-                      className="text-right font-bold bg-white/5 border-white/10"
-                      value={newSupplier.name}
-                      onChange={(e) => setNewSupplier({...newSupplier, name: e.target.value})}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label className="text-right font-bold">رقم الهاتف</Label>
-                    <Input 
-                      placeholder="01xxxxxxxxx" 
-                      className="text-right font-bold bg-white/5 border-white/10"
-                      value={newSupplier.phone}
-                      onChange={(e) => setNewSupplier({...newSupplier, phone: e.target.value})}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label className="text-right font-bold">تصنيف البضاعة</Label>
-                    <Input 
-                      placeholder="مثال: خامات طباعة، إضاءة..." 
-                      className="text-right font-bold bg-white/5 border-white/10"
-                      value={newSupplier.category}
-                      onChange={(e) => setNewSupplier({...newSupplier, category: e.target.value})}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label className="text-right font-bold">دفعنا كام؟</Label>
-                      <Input 
-                        type="number"
-                        placeholder="0.00" 
-                        className="text-right font-bold bg-white/5 border-white/10"
-                        value={newSupplier.paidAmount}
-                        onChange={(e) => setNewSupplier({...newSupplier, paidAmount: e.target.value})}
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label className="text-right font-bold">باقي لهم كام؟</Label>
-                      <Input 
-                        type="number"
-                        placeholder="0.00" 
-                        className="text-right font-bold bg-white/5 border-white/10"
-                        value={newSupplier.remainingAmount}
-                        onChange={(e) => setNewSupplier({...newSupplier, remainingAmount: e.target.value})}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button onClick={handleAddSupplier} className="w-full bg-primary font-bold">حفظ المورد</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <Button size="sm" onClick={() => setIsAddClientOpen(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground h-9 rounded-lg font-black text-xs px-4">
+              <Plus className="size-3 ml-1.5" /> عميل جديد
+            </Button>
+          </div>
+        </div>
+
+        <TabsContent value="clients" className="mt-0 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            {/* Quick Stats */}
+            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-primary mb-1">
+                <Users className="size-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">إجمالي العملاء</span>
+              </div>
+              <p className="text-xl font-black text-white">{stats.totalClients}</p>
+            </Card>
+            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-emerald-500 mb-1">
+                <DollarSign className="size-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">المحصل</span>
+              </div>
+              <p className="text-xl font-black text-white">{stats.totalRevenue.toLocaleString()} ج.م</p>
+            </Card>
+            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-red-500 mb-1">
+                <TrendingUp className="size-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">المديونيات</span>
+              </div>
+              <p className="text-xl font-black text-white">{stats.totalDebt.toLocaleString()} ج.م</p>
+            </Card>
+            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-blue-500 mb-1">
+                <Package className="size-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">إجمالي الطلبات</span>
+              </div>
+              <p className="text-xl font-black text-white">{stats.activeOrders}</p>
+            </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <Card className="border-none shadow-sm overflow-hidden bg-white/5 backdrop-blur-md border border-white/10">
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader className="bg-white/5">
-                  <TableRow className="border-white/10">
-                    <TableHead className="text-right font-black text-muted-foreground">الشركة / المورد</TableHead>
-                    <TableHead className="text-right font-black text-muted-foreground">رقم الهاتف</TableHead>
-                    <TableHead className="text-right font-black text-muted-foreground">التصنيف</TableHead>
-                    <TableHead className="text-right font-black text-muted-foreground">المدفوع</TableHead>
-                    <TableHead className="text-right font-black text-muted-foreground">المتبقي</TableHead>
-                    <TableHead className="text-left font-black text-muted-foreground">الإجراءات</TableHead>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <Card className="lg:col-span-2 bg-white/5 border-white/5 rounded-xl overflow-hidden backdrop-blur-md">
+              <Table>
+                <TableHeader className="bg-black/40">
+                  <TableRow className="border-white/5 hover:bg-transparent">
+                    <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">العميل</TableHead>
+                    <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">التواصل</TableHead>
+                    <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">الطلبات</TableHead>
+                    <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">الحالة المالية</TableHead>
+                    <TableHead className="text-left text-[10px] font-black text-muted-foreground uppercase py-3">إجراءات</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredSuppliers.map((supplier) => (
+                  {filteredClients.map((client) => (
                     <TableRow 
-                      key={supplier.id}
-                      className={`group hover:bg-white/5 border-white/5 transition-colors cursor-pointer ${selectedSupplier?.id === supplier.id ? 'bg-primary/10' : ''}`}
-                      onClick={() => setSelectedSupplier(supplier)}
+                      key={client.id} 
+                      className={`border-white/5 hover:bg-white/5 transition-colors group cursor-pointer ${selectedClient?.id === client.id ? 'bg-primary/10' : ''}`}
+                      onClick={() => setSelectedClient(client)}
                     >
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="size-10 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center font-black text-xs border border-blue-500/20">
-                            {supplier.name[0]}
-                          </div>
-                          <p className="font-black text-white text-sm">{supplier.name}</p>
+                      <TableCell className="py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-xs">{client.name[0]}</div>
+                          <span className="font-bold text-xs text-white">{client.name}</span>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <p className="font-bold text-muted-foreground text-sm">{supplier.phone}</p>
+                      <TableCell className="py-3">
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-[10px] font-bold text-white flex items-center gap-1.5"><Phone className="size-2.5 text-muted-foreground" /> {client.phone}</span>
+                          <span className="text-[8px] text-muted-foreground">{client.email || 'لا يوجد بريد'}</span>
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <p className="font-bold text-slate-200 text-sm">{supplier.category}</p>
+                      <TableCell className="py-3">
+                        <Badge variant="outline" className="bg-white/5 border-white/10 text-[9px] font-black rounded-md px-2 py-0.5">{client.totalOrders} طلب</Badge>
                       </TableCell>
-                      <TableCell>
-                        <p className="font-black text-emerald-500 text-sm">{supplier.totalPaid.toLocaleString()} ج.م</p>
+                      <TableCell className="py-3">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center justify-between text-[9px] font-bold">
+                            <span className="text-emerald-500">{client.totalPaid.toLocaleString()}</span>
+                            <span className="text-red-500">{client.totalDebt.toLocaleString()}</span>
+                          </div>
+                          <div className="w-24 bg-black/40 h-1 rounded-full overflow-hidden">
+                            <div 
+                              className="bg-emerald-500 h-full" 
+                              style={{ width: `${(client.totalPaid / (client.totalPaid + client.totalDebt || 1)) * 100}%` }}
+                            />
+                          </div>
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <p className={`font-black text-sm ${supplier.totalDebt > 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
-                          {supplier.totalDebt.toLocaleString()} ج.م
-                        </p>
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="ghost" size="icon" className="size-8 text-muted-foreground hover:text-white">
-                          <ExternalLink className="size-4" />
+                      <TableCell className="py-3 text-left">
+                        <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setSelectedClient(client); }} className="h-8 w-8 p-0 hover:bg-white/10 rounded-lg text-muted-foreground hover:text-white transition-colors">
+                          <ExternalLink className="size-3.5" />
                         </Button>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
-                  </Table>
-                </div>
-              </Card>
-            </div>
+              </Table>
+            </Card>
 
-            <div className="space-y-6">
-              {selectedSupplier ? (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                  <Card className="border-none shadow-sm bg-white/5 border border-white/10 overflow-hidden">
-                    <CardHeader className="bg-white/5 pb-6 border-b border-white/10">
-                      <CardTitle className="text-lg font-black text-white">{selectedSupplier.name}</CardTitle>
-                      <CardDescription className="font-bold text-muted-foreground">إدارة حسابات المورد المالية</CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-6">
-                      <div className="grid grid-cols-2 gap-4 mb-8">
-                        <div className="bg-emerald-500/10 p-4 rounded-2xl border border-emerald-500/10">
-                          <p className="text-[10px] font-black text-emerald-400 mb-1">إجمالي ما تم دفعه</p>
-                          <p className="text-xl font-black text-emerald-500">{selectedSupplier.totalPaid.toLocaleString()} ج.م</p>
+            <div className="space-y-4">
+              {selectedClient ? (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                  <Card className="bg-white/5 border-white/5 rounded-xl overflow-hidden backdrop-blur-md">
+                    <CardHeader className="p-4 border-b border-white/5 bg-black/20">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="size-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-black text-lg">{selectedClient.name[0]}</div>
+                          <div>
+                            <h3 className="text-sm font-black text-white">{selectedClient.name}</h3>
+                            <p className="text-[10px] text-muted-foreground font-bold">آخر نشاط: {new Date(selectedClient.lastActivity).toLocaleDateString('ar-EG')}</p>
+                          </div>
                         </div>
-                        <div className="bg-red-500/10 p-4 rounded-2xl border border-red-500/10">
-                          <p className="text-[10px] font-black text-red-400 mb-1">المتبقي لهم</p>
-                          <p className="text-xl font-black text-red-500">{selectedSupplier.totalDebt.toLocaleString()} ج.م</p>
+                        <div className="flex gap-1">
+                          <Button variant="outline" size="icon" className="size-8 rounded-lg border-white/10 bg-white/5 text-white hover:bg-white/10" onClick={handlePrint}>
+                            <Printer className="size-3.5" />
+                          </Button>
+                          <Button variant="outline" size="icon" className="size-8 rounded-lg border-white/10 bg-white/5 text-red-500 hover:bg-red-500/10" onClick={() => handleDeleteClient(selectedClient.id)}>
+                            <Trash2 className="size-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-4 space-y-4">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/10 text-center">
+                          <p className="text-[8px] font-black text-emerald-400 uppercase mb-1">تم تحصيله</p>
+                          <p className="text-sm font-black text-emerald-500">{selectedClient.totalPaid.toLocaleString()} ج.م</p>
+                        </div>
+                        <div className="bg-red-500/10 p-3 rounded-xl border border-red-500/10 text-center">
+                          <p className="text-[8px] font-black text-red-400 uppercase mb-1">متبقي مديونية</p>
+                          <p className="text-sm font-black text-red-500">{selectedClient.totalDebt.toLocaleString()} ج.م</p>
                         </div>
                       </div>
 
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-black text-white text-sm">آخر المعاملات</h4>
-                          <Dialog open={isAddSupplierTransactionOpen} onOpenChange={setIsAddSupplierTransactionOpen}>
-                            <DialogTrigger asChild>
-                              <Button size="sm" variant="ghost" className="text-primary hover:bg-primary/5 font-bold h-8 px-2">
-                                <Plus className="size-4 ml-1" />
-                                إضافة عملية
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="font-arabic bg-[#0c0c0c] border-white/10 text-white" dir="rtl">
-                              <DialogHeader>
-                                <DialogTitle className="text-right font-black">إضافة عملية مالية للمورد</DialogTitle>
-                                <DialogDescription className="text-right text-muted-foreground">سجل دفعة جديدة للمورد أو فاتورة مديونية من {selectedSupplier.name}</DialogDescription>
-                              </DialogHeader>
-                              <div className="grid gap-4 py-4">
-                                <div className="grid gap-2">
-                                  <Label className="text-right font-bold">نوع العملية</Label>
-                                  <Select 
-                                    value={newTransaction.type} 
-                                    onValueChange={(val: any) => setNewTransaction({...newTransaction, type: val})}
-                                  >
-                                    <SelectTrigger className="text-right font-bold bg-white/5 border-white/10">
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent className="font-arabic bg-[#0c0c0c] border-white/10 text-white">
-                                      <SelectItem value="payment">دفعة للمورد (خروج نقدية)</SelectItem>
-                                      <SelectItem value="debt">فاتورة بضاعة (مديونية لنا)</SelectItem>
-                                    </SelectContent>
-                                  </Select>
+                      <Tabs defaultValue="transactions" className="w-full">
+                        <TabsList className="grid grid-cols-2 bg-black/40 p-1 h-9 rounded-lg border border-white/5">
+                          <TabsTrigger value="transactions" className="text-[10px] font-black rounded-md">المعاملات</TabsTrigger>
+                          <TabsTrigger value="orders" className="text-[10px] font-black rounded-md">الطلبات</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="transactions" className="mt-3 space-y-2">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-black text-white">السجل المالي</span>
+                            <Button size="sm" variant="ghost" className="h-6 text-[10px] font-black text-primary p-0" onClick={() => setIsAddTransactionOpen(true)}>
+                              <Plus className="size-3 ml-1" /> إضافة
+                            </Button>
+                          </div>
+                          <div className="space-y-1.5 max-h-[200px] overflow-y-auto pr-1 custom-scrollbar">
+                            {selectedClient.transactions?.map(t => (
+                              <div key={t.id} className="flex items-center justify-between p-2 rounded-lg bg-white/[0.02] border border-white/5">
+                                <div className="flex items-center gap-2">
+                                  <div className={`size-6 rounded-md flex items-center justify-center ${t.type === 'payment' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
+                                    {t.type === 'payment' ? <ArrowDownRight className="size-3" /> : <ArrowUpRight className="size-3" />}
+                                  </div>
+                                  <div>
+                                    <p className="text-[9px] font-black text-white leading-tight">{t.description}</p>
+                                    <p className="text-[7px] text-muted-foreground font-bold">{new Date(t.date).toLocaleDateString('ar-EG')}</p>
+                                  </div>
                                 </div>
-                                <div className="grid gap-2">
-                                  <Label className="text-right font-bold">المبلغ</Label>
-                                  <Input 
-                                    type="number" 
-                                    placeholder="0.00" 
-                                    className="text-right font-bold bg-white/5 border-white/10"
-                                    value={newTransaction.amount}
-                                    onChange={(e) => setNewTransaction({...newTransaction, amount: e.target.value})}
-                                  />
+                                <span className={`text-[10px] font-black ${t.type === 'payment' ? 'text-emerald-500' : 'text-red-500'}`}>
+                                  {t.type === 'payment' ? '+' : '-'}{t.amount.toLocaleString()}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </TabsContent>
+                        <TabsContent value="orders" className="mt-3 space-y-2">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-black text-white">الطلبات الحالية</span>
+                            <Button size="sm" variant="ghost" className="h-6 text-[10px] font-black text-primary p-0" onClick={() => setIsAddOrderOpen(true)}>
+                              <Plus className="size-3 ml-1" /> طلب
+                            </Button>
+                          </div>
+                          <div className="space-y-1.5 max-h-[200px] overflow-y-auto pr-1 custom-scrollbar">
+                            {selectedClient.orders?.map(o => (
+                              <div key={o.id} className="p-2 rounded-lg bg-white/[0.02] border border-white/5">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-[10px] font-black text-white">{o.productName}</span>
+                                  <Badge className="text-[7px] h-4 px-1 bg-amber-500/10 text-amber-500 border-amber-500/20">{o.status}</Badge>
                                 </div>
-                                <div className="grid gap-2">
-                                  <Label className="text-right font-bold">البيان / تفاصيل البضاعة</Label>
-                                  <Input 
-                                    placeholder="مثال: دفعة من حساب خامات شهر 5" 
-                                    className="text-right font-bold bg-white/5 border-white/10"
-                                    value={newTransaction.description}
-                                    onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                                  />
+                                <div className="flex justify-between text-[8px] text-muted-foreground font-bold">
+                                  <span>{o.quantity} | {o.size}</span>
+                                  <span className="text-primary">{o.estimatedPrice?.toLocaleString()} ج.م</span>
                                 </div>
                               </div>
-                              <DialogFooter>
-                                <Button onClick={handleAddSupplierTransaction} className="w-full bg-primary font-bold">تأكيد العملية</Button>
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
-                        </div>
+                            ))}
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ) : (
+                <div className="h-full min-h-[400px] flex flex-col items-center justify-center p-6 bg-white/5 rounded-xl border-2 border-dashed border-white/10 text-center backdrop-blur-md">
+                  <Users className="size-10 text-white/10 mb-3" />
+                  <h3 className="text-xs font-black text-white mb-1">اختر عميلاً للمتابعة</h3>
+                  <p className="text-[10px] text-muted-foreground font-bold max-w-[150px]">قم باختيار عميل من القائمة لعرض تفاصيله</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </TabsContent>
 
-                        <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                          {selectedSupplier.transactions?.map((t) => (
-                            <div key={t.id} className="flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/[0.02]">
+        <TabsContent value="suppliers" className="mt-0 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-blue-500 mb-1">
+                <Briefcase className="size-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">إجمالي الموردين</span>
+              </div>
+              <p className="text-xl font-black text-white">{suppliers.length}</p>
+            </Card>
+            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-emerald-500 mb-1">
+                <DollarSign className="size-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">إجمالي ما دفعناه</span>
+              </div>
+              <p className="text-xl font-black text-white">{suppliers.reduce((acc, s) => acc + s.totalPaid, 0).toLocaleString()} ج.م</p>
+            </Card>
+            <Card className="bg-white/5 border-white/5 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-red-500 mb-1">
+                <AlertCircle className="size-3" />
+                <span className="text-[9px] font-black uppercase tracking-widest">إجمالي المديونية</span>
+              </div>
+              <p className="text-xl font-black text-white">{suppliers.reduce((acc, s) => acc + s.totalDebt, 0).toLocaleString()} ج.م</p>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <Card className="lg:col-span-2 bg-white/5 border-white/5 rounded-xl overflow-hidden backdrop-blur-md">
+              <Table>
+                <TableHeader className="bg-black/40">
+                  <TableRow className="border-white/5 hover:bg-transparent">
+                    <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">الشركة / المورد</TableHead>
+                    <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">التصنيف</TableHead>
+                    <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">المدفوع</TableHead>
+                    <TableHead className="text-right text-[10px] font-black text-muted-foreground uppercase py-3">المتبقي</TableHead>
+                    <TableHead className="text-left text-[10px] font-black text-muted-foreground uppercase py-3">إجراءات</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredSuppliers.map((supplier) => (
+                    <TableRow 
+                      key={supplier.id} 
+                      className={`border-white/5 hover:bg-white/5 transition-colors group cursor-pointer ${selectedSupplier?.id === supplier.id ? 'bg-primary/10' : ''}`}
+                      onClick={() => setSelectedSupplier(supplier)}
+                    >
+                      <TableCell className="py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 font-black text-xs">{supplier.name[0]}</div>
+                          <span className="font-bold text-xs text-white">{supplier.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-3">
+                        <span className="text-[10px] font-bold text-white">{supplier.category}</span>
+                      </TableCell>
+                      <TableCell className="py-3">
+                        <span className="text-[10px] font-black text-emerald-500">{supplier.totalPaid.toLocaleString()} ج.م</span>
+                      </TableCell>
+                      <TableCell className="py-3">
+                        <span className={`text-[10px] font-black ${supplier.totalDebt > 0 ? 'text-red-500' : 'text-muted-foreground'}`}>{supplier.totalDebt.toLocaleString()} ج.م</span>
+                      </TableCell>
+                      <TableCell className="py-3 text-left">
+                        <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setSelectedSupplier(supplier); }} className="h-8 w-8 p-0 hover:bg-white/10 rounded-lg text-muted-foreground hover:text-white transition-colors">
+                          <ExternalLink className="size-3.5" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
+
+            <div className="space-y-4">
+              {selectedSupplier ? (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                  <Card className="bg-white/5 border-white/5 rounded-xl overflow-hidden backdrop-blur-md">
+                    <CardHeader className="p-4 border-b border-white/5 bg-black/20">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="size-10 rounded-xl bg-blue-500 flex items-center justify-center text-white font-black text-lg">{selectedSupplier.name[0]}</div>
+                          <div>
+                            <h3 className="text-sm font-black text-white">{selectedSupplier.name}</h3>
+                            <p className="text-[10px] text-muted-foreground font-bold">{selectedSupplier.phone}</p>
+                          </div>
+                        </div>
+                        <Button size="sm" variant="ghost" className="h-8 text-[10px] font-black text-primary" onClick={() => setIsAddSupplierTransactionOpen(true)}>
+                          <Plus className="size-3 ml-1" /> إضافة عملية
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-4 space-y-4">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/10 text-center">
+                          <p className="text-[8px] font-black text-emerald-400 uppercase mb-1">دفعنا لهم</p>
+                          <p className="text-sm font-black text-emerald-500">{selectedSupplier.totalPaid.toLocaleString()} ج.م</p>
+                        </div>
+                        <div className="bg-red-500/10 p-3 rounded-xl border border-red-500/10 text-center">
+                          <p className="text-[8px] font-black text-red-400 uppercase mb-1">باقي لهم</p>
+                          <p className="text-sm font-black text-red-500">{selectedSupplier.totalDebt.toLocaleString()} ج.م</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <span className="text-[10px] font-black text-white">آخر المعاملات</span>
+                        <div className="space-y-1.5 max-h-[250px] overflow-y-auto pr-1 custom-scrollbar">
+                          {selectedSupplier.transactions?.map(t => (
+                            <div key={t.id} className="flex items-center justify-between p-2 rounded-lg bg-white/[0.02] border border-white/5">
                               <div>
-                                <p className="text-xs font-black text-white">{t.description}</p>
-                                <p className="text-[10px] text-muted-foreground font-bold">{new Date(t.date).toLocaleDateString('ar-EG')}</p>
+                                <p className="text-[9px] font-black text-white leading-tight">{t.description}</p>
+                                <p className="text-[7px] text-muted-foreground font-bold">{new Date(t.date).toLocaleDateString('ar-EG')}</p>
                               </div>
-                              <p className={`text-sm font-black ${t.type === 'payment' ? 'text-emerald-500' : 'text-red-500'}`}>
+                              <span className={`text-[10px] font-black ${t.type === 'payment' ? 'text-emerald-500' : 'text-red-500'}`}>
                                 {t.type === 'payment' ? '-' : '+'}{t.amount.toLocaleString()}
-                              </p>
+                              </span>
                             </div>
                           ))}
                         </div>
@@ -1035,586 +922,237 @@ export default function PlatformSystem() {
                   </Card>
                 </motion.div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center p-12 bg-white/5 rounded-[2rem] border-2 border-dashed border-white/10">
-                  <Briefcase className="size-12 text-white/10 mb-4" />
-                  <p className="text-sm font-bold text-muted-foreground text-center">اختر شركة من القائمة لعرض تفاصيل الحساب المالي</p>
+                <div className="h-full min-h-[300px] flex flex-col items-center justify-center p-6 bg-white/5 rounded-xl border-2 border-dashed border-white/10 text-center backdrop-blur-md">
+                  <Briefcase className="size-10 text-white/10 mb-3" />
+                  <h3 className="text-xs font-black text-white mb-1">اختر موردًا للمتابعة</h3>
+                  <p className="text-[10px] text-muted-foreground font-bold max-w-[150px]">قم باختيار مورد من القائمة لعرض تفاصيل حسابه</p>
                 </div>
               )}
             </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="maintenance" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Health Card */}
-            <Card className="border-none shadow-xl bg-white/5 backdrop-blur-md border border-white/10 rounded-[3rem] overflow-hidden group">
-              <CardContent className="p-10 space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="size-16 rounded-[2rem] bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-emerald-500/20">
-                    <Activity className="size-8" />
-                  </div>
-                  <Badge className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-none ${
-                    systemHealth?.status === 'healthy' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'
-                  }`}>
-                    {systemHealth?.status === 'healthy' ? 'نظام مستقر' : 'تنبيه بالنظام'}
-                  </Badge>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-black text-white">حالة الخادم</h3>
-                  <p className="text-muted-foreground font-bold mt-2">مراقبة فورية لأداء السيرفر وقاعدة البيانات</p>
-                </div>
-                <div className="space-y-4 pt-4 border-t border-white/10">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-muted-foreground">قاعدة البيانات</span>
-                    <span className={`text-sm font-black ${systemHealth?.database === 'connected' ? 'text-emerald-500' : 'text-red-500'}`}>
-                      {systemHealth?.database === 'connected' ? 'متصلة' : 'منقطعة'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-muted-foreground">مدة التشغيل</span>
-                    <span className="text-sm font-black text-white" dir="ltr">
-                      {Math.floor(systemHealth?.stats?.uptime / 3600 || 0)}h {Math.floor((systemHealth?.stats?.uptime % 3600) / 60 || 0)}m
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
+        <TabsContent value="system" className="mt-0 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <Card className="bg-white/5 border-white/5 rounded-xl p-4 flex items-center gap-4">
+              <div className="size-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-emerald-500/20">
+                <Activity className="size-5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-muted-foreground uppercase">حالة النظام</p>
+                <p className="text-sm font-black text-white">{systemHealth?.status === 'healthy' ? 'مستقر وآمن' : 'يحتاج فحص'}</p>
+              </div>
             </Card>
-
-            {/* Backup Card */}
-            <Card className="border-none shadow-xl bg-white/5 backdrop-blur-md border border-white/10 rounded-[3rem] overflow-hidden group">
-              <CardContent className="p-10 space-y-6">
-                <div className="size-16 rounded-[2rem] bg-blue-500/10 text-blue-500 flex items-center justify-center border border-blue-500/20">
-                  <Database className="size-8" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-black text-white">نسخة احتياطية</h3>
-                  <p className="text-muted-foreground font-bold mt-2">تأمين بيانات الموقع وتصديرها كملف خارجي</p>
-                </div>
-                <div className="pt-4">
-                  <Button 
-                    onClick={handleDownloadBackup}
-                    disabled={isBackupLoading}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black h-14 rounded-2xl shadow-xl shadow-blue-600/20"
-                  >
-                    {isBackupLoading ? <Loader2 className="animate-spin" /> : (
-                      <>
-                        <HardDrive className="ml-2 size-5" />
-                        تصدير كافة البيانات
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </CardContent>
+            <Card className="bg-white/5 border-white/5 rounded-xl p-4 flex items-center gap-4">
+              <div className="size-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center border border-blue-500/20">
+                <Database className="size-5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-muted-foreground uppercase">قاعدة البيانات</p>
+                <p className="text-sm font-black text-white">{systemHealth?.database === 'connected' ? 'متصلة' : 'منقطعة'}</p>
+              </div>
             </Card>
-
-            {/* Security Card */}
-            <Card className="border-none shadow-xl bg-white/5 backdrop-blur-md border border-white/10 rounded-[3rem] overflow-hidden group">
-              <CardContent className="p-10 space-y-6">
-                <div className="size-16 rounded-[2rem] bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
-                  <ShieldAlert className="size-8" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-black text-white">أمن المنصة</h3>
-                  <p className="text-muted-foreground font-bold mt-2">جدار الحماية ومراقبة محاولات الاختراق</p>
-                </div>
-                <div className="flex items-center gap-3 p-4 bg-amber-500/10 rounded-2xl border border-amber-500/20">
-                  <div className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-xs font-black text-amber-500">حماية Rate Limiting نشطة</span>
-                </div>
-              </CardContent>
+            <Card className="bg-white/5 border-white/5 rounded-xl p-4 flex items-center gap-4">
+              <div className="size-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
+                <ShieldAlert className="size-5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-muted-foreground uppercase">الأمان</p>
+                <p className="text-sm font-black text-white">Rate Limit: نشط</p>
+              </div>
             </Card>
           </div>
-        </TabsContent>
 
-        <TabsContent value="clients" className="space-y-8 animate-in fade-in duration-500">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="relative flex-1 min-w-[300px]">
-              <Search className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              <Input 
-                placeholder="ابحث عن عميل بالاسم أو رقم الهاتف..." 
-                className="pr-11 h-12 bg-white/5 border-white/10 rounded-xl font-bold text-white placeholder:text-muted-foreground/30"
-                value={searchQuery}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <Dialog open={isAddClientOpen} onOpenChange={setIsAddClientOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 h-12 font-bold shadow-lg shadow-primary/20 flex gap-2">
-                  <Plus className="size-5" />
-                  إضافة عميل جديد
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] font-arabic bg-[#0c0c0c] border-white/10 text-white" dir="rtl">
-                <DialogHeader>
-                  <DialogTitle className="text-xl font-black text-white text-right">إضافة عميل جديد</DialogTitle>
-                  <DialogDescription className="text-right text-muted-foreground">أدخل بيانات العميل والطلب الحالي لتسجيله في النظام.</DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name" className="text-right font-bold">اسم العميل</Label>
-                    <Input 
-                      id="name" 
-                      placeholder="أدخل اسم العميل" 
-                      className="text-right font-bold bg-white/5 border-white/10"
-                      value={newClient.name}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewClient({...newClient, name: e.target.value})}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="phone" className="text-right font-bold">رقم الهاتف</Label>
-                    <Input 
-                      id="phone" 
-                      placeholder="01xxxxxxxxx" 
-                      className="text-right font-bold bg-white/5 border-white/10"
-                      value={newClient.phone}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewClient({...newClient, phone: e.target.value})}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="product" className="text-right font-bold">الطلب (المنتج/الخدمة)</Label>
-                    <Input 
-                      id="product" 
-                      placeholder="ماذا طلب العميل؟" 
-                      className="text-right font-bold bg-white/5 border-white/10"
-                      value={newClient.productName}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewClient({...newClient, productName: e.target.value})}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="paid" className="text-right font-bold">دفع كام؟</Label>
-                      <Input 
-                        id="paid" 
-                        type="number"
-                        placeholder="0.00" 
-                        className="text-right font-bold bg-white/5 border-white/10"
-                        value={newClient.paidAmount}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewClient({...newClient, paidAmount: e.target.value})}
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="remaining" className="text-right font-bold">باقي كام؟</Label>
-                      <Input 
-                        id="remaining" 
-                        type="number"
-                        placeholder="0.00" 
-                        className="text-right font-bold bg-white/5 border-white/10"
-                        value={newClient.remainingAmount}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewClient({...newClient, remainingAmount: e.target.value})}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsAddClientOpen(false)} className="font-bold border-white/10 bg-white/5 text-white hover:bg-white/10">إلغاء</Button>
-                  <Button onClick={handleAddClient} className="bg-primary text-primary-foreground font-bold">حفظ العميل</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          <Card className="border-none shadow-sm overflow-hidden bg-white/5 backdrop-blur-md border border-white/10">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="bg-white/5">
-                  <TableRow className="border-white/10">
-                    <TableHead className="text-right font-black text-muted-foreground uppercase tracking-widest text-[10px]">العميل</TableHead>
-                    <TableHead className="text-right font-black text-muted-foreground uppercase tracking-widest text-[10px]">رقم الهاتف</TableHead>
-                    <TableHead className="text-right font-black text-muted-foreground uppercase tracking-widest text-[10px]">آخر طلب</TableHead>
-                    <TableHead className="text-right font-black text-muted-foreground uppercase tracking-widest text-[10px]">المدفوع</TableHead>
-                    <TableHead className="text-right font-black text-muted-foreground uppercase tracking-widest text-[10px]">المتبقي</TableHead>
-                    <TableHead className="text-left font-black text-muted-foreground uppercase tracking-widest text-[10px]">الإجراءات</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <AnimatePresence>
-                    {filteredClients.map((client) => (
-                      <motion.tr 
-                        key={client.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className={`group hover:bg-white/5 border-white/5 transition-colors cursor-pointer ${selectedClient?.id === client.id ? 'bg-primary/10' : ''}`}
-                        onClick={() => setSelectedClient(client)}
-                      >
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <div className="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-black text-xs border border-primary/20">
-                              {client.name[0]}
-                            </div>
-                            <p className="font-black text-white text-sm">{client.name}</p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <p className="font-bold text-muted-foreground text-sm">{client.phone}</p>
-                        </TableCell>
-                        <TableCell>
-                          <p className="font-bold text-slate-200 text-sm">
-                            {client.orders && client.orders.length > 0 ? client.orders[0]?.productName : 'لا يوجد'}
-                          </p>
-                        </TableCell>
-                        <TableCell>
-                          <p className="font-black text-emerald-500 text-sm">{client.totalPaid.toLocaleString()} ج.م</p>
-                        </TableCell>
-                        <TableCell>
-                          <p className={`font-black text-sm ${client.totalDebt > 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
-                            {client.totalDebt.toLocaleString()} ج.م
-                          </p>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="icon" className="size-8 rounded-lg text-muted-foreground hover:text-white hover:bg-white/5">
-                              <ExternalLink className="size-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </motion.tr>
-                    ))}
-                  </AnimatePresence>
-                </TableBody>
-              </Table>
+          <Card className="bg-white/5 border-white/5 rounded-xl p-6 backdrop-blur-md">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div>
+                <h3 className="text-lg font-black text-white mb-1">النسخ الاحتياطي والصيانة</h3>
+                <p className="text-xs text-muted-foreground font-bold">تصدير كافة البيانات المسجلة على المنصة في ملف JSON خارجي للتأمين.</p>
+              </div>
+              <Button 
+                onClick={handleDownloadBackup}
+                disabled={isBackupLoading}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-black h-12 rounded-xl px-8 shadow-lg shadow-blue-600/20"
+              >
+                {isBackupLoading ? <Loader2 className="animate-spin" /> : (
+                  <>
+                    <Download className="ml-2 size-4" />
+                    تصدير نسخة احتياطية
+                  </>
+                )}
+              </Button>
             </div>
           </Card>
-
-        {/* Client Detail View */}
-        <div className="space-y-6">
-          {selectedClient ? (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="space-y-6"
-            >
-              <Card className="border-none shadow-sm bg-white/5 border border-white/10 overflow-hidden">
-                <CardHeader className="bg-white/5 pb-6 border-b border-white/10">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="size-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center font-black text-lg shadow-lg shadow-primary/20">
-                        {selectedClient.name[0]}
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg font-black text-white">{selectedClient.name}</CardTitle>
-                        <CardDescription className="font-bold flex items-center gap-1 text-muted-foreground">
-                          <Clock className="size-3" />
-                          آخر نشاط: {new Date(selectedClient.lastActivity).toLocaleDateString('ar-EG')}
-                        </CardDescription>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="icon" className="rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/10" onClick={handlePrint}>
-                        <Printer className="size-4" />
-                      </Button>
-                      <Button variant="outline" size="icon" className="rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/10">
-                        <MoreVertical className="size-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="grid grid-cols-2 gap-4 mb-8">
-                    <div className="bg-emerald-500/10 p-4 rounded-2xl border border-emerald-500/10">
-                      <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">مدفوع</p>
-                      <p className="text-xl font-black text-emerald-500">{selectedClient.totalPaid.toLocaleString()} ج.م</p>
-                    </div>
-                    <div className="bg-red-500/10 p-4 rounded-2xl border border-red-500/10">
-                      <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">مديونية</p>
-                      <p className="text-xl font-black text-red-500">{selectedClient.totalDebt.toLocaleString()} ج.م</p>
-                    </div>
-                  </div>
-
-                  {/* Visual Progress Bar for Debt/Paid */}
-                  <div className="mb-8 space-y-4">
-                    <div className="flex justify-between text-xs font-black">
-                      <span className="text-emerald-500">تحصيل {Math.round((selectedClient.totalPaid / (selectedClient.totalPaid + selectedClient.totalDebt || 1)) * 100)}%</span>
-                      <span className="text-red-500">ديون {Math.round((selectedClient.totalDebt / (selectedClient.totalPaid + selectedClient.totalDebt || 1)) * 100)}%</span>
-                    </div>
-                    <div className="h-2 w-full bg-red-500/10 rounded-full overflow-hidden flex border border-white/5">
-                      <div 
-                        className="h-full bg-emerald-500 transition-all duration-500" 
-                        style={{ width: `${(selectedClient.totalPaid / (selectedClient.totalPaid + selectedClient.totalDebt || 1)) * 100}%` }}
-                      />
-                    </div>
-
-                    {/* Financial Activity Chart */}
-                    <div className="h-40 w-full mt-6 bg-white/5 rounded-2xl p-2 border border-white/10">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart
-                          data={selectedClient.transactions?.slice().reverse().map(t => ({
-                            date: new Date(t.date).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' }),
-                            amount: t.type === 'payment' ? t.amount : -t.amount,
-                            type: t.type
-                          })) || []}
-                        >
-                          <defs>
-                            <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#E31E24" stopOpacity={0.1}/>
-                              <stop offset="95%" stopColor="#E31E24" stopOpacity={0}/>
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff05" />
-                          <XAxis 
-                            dataKey="date" 
-                            hide 
-                          />
-                          <YAxis hide />
-                          <RechartsTooltip 
-                            contentStyle={{ 
-                              borderRadius: '12px', 
-                              backgroundColor: '#0c0c0c',
-                              border: '1px solid rgba(255,255,255,0.1)', 
-                              boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.5)',
-                              fontSize: '10px',
-                              direction: 'rtl',
-                              color: '#fff'
-                            }}
-                          />
-                          <Area 
-                            type="monotone" 
-                            dataKey="amount" 
-                            stroke="#E31E24" 
-                            fillOpacity={1} 
-                            fill="url(#colorAmount)" 
-                            strokeWidth={2}
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-
-                  <Tabs defaultValue="transactions" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 bg-white/5 rounded-xl p-1 h-12 mb-6 border border-white/10">
-                      <TabsTrigger value="transactions" className="rounded-lg font-black text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                        <Wallet className="size-4 ml-2" />
-                        السجل المالي
-                      </TabsTrigger>
-                      <TabsTrigger value="orders" className="rounded-lg font-black text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                        <Briefcase className="size-4 ml-2" />
-                        الطلبات والعمليات
-                      </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="transactions" className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-black text-white flex items-center gap-2">
-                          <DollarSign className="size-4 text-primary" />
-                          المعاملات المالية
-                        </h4>
-                        <Dialog open={isAddTransactionOpen} onOpenChange={setIsAddTransactionOpen}>
-                          <DialogTrigger asChild>
-                            <Button size="sm" variant="ghost" className="text-primary hover:bg-primary/5 font-bold h-8 px-2">
-                              <Plus className="size-4 ml-1" />
-                              إضافة عملية
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="font-arabic bg-[#0c0c0c] border-white/10 text-white" dir="rtl">
-                            <DialogHeader>
-                              <DialogTitle className="text-right font-black">إضافة عملية مالية</DialogTitle>
-                              <DialogDescription className="text-right text-muted-foreground">سجل دفعة جديدة أو مديونية للعميل {selectedClient.name}</DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                              <div className="grid gap-2">
-                                <Label className="text-right font-bold">نوع العملية</Label>
-                                <Select 
-                                  value={newTransaction.type} 
-                                  onValueChange={(val: any) => setNewTransaction({...newTransaction, type: val})}
-                                >
-                                  <SelectTrigger className="text-right font-bold bg-white/5 border-white/10">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent className="font-arabic bg-[#0c0c0c] border-white/10 text-white">
-                                    <SelectItem value="payment">دفعة / تحصيل</SelectItem>
-                                    <SelectItem value="debt">مديونية / باق حساب</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="grid gap-2">
-                                <Label className="text-right font-bold">المبلغ</Label>
-                                <Input 
-                                  type="number" 
-                                  placeholder="0.00" 
-                                  className="text-right font-bold bg-white/5 border-white/10"
-                                  value={newTransaction.amount}
-                                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTransaction({...newTransaction, amount: e.target.value})}
-                                />
-                              </div>
-                              <div className="grid gap-2">
-                                <Label className="text-right font-bold">الوصف / التفاصيل</Label>
-                                <Input 
-                                  placeholder="مثال: دفعة تحت الحساب للوحة فليكس" 
-                                  className="text-right font-bold bg-white/5 border-white/10"
-                                  value={newTransaction.description}
-                                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTransaction({...newTransaction, description: e.target.value})}
-                                />
-                              </div>
-                            </div>
-                            <DialogFooter>
-                              <Button onClick={handleAddTransaction} className="w-full bg-primary font-bold">تأكيد العملية</Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-
-                      <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                        {selectedClient.transactions?.length > 0 ? (
-                          selectedClient.transactions.map((t) => (
-                            <div key={t.id} className="flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/5 transition-colors">
-                              <div className="flex items-center gap-3">
-                                <div className={`size-8 rounded-lg flex items-center justify-center ${
-                                  t.type === 'payment' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'
-                                }`}>
-                                  {t.type === 'payment' ? <ArrowDownRight className="size-4" /> : <ArrowUpRight className="size-4" />}
-                                </div>
-                                <div>
-                                  <p className="text-xs font-black text-white">{t.description}</p>
-                                  <p className="text-[10px] text-muted-foreground font-bold">{new Date(t.date).toLocaleDateString('ar-EG')}</p>
-                                </div>
-                              </div>
-                              <p className={`text-sm font-black ${t.type === 'payment' ? 'text-emerald-500' : 'text-red-500'}`}>
-                                {t.type === 'payment' ? '+' : '-'}{t.amount.toLocaleString()}
-                              </p>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="text-center py-12 border-2 border-dashed border-white/10 rounded-2xl bg-white/5">
-                            <Wallet className="size-8 text-white/10 mx-auto mb-2" />
-                            <p className="text-xs text-muted-foreground font-bold">لا توجد عمليات مالية مسجلة</p>
-                          </div>
-                        )}
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="orders" className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-black text-white flex items-center gap-2">
-                          <Package className="size-4 text-primary" />
-                          سجل العمليات والطلبات
-                        </h4>
-                        <Dialog open={isAddOrderOpen} onOpenChange={setIsAddOrderOpen}>
-                          <DialogTrigger asChild>
-                            <Button size="sm" variant="ghost" className="text-primary hover:bg-primary/5 font-bold h-8 px-2">
-                              <Plus className="size-4 ml-1" />
-                              إضافة طلب جديد
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="font-arabic bg-[#0c0c0c] border-white/10 text-white" dir="rtl">
-                            <DialogHeader>
-                              <DialogTitle className="text-right font-black">إضافة طلب للعميل</DialogTitle>
-                              <DialogDescription className="text-right text-muted-foreground">سجل تفاصيل الطلب الجديد للعميل {selectedClient.name}</DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                              <div className="grid gap-2">
-                                <Label className="text-right font-bold">اسم المنتج / الخدمة</Label>
-                                <Input 
-                                  placeholder="مثال: لوحة فليكس 3*2" 
-                                  className="text-right font-bold bg-white/5 border-white/10"
-                                  value={newOrder.productName}
-                                  onChange={(e) => setNewOrder({...newOrder, productName: e.target.value})}
-                                />
-                              </div>
-                              <div className="grid grid-cols-2 gap-4">
-                                <div className="grid gap-2">
-                                  <Label className="text-right font-bold">الكمية</Label>
-                                  <Input 
-                                    placeholder="1" 
-                                    className="text-right font-bold bg-white/5 border-white/10"
-                                    value={newOrder.quantity}
-                                    onChange={(e) => setNewOrder({...newOrder, quantity: e.target.value})}
-                                  />
-                                </div>
-                                <div className="grid gap-2">
-                                  <Label className="text-right font-bold">المقاس</Label>
-                                  <Input 
-                                    placeholder="3*2 متر" 
-                                    className="text-right font-bold bg-white/5 border-white/10"
-                                    value={newOrder.size}
-                                    onChange={(e) => setNewOrder({...newOrder, size: e.target.value})}
-                                  />
-                                </div>
-                              </div>
-                              <div className="grid gap-2">
-                                <Label className="text-right font-bold">السعر المقدر</Label>
-                                <Input 
-                                  type="number"
-                                  placeholder="0.00" 
-                                  className="text-right font-bold bg-white/5 border-white/10"
-                                  value={newOrder.estimatedPrice}
-                                  onChange={(e) => setNewOrder({...newOrder, estimatedPrice: e.target.value})}
-                                />
-                              </div>
-                              <div className="grid gap-2">
-                                <Label className="text-right font-bold">تفاصيل إضافية</Label>
-                                <Textarea 
-                                  placeholder="أي تفاصيل تخص التنفيذ..." 
-                                  className="text-right font-bold bg-white/5 border-white/10"
-                                  value={newOrder.details}
-                                  onChange={(e) => setNewOrder({...newOrder, details: e.target.value})}
-                                />
-                              </div>
-                            </div>
-                            <DialogFooter>
-                              <Button onClick={handleAddOrder} className="w-full bg-primary font-bold">تأكيد الطلب</Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-                      <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                        {selectedClient.orders?.length > 0 ? (
-                          selectedClient.orders.map((o) => (
-                            <div key={o.id} className="p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/5 transition-colors space-y-3">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                  <div className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
-                                    <Briefcase className="size-5" />
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-black text-white">{o.productName}</p>
-                                    <p className="text-[10px] text-muted-foreground font-bold">{o.categoryName}</p>
-                                  </div>
-                                </div>
-                                <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[10px] font-bold">{o.status}</Badge>
-                              </div>
-                              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/5">
-                                <div>
-                                  <p className="text-[10px] text-muted-foreground font-bold">الكمية/المقاس</p>
-                                  <p className="text-xs font-black text-slate-200">{o.quantity || o.size || 'N/A'}</p>
-                                </div>
-                                <div className="text-left">
-                                  <p className="text-[10px] text-muted-foreground font-bold">القيمة التقديرية</p>
-                                  <p className="text-xs font-black text-primary">{o.estimatedPrice?.toLocaleString()} ج.م</p>
-                                </div>
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="text-center py-12 border-2 border-dashed border-white/10 rounded-2xl bg-white/5">
-                            <Briefcase className="size-8 text-white/10 mx-auto mb-2" />
-                            <p className="text-xs text-muted-foreground font-bold">لا توجد طلبات مسجلة لهذا العميل</p>
-                          </div>
-                        )}
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-
-                  <Button 
-                    onClick={handlePrint}
-                    className="w-full mt-8 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl h-12 flex gap-2 shadow-xl shadow-primary/20"
-                  >
-                    <Download className="size-4" />
-                    تحميل كشف حساب (PDF)
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ) : (
-            <div className="h-full flex flex-col items-center justify-center p-12 bg-white/5 rounded-[3rem] border-2 border-dashed border-white/10 text-center backdrop-blur-md">
-              <div className="size-20 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/5">
-                <Users className="size-10 text-white/10" />
-              </div>
-              <h3 className="text-lg font-black text-white mb-2">اختر عميلاً للمتابعة</h3>
-              <p className="text-sm text-muted-foreground font-bold max-w-[200px]">قم باختيار عميل من القائمة لعرض تفاصيله المالية وإدارة معاملاته</p>
-            </div>
-          )}
-        </div>
-      </TabsContent>
+        </TabsContent>
       </Tabs>
+
+      {/* Dialogs */}
+      <Dialog open={isAddClientOpen} onOpenChange={setIsAddClientOpen}>
+        <DialogContent className="sm:max-w-[400px] font-arabic bg-[#0c0c0c] border-white/10 text-white" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-black text-white text-right">إضافة عميل جديد</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-3 py-4">
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">اسم العميل</Label>
+              <Input placeholder="أدخل اسم العميل" className="h-9 text-xs bg-white/5 border-white/10" value={newClient.name} onChange={(e) => setNewClient({...newClient, name: e.target.value})} />
+            </div>
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">رقم الهاتف</Label>
+              <Input placeholder="01xxxxxxxxx" className="h-9 text-xs bg-white/5 border-white/10" value={newClient.phone} onChange={(e) => setNewClient({...newClient, phone: e.target.value})} />
+            </div>
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">المنتج / الخدمة</Label>
+              <Input placeholder="ماذا طلب العميل؟" className="h-9 text-xs bg-white/5 border-white/10" value={newClient.productName} onChange={(e) => setNewClient({...newClient, productName: e.target.value})} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label className="text-right text-xs font-bold">المقدم (ج.م)</Label>
+                <Input type="number" placeholder="0.00" className="h-9 text-xs bg-white/5 border-white/10" value={newClient.paidAmount} onChange={(e) => setNewClient({...newClient, paidAmount: e.target.value})} />
+              </div>
+              <div className="grid gap-1.5">
+                <Label className="text-right text-xs font-bold">المتبقي (ج.م)</Label>
+                <Input type="number" placeholder="0.00" className="h-9 text-xs bg-white/5 border-white/10" value={newClient.remainingAmount} onChange={(e) => setNewClient({...newClient, remainingAmount: e.target.value})} />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleAddClient} className="w-full bg-primary font-black text-xs h-10">حفظ العميل</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isAddSupplierOpen} onOpenChange={setIsAddSupplierOpen}>
+        <DialogContent className="sm:max-w-[400px] font-arabic bg-[#0c0c0c] border-white/10 text-white" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-black text-white text-right">إضافة شركة توريد</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-3 py-4">
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">اسم الشركة</Label>
+              <Input placeholder="أدخل اسم الشركة" className="h-9 text-xs bg-white/5 border-white/10" value={newSupplier.name} onChange={(e) => setNewSupplier({...newSupplier, name: e.target.value})} />
+            </div>
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">رقم الهاتف</Label>
+              <Input placeholder="01xxxxxxxxx" className="h-9 text-xs bg-white/5 border-white/10" value={newSupplier.phone} onChange={(e) => setNewSupplier({...newSupplier, phone: e.target.value})} />
+            </div>
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">تصنيف البضاعة</Label>
+              <Input placeholder="مثال: خامات طباعة" className="h-9 text-xs bg-white/5 border-white/10" value={newSupplier.category} onChange={(e) => setNewSupplier({...newSupplier, category: e.target.value})} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label className="text-right text-xs font-bold">مدفوع لهم</Label>
+                <Input type="number" placeholder="0.00" className="h-9 text-xs bg-white/5 border-white/10" value={newSupplier.paidAmount} onChange={(e) => setNewSupplier({...newSupplier, paidAmount: e.target.value})} />
+              </div>
+              <div className="grid gap-1.5">
+                <Label className="text-right text-xs font-bold">متبقي لهم</Label>
+                <Input type="number" placeholder="0.00" className="h-9 text-xs bg-white/5 border-white/10" value={newSupplier.remainingAmount} onChange={(e) => setNewSupplier({...newSupplier, remainingAmount: e.target.value})} />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleAddSupplier} className="w-full bg-primary font-black text-xs h-10">حفظ المورد</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isAddTransactionOpen} onOpenChange={setIsAddTransactionOpen}>
+        <DialogContent className="sm:max-w-[400px] font-arabic bg-[#0c0c0c] border-white/10 text-white" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-black text-white text-right">إضافة عملية مالية</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-3 py-4">
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">نوع العملية</Label>
+              <Select value={newTransaction.type} onValueChange={(val: any) => setNewTransaction({...newTransaction, type: val})}>
+                <SelectTrigger className="h-9 text-xs bg-white/5 border-white/10"><SelectValue /></SelectTrigger>
+                <SelectContent className="font-arabic bg-[#0c0c0c] border-white/10 text-white">
+                  <SelectItem value="payment">دفعة / تحصيل</SelectItem>
+                  <SelectItem value="debt">مديونية / باق حساب</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">المبلغ</Label>
+              <Input type="number" placeholder="0.00" className="h-9 text-xs bg-white/5 border-white/10" value={newTransaction.amount} onChange={(e) => setNewTransaction({...newTransaction, amount: e.target.value})} />
+            </div>
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">الوصف</Label>
+              <Input placeholder="مثال: دفعة تحت الحساب" className="h-9 text-xs bg-white/5 border-white/10" value={newTransaction.description} onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleAddTransaction} className="w-full bg-primary font-black text-xs h-10">تأكيد العملية</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isAddSupplierTransactionOpen} onOpenChange={setIsAddSupplierTransactionOpen}>
+        <DialogContent className="sm:max-w-[400px] font-arabic bg-[#0c0c0c] border-white/10 text-white" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-black text-white text-right">إضافة عملية للمورد</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-3 py-4">
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">نوع العملية</Label>
+              <Select value={newTransaction.type} onValueChange={(val: any) => setNewTransaction({...newTransaction, type: val})}>
+                <SelectTrigger className="h-9 text-xs bg-white/5 border-white/10"><SelectValue /></SelectTrigger>
+                <SelectContent className="font-arabic bg-[#0c0c0c] border-white/10 text-white">
+                  <SelectItem value="payment">دفعة للمورد (خروج نقدية)</SelectItem>
+                  <SelectItem value="debt">فاتورة بضاعة (مديونية علينا)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">المبلغ</Label>
+              <Input type="number" placeholder="0.00" className="h-9 text-xs bg-white/5 border-white/10" value={newTransaction.amount} onChange={(e) => setNewTransaction({...newTransaction, amount: e.target.value})} />
+            </div>
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">البيان</Label>
+              <Input placeholder="مثال: دفعة خامات شهر 5" className="h-9 text-xs bg-white/5 border-white/10" value={newTransaction.description} onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleAddSupplierTransaction} className="w-full bg-primary font-black text-xs h-10">تأكيد العملية</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isAddOrderOpen} onOpenChange={setIsAddOrderOpen}>
+        <DialogContent className="sm:max-w-[400px] font-arabic bg-[#0c0c0c] border-white/10 text-white" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-black text-white text-right">إضافة طلب جديد</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-3 py-4">
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">اسم المنتج</Label>
+              <Input placeholder="مثال: لوحة فليكس" className="h-9 text-xs bg-white/5 border-white/10" value={newOrder.productName} onChange={(e) => setNewOrder({...newOrder, productName: e.target.value})} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label className="text-right text-xs font-bold">الكمية</Label>
+                <Input placeholder="1" className="h-9 text-xs bg-white/5 border-white/10" value={newOrder.quantity} onChange={(e) => setNewOrder({...newOrder, quantity: e.target.value})} />
+              </div>
+              <div className="grid gap-1.5">
+                <Label className="text-right text-xs font-bold">المقاس</Label>
+                <Input placeholder="3*2 متر" className="h-9 text-xs bg-white/5 border-white/10" value={newOrder.size} onChange={(e) => setNewOrder({...newOrder, size: e.target.value})} />
+              </div>
+            </div>
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">السعر المقدر</Label>
+              <Input type="number" placeholder="0.00" className="h-9 text-xs bg-white/5 border-white/10" value={newOrder.estimatedPrice} onChange={(e) => setNewOrder({...newOrder, estimatedPrice: e.target.value})} />
+            </div>
+            <div className="grid gap-1.5">
+              <Label className="text-right text-xs font-bold">تفاصيل</Label>
+              <Textarea placeholder="أي ملاحظات..." className="text-xs bg-white/5 border-white/10 min-h-[60px]" value={newOrder.details} onChange={(e) => setNewOrder({...newOrder, details: e.target.value})} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleAddOrder} className="w-full bg-primary font-black text-xs h-10">تأكيد الطلب</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
