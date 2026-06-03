@@ -219,10 +219,10 @@ export default function HeroSection() {
               className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl sm:rounded-2xl px-6 sm:px-10 h-12 sm:h-14 text-base sm:text-lg font-black shadow-lg shadow-primary/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden"
               asChild
             >
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+              <a href="/services">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine" />
-                <MessageCircle className="ml-2 sm:ml-3 size-5 sm:size-6 group-hover:rotate-12 transition-transform" />
-                ابدأ رحلة نجاحك
+                <Zap className="ml-2 sm:ml-3 size-5 sm:size-6 group-hover:rotate-12 transition-transform" />
+                تسوق الآن
               </a>
             </Button>
             <Button 

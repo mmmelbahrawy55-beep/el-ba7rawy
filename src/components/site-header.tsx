@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import Link from 'next/link';
-import { Menu, MessageCircle, ShieldCheck } from 'lucide-react';
+import { Menu, MessageCircle, ShieldCheck, ShoppingCart } from 'lucide-react';
+import { useCartStore } from '@/lib/cart-store';
 import { Button } from './ui/button';
 import {
   Sheet,
@@ -101,6 +102,21 @@ export default function SiteHeader() {
     setLastScrollY(latest);
   });
 
+  const cartItems = useCartStore((state) => state.items);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsOpen(false);
+    }
+  }, [pathname]);
+
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
       <AnimatePresence>
@@ -191,6 +207,22 @@ export default function SiteHeader() {
                   {/* Theme toggle removed for dark mode only */}
                   
                   <Link
+                    href="/cart"
+                    className="relative p-2 text-muted-foreground hover:text-primary transition-all duration-300 group"
+                  >
+                    <ShoppingCart className="size-5" />
+                    {isClient && cartItems.length > 0 && (
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -top-1 -right-1 size-5 bg-primary text-black text-[10px] font-black rounded-full flex items-center justify-center shadow-lg shadow-primary/20"
+                      >
+                        {cartItems.length}
+                      </motion.span>
+                    )}
+                  </Link>
+
+                  <Link
                     href="/admin"
                     className="flex items-center gap-2 px-4 py-2 text-xs font-black bg-primary text-primary-foreground border border-primary rounded-xl transition-all duration-300 hover:bg-primary/90 shadow-lg shadow-primary/10"
                   >
@@ -247,6 +279,20 @@ export default function SiteHeader() {
                           </motion.div>
                         ))}
                         <Separator className="my-4 bg-border" />
+                        <Link
+                          href="/cart"
+                          className="flex items-center justify-between px-5 py-4 text-lg font-bold text-muted-foreground hover:text-primary hover:bg-muted rounded-2xl transition-all no-underline"
+                        >
+                          <div className="flex items-center gap-3">
+                            <ShoppingCart className="size-6" />
+                            عربة التسوق
+                          </div>
+                          {isClient && cartItems.length > 0 && (
+                            <span className="bg-primary text-black size-6 rounded-full flex items-center justify-center text-xs font-black">
+                              {cartItems.length}
+                            </span>
+                          )}
+                        </Link>
                         <Link
                           href="/admin"
                           className="flex items-center gap-3 px-5 py-4 text-lg font-bold text-muted-foreground hover:text-primary hover:bg-muted rounded-2xl transition-all no-underline text-right"

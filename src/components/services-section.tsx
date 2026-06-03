@@ -221,8 +221,8 @@ const ProductCard: React.FC<{
                 className="flex-1 rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black h-10"
                 asChild
               >
-                <Link href={`/services/${categoryId}`}>
-                  التفاصيل
+                <Link href={`/shop/product/${product.id}`}>
+                  تخصيص وطلب
                 </Link>
               </Button>
               <Button 
@@ -231,7 +231,7 @@ const ProductCard: React.FC<{
                 asChild
               >
                 <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  اطلب الآن
+                  واتساب
                 </a>
               </Button>
             </div>
