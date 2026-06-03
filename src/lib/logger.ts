@@ -1,3 +1,5 @@
+import { db } from "./db";
+
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
 interface LogEntry {
@@ -20,8 +22,28 @@ class Logger {
     return Logger.instance;
   }
 
+  private async saveToDb(entry: LogEntry) {
+    try {
+      // ActivityLog table mapping
+      await db.activityLog.create({
+        data: {
+          action: `${entry.level.toUpperCase()}: ${entry.message}`,
+          details: entry.context ? JSON.stringify(entry.context) : null,
+          // Since we might not have a session in all contexts, these are optional
+          userEmail: entry.context?.userEmail || "System",
+          ipAddress: entry.context?.ip || null,
+        }
+      });
+    } catch (e) {
+      console.error("Failed to save log to DB:", e);
+    }
+  }
+
   private log(entry: LogEntry) {
     const formattedMessage = `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.message}`;
+    
+    // Fire and forget DB saving
+    this.saveToDb(entry);
     
     if (this.isProduction) {
       // In production, we could send this to an external service like Sentry, Logtail, etc.

@@ -51,10 +51,21 @@ export async function GET(request: Request) {
                   isActive: cat.isActive,
                 }
               });
+              
+              // Log category creation
+              await db.activityLog.create({
+                data: {
+                  action: 'AUTO_SEED_CATEGORY',
+                  details: `تم إنشاء تصنيف تلقائياً: ${cat.name}`,
+                  userEmail: 'System'
+                }
+              }).catch(() => {});
             }
 
             for (const prod of cat.products) {
               const price = prod.pricePerMeter ?? prod.pricePerLetter ?? prod.pricePerThousand ?? prod.priceFlat ?? 0;
+              const isNew = !(await db.product.findUnique({ where: { id: prod.id } }));
+              
               await db.product.upsert({
                 where: { id: prod.id },
                 update: {},
@@ -74,6 +85,17 @@ export async function GET(request: Request) {
                   discount: prod.discount ?? null,
                 }
               });
+
+              if (isNew) {
+                // Log product creation
+                await db.activityLog.create({
+                  data: {
+                    action: 'AUTO_SEED_PRODUCT',
+                    details: `تم إنشاء منتج تلقائياً: ${prod.name}`,
+                    userEmail: 'System'
+                  }
+                }).catch(() => {});
+              }
             }
           }
           

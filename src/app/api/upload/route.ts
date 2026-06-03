@@ -35,24 +35,12 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Sanitize folder name
-    const safeFolder = folder.replace(/[^a-zA-Z0-9-_]/g, "_").toLowerCase();
-
-    // Create uploads directory with subfolder
-    const uploadsDir = path.join(process.cwd(), "public", "uploads", safeFolder);
-    await mkdir(uploadsDir, { recursive: true });
-
-    // Generate unique filename
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const ext = path.extname(file.name) || ".png";
-    const filename = `${uniqueSuffix}${ext}`;
-    const filepath = path.join(uploadsDir, filename);
-
-    await writeFile(filepath, buffer);
+    // Convert to Base64 to support Vercel (Read-only filesystem)
+    const base64Image = `data:${file.type};base64,${buffer.toString('base64')}`;
 
     return NextResponse.json({
-      url: `/uploads/${safeFolder}/${filename}`,
-      filename,
+      url: base64Image,
+      filename: file.name,
       size: file.size,
       type: file.type,
     });
