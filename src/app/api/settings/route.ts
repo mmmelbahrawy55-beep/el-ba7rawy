@@ -37,30 +37,25 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    console.log("Saving settings with body:", body);
+    console.log("Saving settings with body size:", JSON.stringify(body).length);
+
+    const dataToUpdate = {
+      siteName: body.siteName,
+      siteNameEn: body.siteNameEn,
+      logoUrl: body.logoUrl,
+      whatsapp: body.whatsapp,
+      email: body.email,
+      address: body.address,
+      facebook: body.facebook,
+      instagram: body.instagram,
+    };
 
     const updated = await db.setting.upsert({
       where: { id: "site-settings" },
-      update: {
-        siteName: body.siteName,
-        siteNameEn: body.siteNameEn,
-        logoUrl: body.logoUrl,
-        whatsapp: body.whatsapp,
-        email: body.email,
-        address: body.address,
-        facebook: body.facebook,
-        instagram: body.instagram,
-      },
+      update: dataToUpdate,
       create: {
         id: "site-settings",
-        siteName: body.siteName,
-        siteNameEn: body.siteNameEn,
-        logoUrl: body.logoUrl,
-        whatsapp: body.whatsapp,
-        email: body.email,
-        address: body.address,
-        facebook: body.facebook,
-        instagram: body.instagram,
+        ...dataToUpdate,
       },
     });
 
