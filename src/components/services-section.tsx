@@ -172,6 +172,7 @@ const ProductCard: React.FC<{
               src={product.imageUrl || 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=800'}
               alt={product.name}
               fill
+              priority={index < 3}
               className="object-cover transition-transform duration-1000 group-hover:scale-110"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />

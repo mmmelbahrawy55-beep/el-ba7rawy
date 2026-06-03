@@ -131,7 +131,7 @@ export default function ProductsManager() {
     try {
       setLoading(true)
       const [productsRes, catsRes] = await Promise.all([
-        fetch('/api/products'),
+        fetch('/api/products?admin=true'),
         fetch('/api/categories?admin=true'),
       ])
       

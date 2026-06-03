@@ -107,8 +107,24 @@ export default function SettingsManager() {
       const data = await res.json()
       
       if (res.ok) {
-        setSettings((prev) => prev ? { ...prev, logoUrl: data.url } : null)
-        toast.success('تم رفع الشعار بنجاح')
+        setSettings((prev) => {
+          const updatedSettings = prev ? { ...prev, logoUrl: data.url } : null;
+          // Automatically save settings after successful logo upload
+          if (updatedSettings) {
+            fetch('/api/settings', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(updatedSettings),
+            }).then(saveRes => {
+              if (saveRes.ok) {
+                toast.success('تم رفع وحفظ الشعار بنجاح');
+              } else {
+                toast.error('تم رفع الشعار ولكن فشل حفظ الإعدادات');
+              }
+            });
+          }
+          return updatedSettings;
+        });
       } else {
         toast.error(data.error || 'فشل رفع الشعار')
       }

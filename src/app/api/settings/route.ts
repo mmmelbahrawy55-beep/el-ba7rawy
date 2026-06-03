@@ -24,6 +24,10 @@ export async function GET() {
     return NextResponse.json({
       ...setting,
       geminiKey: aiConfig?.keywords || null,
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+      }
     });
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch settings" }, { status: 500 });
