@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { db } from "../../../lib/db";
-import { getAllProducts } from "../../../lib/products-data";
 
 export async function GET(request: Request) {
   try {
@@ -35,7 +34,7 @@ export async function GET(request: Request) {
         const isAdmin = searchParams.get("admin") === "true";
         if (isAdmin) {
           console.log("Auto-seeding products as DB is empty...");
-          const { categories } = await import("@/lib/products-data");
+          const { categories } = await import("../../../lib/products-data");
           
           for (const cat of categories) {
             // Check if category exists
@@ -89,7 +88,7 @@ export async function GET(request: Request) {
             orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
           });
         } else {
-          const { getAllProducts } = await import("@/lib/products-data");
+          const { getAllProducts } = await import("../../../lib/products-data");
           const fallback = getAllProducts().map((p: any) => ({
             ...p,
             price: p.pricePerMeter ?? p.pricePerLetter ?? p.pricePerThousand ?? p.priceFlat ?? 0,

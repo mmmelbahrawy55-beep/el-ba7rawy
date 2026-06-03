@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { categories as fallbackCategories } from "@/lib/products-data";
+import { db } from "../../../lib/db";
+import { categories as fallbackCategories } from "../../../lib/products-data";
 
 export async function GET(request: Request) {
   try {
