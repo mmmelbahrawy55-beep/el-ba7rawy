@@ -58,6 +58,8 @@ export default function SiteHeader() {
     }
   }
 
+  const [logoSource, setLogoSource] = useState('/images/logo.png');
+
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
@@ -69,6 +71,9 @@ export default function SiteHeader() {
         if (res.ok && isMounted) {
           const data = await res.json()
           setSettings(data)
+          if (data.logoUrl) {
+            setLogoSource(data.logoUrl)
+          }
         }
       } catch (err: any) {
         if (err.name !== 'AbortError') {
@@ -163,18 +168,13 @@ export default function SiteHeader() {
                     whileTap={{ scale: 0.95 }}
                     className="flex items-center gap-3"
                   >
-                    <div className="relative size-10 sm:size-12 flex items-center justify-center">
+                    <div className="relative h-12 w-auto flex items-center justify-center">
                       <img
-                        src="/images/logo.png"
+                        src={logoSource}
                         alt="ELBA7RAWY Logo"
-                        className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]"
+                        onError={() => setLogoSource('/images/logo.png')}
+                        className="h-full w-auto object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)] brightness-125 contrast-125"
                       />
-                    </div>
-                    <div className="flex flex-col items-start">
-                      <h1 className="text-lg sm:text-xl font-black tracking-tighter text-foreground leading-none">
-                        ELBA<span className="text-primary">7RAWY</span>
-                      </h1>
-                      <span className="text-[8px] font-black text-primary uppercase tracking-[0.3em] mt-0.5">Advertising</span>
                     </div>
                     <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
                   </motion.div>

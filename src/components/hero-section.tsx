@@ -50,6 +50,8 @@ export default function HeroSection() {
   const rotateX = useTransform(y, [-500, 500], [5, -5]);
   const rotateY = useTransform(x, [-500, 500], [-5, 5]);
 
+  const [logoSource, setLogoSource] = useState('/images/logo.png');
+
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
@@ -61,6 +63,9 @@ export default function HeroSection() {
         if (isMounted && settingsRes.ok) {
           const settingsData = await settingsRes.json();
           setSettings(settingsData);
+          if (settingsData.logoUrl) {
+            setLogoSource(settingsData.logoUrl);
+          }
         }
       } catch (err: any) {
         if (err.name !== 'AbortError') {
@@ -162,9 +167,10 @@ export default function HeroSection() {
           >
             <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-[400px] md:h-[400px]">
               <img
-                src={settings?.logoUrl || "/images/logo.png"}
+                src={logoSource}
                 alt={settings?.siteName || "ELBA7RAWY Logo"}
-                className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.5)] block"
+                onError={() => setLogoSource('/images/logo.png')}
+                className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.5)] block brightness-110"
                 loading="eager"
               />
             </div>

@@ -50,9 +50,13 @@ function FooterSection({ children, className }: { children: React.ReactNode; cla
 export default function SiteFooter() {
   const [settings, setSettings] = useState<any>(null);
   const [categories, setCategories] = useState<any[]>([]);
+  const [logoSource, setLogoSource] = useState('/images/logo.png');
 
   useEffect(() => {
-    fetch('/api/settings').then(res => res.json()).then(data => setSettings(data)).catch(() => {});
+    fetch('/api/settings').then(res => res.json()).then(data => {
+      setSettings(data);
+      if (data.logoUrl) setLogoSource(data.logoUrl);
+    }).catch(() => {});
     fetch('/api/categories').then(res => res.json()).then(data => setCategories(data)).catch(() => {});
   }, []);
 
@@ -71,23 +75,14 @@ export default function SiteFooter() {
           {/* Brand Card - Bento Large */}
           <div className="lg:col-span-2 bg-card/50 p-5 sm:p-6 rounded-xl border border-border backdrop-blur-sm flex flex-col justify-between group hover:border-primary/20 transition-all duration-500 shadow-xl shadow-black/10">
             <div>
-              {settings?.logoUrl ? (
-                <div className="relative h-12 w-auto mb-4 flex items-center justify-start group-hover:scale-105 transition-transform duration-500">
-                  <img
-                    src={settings.logoUrl}
-                    alt="El Bahrawy"
-                    className="h-full w-auto object-contain"
-                  />
-                </div>
-              ) : (
-                <div className="relative h-12 w-auto mb-4 flex items-center justify-start group-hover:scale-105 transition-transform duration-500">
-                  <img
-                    src="/images/logo.png"
-                    alt="El Bahrawy"
-                    className="h-full w-auto object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]"
-                  />
-                </div>
-              )}
+              <div className="relative h-12 w-auto mb-4 flex items-center justify-start group-hover:scale-105 transition-transform duration-500">
+                <img
+                  src={logoSource}
+                  alt="El Bahrawy"
+                  onError={() => setLogoSource('/images/logo.png')}
+                  className="h-full w-auto object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]"
+                />
+              </div>
               <h3 className="text-xl font-black mb-2 tracking-tighter text-foreground">
                 ELBA<span className="text-primary">7RAWY</span>
               </h3>
