@@ -72,19 +72,21 @@ export default function SiteFooter() {
           <div className="lg:col-span-2 bg-card/50 p-5 sm:p-6 rounded-xl border border-border backdrop-blur-sm flex flex-col justify-between group hover:border-primary/20 transition-all duration-500 shadow-xl shadow-black/10">
             <div>
               {settings?.logoUrl ? (
-                <div className="relative h-10 w-auto mb-4 flex items-center justify-start group-hover:scale-105 transition-transform duration-500 bg-white mix-blend-screen rounded-lg px-2 py-0.5">
+                <div className="relative h-12 w-auto mb-4 flex items-center justify-start group-hover:scale-105 transition-transform duration-500">
                   <img
                     src={settings.logoUrl}
                     alt="El Bahrawy"
-                    className="h-full w-auto object-contain brightness-110 contrast-125 mix-blend-multiply"
+                    className="h-full w-auto object-contain"
                   />
                 </div>
               ) : (
-                <img
-                  src="/images/logo.png"
-                  alt="El Bahrawy"
-                  className="h-10 w-auto object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)] mb-4 group-hover:scale-105 transition-transform duration-500"
-                />
+                <div className="relative h-12 w-auto mb-4 flex items-center justify-start group-hover:scale-105 transition-transform duration-500">
+                  <img
+                    src="/images/logo.png"
+                    alt="El Bahrawy"
+                    className="h-full w-auto object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]"
+                  />
+                </div>
               )}
               <h3 className="text-xl font-black mb-2 tracking-tighter text-foreground">
                 ELBA<span className="text-primary">7RAWY</span>
