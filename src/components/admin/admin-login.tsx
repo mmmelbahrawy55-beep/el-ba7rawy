@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react'
 import { Button } from '../ui/button'
