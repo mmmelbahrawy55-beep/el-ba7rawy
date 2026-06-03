@@ -101,9 +101,14 @@ export default function SettingsManager() {
       setUploading(false)
     }
     reader.onload = async (event) => {
-      const base64Data = event.target?.result as string
+      let base64Data = event.target?.result as string
       
       if (base64Data) {
+        // Optimization: If image is too large, try to warn or suggest compression
+        if (base64Data.length > 1000000) { // Approx 1MB in Base64
+          toast.error('حجم الصورة كبير جداً، جاري محاولة الحفظ ولكن قد يفشل')
+        }
+
         const updatedSettings = settings ? { ...settings, logoUrl: base64Data } : null
         if (updatedSettings) {
           setSettings(updatedSettings)
@@ -114,19 +119,20 @@ export default function SettingsManager() {
               body: JSON.stringify(updatedSettings),
             })
             
+            const result = await saveRes.json()
+            
             if (saveRes.ok) {
-              toast.success('تم رفع وحفظ الشعار بنجاح (محلياً)')
+              toast.success('تم رفع وحفظ الشعار بنجاح')
             } else {
-              const errorData = await saveRes.json()
-              const details = errorData.details || ''
-              if (details.includes('too long') || details.includes('limit')) {
-                toast.error('صورة الشعار كبيرة جداً، يرجى اختيار صورة أصغر من 500 كيلوبايت')
-              } else {
-                toast.error(errorData.error || 'فشل حفظ الإعدادات في قاعدة البيانات')
+              console.error('Save failed:', result)
+              toast.error(result.error || 'فشل حفظ الإعدادات في قاعدة البيانات')
+              if (result.details) {
+                console.error('Error details:', result.details)
               }
             }
           } catch (err) {
-            toast.error('حدث خطأ أثناء الحفظ')
+            console.error('Network error during save:', err)
+            toast.error('حدث خطأ في الاتصال بالخادم')
           }
         }
       }

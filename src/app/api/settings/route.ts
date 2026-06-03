@@ -39,6 +39,14 @@ export async function PUT(request: Request) {
     const body = await request.json();
     console.log("Saving settings with body size:", JSON.stringify(body).length);
 
+    // Validate body size for Prisma/Postgres limits (Base64 can be large)
+    if (JSON.stringify(body).length > 4 * 1024 * 1024) { // 4MB limit
+      return NextResponse.json({ 
+        error: "حجم البيانات كبير جداً", 
+        details: "الرجاء اختيار صورة شعار أصغر حجماً" 
+      }, { status: 413 });
+    }
+
     const dataToUpdate = {
       siteName: body.siteName,
       siteNameEn: body.siteNameEn,
