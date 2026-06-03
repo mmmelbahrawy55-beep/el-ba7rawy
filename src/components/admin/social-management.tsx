@@ -24,10 +24,6 @@ export default function SocialManagement() {
   const [loading, setLoading] = useState(true)
   const [summary, setSummary] = useState({ success: 0, failed: 0, total: 0 })
 
-  useEffect(() => {
-    fetchLogs()
-  }, [])
-
   const fetchLogs = async () => {
     try {
       const res = await fetch('/api/admin/social/logs')
@@ -40,6 +36,13 @@ export default function SocialManagement() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    const init = async () => {
+      await fetchLogs()
+    }
+    init()
+  }, [])
 
   const getActionIcon = (action: string) => {
     switch (action) {

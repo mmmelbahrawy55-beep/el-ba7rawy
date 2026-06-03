@@ -128,8 +128,14 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
       <aside className={`fixed inset-y-0 right-0 z-50 w-56 bg-[#080808] border-l border-white/5 transition-transform duration-500 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'} shadow-2xl`}>
         <div className="flex flex-col h-full">
           <div className="p-4">
-            <h2 className="text-lg font-black tracking-tighter text-white flex items-center gap-2">
-              <div className="size-5 bg-primary rounded flex items-center justify-center text-black rotate-12 shadow-lg shadow-primary/20 text-[10px]">E</div>
+            <h2 className="text-lg font-black tracking-tighter text-white flex items-center gap-3">
+              <div className="relative size-8 flex items-center justify-center">
+                <img
+                  src="/images/logo.png"
+                  alt="ELBA7RAWY Logo"
+                  className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(251,191,36,0.2)]"
+                />
+              </div>
               <span dir="ltr">ELBA<span className="text-primary">7RAWY</span></span>
             </h2>
             <div className="flex items-center gap-2 mt-1">
@@ -203,7 +209,10 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
             >
               <Menu className="size-4" />
             </Button>
-            <div>
+            <div className="flex items-center gap-2">
+              <div className="lg:hidden size-6 flex items-center justify-center">
+                <img src="/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
+              </div>
               <h1 className="text-base font-black text-white tracking-tighter">
                 {navItems.find(i => i.id === activeSection)?.label}
               </h1>

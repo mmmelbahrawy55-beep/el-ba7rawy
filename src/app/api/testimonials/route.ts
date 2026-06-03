@@ -16,9 +16,31 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const testimonial = await db.testimonial.create({ data: body })
+    const { id, ...data } = body
+
+    if (id) {
+      const testimonial = await db.testimonial.update({
+        where: { id },
+        data
+      })
+      return NextResponse.json(testimonial)
+    }
+
+    const testimonial = await db.testimonial.create({ data })
     return NextResponse.json(testimonial)
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to create testimonial' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to save testimonial' }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+    if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
+    await db.testimonial.delete({ where: { id } })
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to delete testimonial' }, { status: 500 })
   }
 }

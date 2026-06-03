@@ -16,8 +16,10 @@ const cairo = Cairo({
   weight: ["200", "300", "400", "500", "600", "700", "800", "900", "1000"],
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+
 export const metadata: Metadata = {
-  metadataBase: new URL('http://localhost:3000'),
+  metadataBase: new URL(baseUrl),
   title: {
     default: "البحراوي للدعاية والإعلان | ELBA7RAWY Advertising",
     template: "%s | البحراوي للدعاية والإعلان"

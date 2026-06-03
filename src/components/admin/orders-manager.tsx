@@ -81,7 +81,10 @@ export default function OrdersManager() {
   }, [])
 
   useEffect(() => {
-    fetchData()
+    const init = async () => {
+      await fetchData()
+    }
+    init()
   }, [fetchData])
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {

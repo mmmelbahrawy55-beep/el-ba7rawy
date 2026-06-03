@@ -145,12 +145,20 @@ export default function SiteHeader() {
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center"
+                    className="flex items-center gap-3"
                   >
-                    <div className="flex items-center gap-2">
-                      <h1 className="text-lg sm:text-xl font-black tracking-tighter text-foreground">
+                    <div className="relative size-10 sm:size-12 flex items-center justify-center">
+                      <img
+                        src="/images/logo.png"
+                        alt="ELBA7RAWY Logo"
+                        className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]"
+                      />
+                    </div>
+                    <div className="flex flex-col items-start">
+                      <h1 className="text-lg sm:text-xl font-black tracking-tighter text-foreground leading-none">
                         ELBA<span className="text-primary">7RAWY</span>
                       </h1>
+                      <span className="text-[8px] font-black text-primary uppercase tracking-[0.3em] mt-0.5">Advertising</span>
                     </div>
                     <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
                   </motion.div>

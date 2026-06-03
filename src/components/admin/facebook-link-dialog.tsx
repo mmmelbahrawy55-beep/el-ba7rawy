@@ -27,12 +27,6 @@ export default function FacebookLinkDialog({ isOpen, onClose, onSuccess }: Faceb
   const [accountInfo, setAccountInfo] = useState<any>(null)
   const [missingScopes, setMissingScopes] = useState<string[]>([])
 
-  useEffect(() => {
-    if (isOpen) {
-      checkStatus()
-    }
-  }, [isOpen])
-
   const checkStatus = async () => {
     try {
       const res = await fetch('/api/auth/facebook/status')
@@ -48,6 +42,15 @@ export default function FacebookLinkDialog({ isOpen, onClose, onSuccess }: Faceb
       console.error('Status Check Error:', err)
     }
   }
+
+  useEffect(() => {
+    if (isOpen) {
+      const init = async () => {
+        await checkStatus()
+      }
+      init()
+    }
+  }, [isOpen])
 
   const handleLink = async () => {
     setLoading(true)

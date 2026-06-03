@@ -15,12 +15,22 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const { id, ...data } = body;
+
+    if (id) {
+      const project = await db.project.update({
+        where: { id },
+        data,
+      });
+      return NextResponse.json(project);
+    }
+
     const project = await db.project.create({
-      data: body,
+      data,
     });
     return NextResponse.json(project);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to create project" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save project" }, { status: 500 });
   }
 }
 

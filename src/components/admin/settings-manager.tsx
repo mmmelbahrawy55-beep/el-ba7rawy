@@ -202,12 +202,20 @@ export default function SettingsManager() {
 
             <div className="pt-2">
               <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest mr-1 mb-2 block">الشعار</Label>
-              <div className="flex items-center gap-4 bg-white/5 p-3 rounded-lg border border-white/5">
-                <div className="size-16 rounded-lg bg-black flex items-center justify-center overflow-hidden border border-white/10">
+              <div className="flex flex-col md:flex-row gap-4 bg-white/5 p-3 rounded-lg border border-white/5 items-start">
+                <div className="relative size-16 rounded-lg bg-black flex items-center justify-center overflow-hidden border border-white/10 group/logo">
                   {settings.logoUrl ? (
                     <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-contain p-2" />
                   ) : (
-                    <ImageIcon className="size-6 text-white/10" />
+                    <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                      <img src="/images/logo.png" alt="Default Logo" className="w-8 h-8 object-contain opacity-50" />
+                      <span className="text-[6px] font-black uppercase">Default</span>
+                    </div>
+                  )}
+                  {uploading && (
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                      <Loader2 className="size-4 animate-spin text-primary" />
+                    </div>
                   )}
                 </div>
                 <div className="flex-1 space-y-2">

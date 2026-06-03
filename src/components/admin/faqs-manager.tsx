@@ -13,10 +13,6 @@ export default function FAQsManager() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
-    fetchFaqs()
-  }, [])
-
   const fetchFaqs = async () => {
     try {
       const res = await fetch('/api/faqs')
@@ -27,6 +23,13 @@ export default function FAQsManager() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    const init = async () => {
+      await fetchFaqs()
+    }
+    init()
+  }, [])
 
   const handleAdd = () => {
     setFaqs([...faqs, { question: '', answer: '', isActive: true, sortOrder: faqs.length }])

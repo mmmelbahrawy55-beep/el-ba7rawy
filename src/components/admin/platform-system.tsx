@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Users, 
@@ -159,7 +159,7 @@ export default function PlatformSystem() {
   })
 
   // Load data from API
-  const fetchClients = async () => {
+  const fetchClients = useCallback(async () => {
     try {
       setLoading(true)
       const [clientsRes, suppliersRes, settingsRes] = await Promise.all([
@@ -198,15 +198,18 @@ export default function PlatformSystem() {
         setSystemHealth(healthData)
       }
     } catch (error) {
-      toast.error('فشل تحميل بيانات النظام')
+      console.error('Fetch error:', error)
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedClient, selectedSupplier])
 
   useEffect(() => {
-    fetchClients()
-  }, [])
+    const init = async () => {
+      await fetchClients()
+    }
+    init()
+  }, [fetchClients])
 
   const handleAddSupplier = async () => {
     if (!newSupplier.name || !newSupplier.phone) {

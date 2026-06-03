@@ -150,6 +150,7 @@ export default function ProductsManager() {
       setCategories(Array.isArray(categoriesData) ? categoriesData : [])
     } catch (error) {
       console.error('Fetch error:', error)
+      toast.error('فشل في تحميل البيانات')
       setProducts([])
       setCategories([])
     } finally {
@@ -158,7 +159,10 @@ export default function ProductsManager() {
   }, [])
 
   useEffect(() => {
-    fetchData()
+    const init = async () => {
+      await fetchData()
+    }
+    init()
   }, [fetchData])
 
   const handleSync = async () => {

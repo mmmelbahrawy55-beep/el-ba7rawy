@@ -163,16 +163,24 @@ export default function CategoriesManager() {
     try {
       setLoading(true)
       const res = await fetch('/api/categories?admin=true')
-      if (res.ok) setCategories(await res.json())
+      if (res.ok) {
+        const data = await res.json()
+        setCategories(Array.isArray(data) ? data : [])
+      } else {
+        toast.error('فشل تحميل التصنيفات')
+      }
     } catch {
-      toast.error('فشل تحميل التصنيفات')
+      toast.error('حدث خطأ في الاتصال')
     } finally {
       setLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    fetchCategories()
+    const init = async () => {
+      await fetchCategories()
+    }
+    init()
   }, [fetchCategories])
 
   const handleSave = async () => {

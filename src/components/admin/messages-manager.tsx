@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   Trash2, 
   Search, 
@@ -31,7 +31,7 @@ export default function MessagesManager() {
   const [filter, setFilter] = useState<'all' | 'unread' | 'read' | 'archived'>('all')
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null)
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       const res = await fetch('/api/messages')
       const data = await res.json()
@@ -41,11 +41,14 @@ export default function MessagesManager() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
-    fetchMessages()
-  }, [])
+    const init = async () => {
+      await fetchMessages()
+    }
+    init()
+  }, [fetchMessages])
 
   const handleUpdateStatus = async (id: string, status: string) => {
     try {

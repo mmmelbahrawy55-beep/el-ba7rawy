@@ -92,7 +92,16 @@ export default function ProjectsManager() {
     try {
       setLoading(true)
       const res = await fetch('/api/projects')
-      if (res.ok) setProjects(await res.json())
+      if (res.ok) {
+        const data = await res.json()
+        // Sort projects by sortOrder, then by isFeatured
+        const sorted = data.sort((a: Project, b: Project) => {
+          if (a.isFeatured && !b.isFeatured) return -1
+          if (!a.isFeatured && b.isFeatured) return 1
+          return a.sortOrder - b.sortOrder
+        })
+        setProjects(sorted)
+      }
     } catch {
       toast.error('فشل تحميل المشاريع')
     } finally {
@@ -101,7 +110,10 @@ export default function ProjectsManager() {
   }, [])
 
   useEffect(() => {
-    fetchProjects()
+    const init = async () => {
+      await fetchProjects()
+    }
+    init()
   }, [fetchProjects])
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

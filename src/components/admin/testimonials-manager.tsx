@@ -13,10 +13,6 @@ export default function TestimonialsManager() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
-    fetchTestimonials()
-  }, [])
-
   const fetchTestimonials = async () => {
     try {
       const res = await fetch('/api/testimonials')
@@ -27,6 +23,13 @@ export default function TestimonialsManager() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    const init = async () => {
+      await fetchTestimonials()
+    }
+    init()
+  }, [])
 
   const handleAdd = () => {
     setTestimonials([...testimonials, { name: '', role: '', content: '', avatar: '', isActive: true }])
