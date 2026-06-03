@@ -63,45 +63,59 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const body = await request.json();
-
-    const { name, nameEn, icon, color, isActive, sortOrder } = body as {
-      name: string;
-      nameEn: string;
-      icon?: string;
-      color?: string;
-      isActive?: boolean;
-      sortOrder?: number;
-    };
-
-    if (!name || !nameEn) {
-      return NextResponse.json(
-        { error: "name and nameEn are required" },
-        { status: 400 }
-      );
+    const body = await req.json()
+    const { id, ...data } = body
+    
+    if (id) {
+      const category = await db.category.update({
+        where: { id },
+        data: {
+          name: data.name,
+          nameEn: data.nameEn,
+          icon: data.icon,
+          color: data.color,
+          sortOrder: Number(data.sortOrder) || 0,
+          isActive: data.isActive ?? true,
+        }
+      })
+      return NextResponse.json(category)
     }
 
-    const category = await db.category.create({
+    const category = await db.category.create({ 
       data: {
-        name,
-        nameEn,
-        icon: icon ?? "Printer",
-        color: color ?? "blue",
-        isActive: isActive ?? true,
-        sortOrder: sortOrder ?? 0,
-      },
-      include: {
-        _count: {
-          select: { products: true },
-        },
-      },
-    });
-
-    return NextResponse.json(category, { status: 201 });
+        name: data.name,
+        nameEn: data.nameEn,
+        icon: data.icon ?? "Printer",
+        color: data.color ?? "blue",
+        sortOrder: Number(data.sortOrder) || 0,
+        isActive: data.isActive ?? true,
+      }
+    })
+    return NextResponse.json(category)
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to create category";
-    return NextResponse.json({ error: message }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Failed to save category";
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+    if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
+    
+    // Check if category has products
+    const productCount = await db.product.count({ where: { categoryId: id } })
+    if (productCount > 0) {
+      return NextResponse.json({ error: 'لا يمكن حذف تصنيف يحتوي على منتجات. قم بنقل المنتجات أولاً.' }, { status: 400 })
+    }
+
+    await db.category.delete({ where: { id } })
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to delete category";
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

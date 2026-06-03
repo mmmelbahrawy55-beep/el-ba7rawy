@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, MessageCircle, ShieldCheck, Clock, CheckCircle2 } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export default function ServiceDetailsPage() {
@@ -111,9 +112,15 @@ export default function ServiceDetailsPage() {
                     <Clock className="size-4" />
                     <span className="text-xs">{product.deliveryDays} أيام</span>
                   </div>
-                  <Button variant="ghost" className="text-primary font-black text-sm group-hover:translate-x-[-5px] transition-transform">
-                    تفاصيل السعر
-                    <ArrowRight className="mr-2 size-4 rotate-180" />
+                  <Button 
+                    variant="ghost" 
+                    className="text-primary font-black text-sm group-hover:translate-x-[-5px] transition-transform"
+                    asChild
+                  >
+                    <Link href={`/shop/product/${product.id}`}>
+                      تفاصيل السعر
+                      <ArrowRight className="mr-2 size-4 rotate-180" />
+                    </Link>
                   </Button>
                 </div>
               </motion.div>
