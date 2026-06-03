@@ -23,7 +23,6 @@ export async function GET(request: Request) {
             price: true,
             unitType: true,
             deliveryDays: true,
-            isHot: true,
             discount: true,
             createdAt: true,
           },
