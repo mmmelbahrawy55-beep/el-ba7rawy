@@ -35,15 +35,22 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Convert to Base64 to support Vercel (Read-only filesystem)
-    const base64Image = `data:${file.type};base64,${buffer.toString('base64')}`;
+    // Use Base64 for logos/small branding images to avoid EROFS on Vercel
+    // For other folders, we might need a real storage solution, but this fixes the branding issue
+    if (folder === 'branding' || file.size < 1024 * 1024) {
+      const base64Image = `data:${file.type};base64,${buffer.toString('base64')}`;
+      return NextResponse.json({
+        url: base64Image,
+        filename: file.name,
+        size: file.size,
+        type: file.type,
+      });
+    }
 
-    return NextResponse.json({
-      url: base64Image,
-      filename: file.name,
-      size: file.size,
-      type: file.type,
-    });
+    return NextResponse.json(
+      { error: "Vercel environment requires external storage for large files. Please use a smaller logo (under 1MB)." },
+      { status: 400 }
+    );
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to upload file";
     return NextResponse.json({ error: message }, { status: 500 });
