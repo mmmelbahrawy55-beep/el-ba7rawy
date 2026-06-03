@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 
+// API Version: 1.1.0 - Base64 Only to support Vercel EROFS
 export async function POST(request: Request) {
   try {
+    console.log("Upload API called - Version 1.1.0 (Base64)");
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     const folder = (formData.get("folder") as string) || "general";
@@ -24,10 +24,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
+    // Validate file size (max 2MB for Base64 to avoid DB/Payload issues)
+    if (file.size > 2 * 1024 * 1024) {
       return NextResponse.json(
-        { error: "File size exceeds 10MB limit." },
+        { error: "File size exceeds 2MB limit for Vercel uploads." },
         { status: 400 }
       );
     }
@@ -35,24 +35,22 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Use Base64 for logos/small branding images to avoid EROFS on Vercel
-    // For other folders, we might need a real storage solution, but this fixes the branding issue
-    if (folder === 'branding' || file.size < 1024 * 1024) {
-      const base64Image = `data:${file.type};base64,${buffer.toString('base64')}`;
-      return NextResponse.json({
-        url: base64Image,
-        filename: file.name,
-        size: file.size,
-        type: file.type,
-      });
-    }
+    // Convert to Base64 to support Vercel (Read-only filesystem)
+    // This bypasses the need for disk access (EROFS)
+    const base64Image = `data:${file.type};base64,${buffer.toString('base64')}`;
 
-    return NextResponse.json(
-      { error: "Vercel environment requires external storage for large files. Please use a smaller logo (under 1MB)." },
-      { status: 400 }
-    );
+    console.log(`Successfully converted ${file.name} to Base64`);
+
+    return NextResponse.json({
+      url: base64Image,
+      filename: file.name,
+      size: file.size,
+      type: file.type,
+      version: "1.1.0"
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to upload file";
+    console.error("Upload Error:", message);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
