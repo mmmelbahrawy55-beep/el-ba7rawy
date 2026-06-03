@@ -1,11 +1,11 @@
 'use client'
 
-import SiteHeader from '@/components/site-header'
-import SiteFooter from '@/components/site-footer'
-import FloatingActions from '@/components/floating-actions'
-import PortfolioGallery from '@/components/portfolio-gallery'
+import SiteHeader from '../../components/site-header'
+import SiteFooter from '../../components/site-footer'
+import FloatingActions from '../../components/floating-actions'
+import PortfolioGallery from '../../components/portfolio-gallery'
 import { motion } from 'framer-motion'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '../../components/ui/badge'
 
 export default function PortfolioPage() {
   return (

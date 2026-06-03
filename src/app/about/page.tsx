@@ -1,13 +1,12 @@
 'use client'
 
-import SiteHeader from '@/components/site-header'
-import SiteFooter from '@/components/site-footer'
-import FloatingActions from '@/components/floating-actions'
+import SiteHeader from '../../components/site-header'
+import SiteFooter from '../../components/site-footer'
+import FloatingActions from '../../components/floating-actions'
 import { motion } from 'framer-motion'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '../../components/ui/badge'
+import { Card, CardContent } from '../../components/ui/card'
 import { Target, Eye, ShieldCheck, Award, Users, Rocket } from 'lucide-react'
-import Image from 'next/image'
 import { useState, useEffect } from 'react'
 
 export default function AboutPage() {

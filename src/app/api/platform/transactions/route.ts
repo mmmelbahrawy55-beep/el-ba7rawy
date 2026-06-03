@@ -32,6 +32,7 @@ export async function POST(request: Request) {
 
       if (type === "payment") {
         totalPaid += parseFloat(amount);
+        totalDebt = Math.max(0, totalDebt - parseFloat(amount));
       } else if (type === "debt") {
         totalDebt += parseFloat(amount);
       }

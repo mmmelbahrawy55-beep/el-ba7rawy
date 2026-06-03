@@ -1,17 +1,16 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "./ui/accordion"
 
 import {
   HelpCircle,
-  ChevronDown,
 } from 'lucide-react'
 
 const fallbackFaqs = [

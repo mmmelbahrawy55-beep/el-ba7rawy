@@ -4,17 +4,17 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, X, Layers, Search } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
+import { Input } from './ui/input';
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogDescription,
-} from '@/components/ui/dialog';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+} from './ui/dialog';
+import { Skeleton } from './ui/skeleton';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 import Link from 'next/link';
 
@@ -152,7 +152,7 @@ function Lightbox({ project, projects, open, onClose, onNavigate }: LightboxProp
   }, [open, handleKeyDown]);
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+    <Dialog open={open} onOpenChange={(v: boolean) => !v && onClose()}>
       <DialogContent
         className="max-w-5xl w-[95vw] sm:w-[90vw] p-0 overflow-hidden bg-black/95 border-white/10 backdrop-blur-sm"
         showCloseButton={false}
@@ -342,7 +342,7 @@ export default function PortfolioGallery() {
               <Search className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-slate-500" />
               <Input
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                 placeholder="ابحث في المشاريع..."
                 className="pr-10 h-12 sm:h-14 rounded-xl border-white/5 bg-[#0c0c0c] font-black text-xs focus:ring-primary/30 transition-all text-white border-2"
               />
@@ -396,7 +396,7 @@ export default function PortfolioGallery() {
                               size="sm" 
                               variant="secondary" 
                               className="rounded-xl font-black text-[10px] h-10 bg-white/10 text-white hover:bg-white/20 border-white/10 border backdrop-blur-md"
-                              onClick={(e) => {
+                              onClick={(e: React.MouseEvent) => {
                                 e.stopPropagation();
                                 setLightboxProject(project);
                               }}

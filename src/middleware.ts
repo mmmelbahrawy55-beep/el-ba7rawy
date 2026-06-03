@@ -9,9 +9,7 @@ export function middleware(request: NextRequest) {
     ['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method) &&
     !pathname.startsWith('/api/orders') && // Allow order creation
     !pathname.startsWith('/api/auth') && // Allow login
-    !pathname.startsWith('/api/marketing') && // Allow marketing AI interactions
-    !pathname.startsWith('/api/upload') && // Allow file uploads
-    !pathname.startsWith('/api/settings') // Allow settings updates
+    !pathname.startsWith('/api/marketing') // Allow marketing AI interactions
 
   const isAdminPath = pathname.startsWith('/admin')
 

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import {
-  Settings as SettingsIcon,
   Save,
   Globe,
   MessageCircle,
@@ -13,10 +12,10 @@ import {
   Loader2,
   Image as ImageIcon,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
+import { Card, CardContent } from '../ui/card'
 import { toast } from 'sonner'
 
 interface SettingsData {
@@ -165,7 +164,7 @@ export default function SettingsManager() {
                 <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest mr-1">الاسم (عربي)</Label>
                 <Input
                   value={settings.siteName}
-                  onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSettings({ ...settings, siteName: e.target.value })}
                   className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
                 />
               </div>
@@ -173,7 +172,7 @@ export default function SettingsManager() {
                 <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest mr-1">الاسم (EN)</Label>
                 <Input
                   value={settings.siteNameEn}
-                  onChange={(e) => setSettings({ ...settings, siteNameEn: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSettings({ ...settings, siteNameEn: e.target.value })}
                   className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
                   dir="ltr"
                 />
@@ -227,7 +226,7 @@ export default function SettingsManager() {
                 </Label>
                 <Input
                   value={settings.whatsapp || ''}
-                  onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSettings({ ...settings, whatsapp: e.target.value })}
                   placeholder="01xxxxxxxxx"
                   className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
                 />
@@ -238,7 +237,7 @@ export default function SettingsManager() {
                 </Label>
                 <Input
                   value={settings.email || ''}
-                  onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSettings({ ...settings, email: e.target.value })}
                   className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
                 />
               </div>
@@ -248,7 +247,7 @@ export default function SettingsManager() {
                 </Label>
                 <Input
                   value={settings.address || ''}
-                  onChange={(e) => setSettings({ ...settings, address: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSettings({ ...settings, address: e.target.value })}
                   className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
                 />
               </div>
@@ -271,7 +270,7 @@ export default function SettingsManager() {
                 </Label>
                 <Input
                   value={settings.facebook || ''}
-                  onChange={(e) => setSettings({ ...settings, facebook: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSettings({ ...settings, facebook: e.target.value })}
                   className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
                 />
               </div>
@@ -281,7 +280,7 @@ export default function SettingsManager() {
                 </Label>
                 <Input
                   value={settings.instagram || ''}
-                  onChange={(e) => setSettings({ ...settings, instagram: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSettings({ ...settings, instagram: e.target.value })}
                   className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
                 />
               </div>
@@ -301,7 +300,7 @@ export default function SettingsManager() {
               <Input
                 type="password"
                 value={settings.geminiKey || ''}
-                onChange={(e) => setSettings({ ...settings, geminiKey: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSettings({ ...settings, geminiKey: e.target.value })}
                 placeholder="AIzaSy..."
                 className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
               />

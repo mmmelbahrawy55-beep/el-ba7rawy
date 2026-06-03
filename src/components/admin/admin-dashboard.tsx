@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard,
@@ -16,10 +16,7 @@ import {
   Image as ImageIcon,
   Clock,
   Users,
-  Mail,
   Megaphone,
-  BrainCircuit,
-  ChevronDown,
   Sparkles,
   HelpCircle,
   MessageSquare
@@ -31,10 +28,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { toast } from 'sonner'
+} from '../ui/dropdown-menu'
+import { Button } from '../ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import StatsCards from './stats-cards'
 import ProductsManager from './products-manager'
 import CategoriesManager from './categories-manager'
@@ -129,29 +125,29 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
   return (
     <div className="flex min-h-screen bg-[#020202] font-arabic text-foreground selection:bg-primary/30" dir="rtl">
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 right-0 z-50 w-64 bg-[#080808] border-l border-white/5 transition-transform duration-500 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'} shadow-2xl`}>
+      <aside className={`fixed inset-y-0 right-0 z-50 w-56 bg-[#080808] border-l border-white/5 transition-transform duration-500 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'} shadow-2xl`}>
         <div className="flex flex-col h-full">
-          <div className="p-6">
-            <h2 className="text-xl font-black tracking-tighter text-white flex items-center gap-2">
-              <div className="size-6 bg-primary rounded flex items-center justify-center text-black rotate-12 shadow-lg shadow-primary/20 text-xs">E</div>
+          <div className="p-4">
+            <h2 className="text-lg font-black tracking-tighter text-white flex items-center gap-2">
+              <div className="size-5 bg-primary rounded flex items-center justify-center text-black rotate-12 shadow-lg shadow-primary/20 text-[10px]">E</div>
               <span dir="ltr">ELBA<span className="text-primary">7RAWY</span></span>
             </h2>
             <div className="flex items-center gap-2 mt-1">
               <div className="size-1 rounded-full bg-green-500 animate-pulse" />
-              <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Admin Control</p>
+              <p className="text-[7px] font-black text-muted-foreground uppercase tracking-widest">Admin Control</p>
             </div>
           </div>
 
-          <nav className="flex-1 px-4 space-y-6 overflow-y-auto pb-6 custom-scrollbar">
+          <nav className="flex-1 px-3 space-y-4 overflow-y-auto pb-4 custom-scrollbar">
             {['عام', 'النظام', 'الإدارة', 'التسويق', 'المبيعات', 'أخرى'].map((cat) => (
-              <div key={cat} className="space-y-2">
-                <h3 className="px-3 text-[8px] font-black text-muted-foreground/40 uppercase tracking-widest">{cat}</h3>
-                <div className="space-y-1">
+              <div key={cat} className="space-y-1.5">
+                <h3 className="px-3 text-[7px] font-black text-muted-foreground/40 uppercase tracking-widest">{cat}</h3>
+                <div className="space-y-0.5">
                   {navItems.filter(item => item.category === cat).map((item) => (
                     <button
                       key={item.id}
                       onClick={() => item.id === 'logout' ? onLogout() : setActiveSection(item.id as Section)}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group relative overflow-hidden ${
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
                         activeSection === item.id 
                           ? 'text-white' 
                           : 'text-muted-foreground/60 hover:bg-white/5 hover:text-white'
@@ -164,8 +160,8 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
                           transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                         />
                       )}
-                      <item.icon className={`size-4 relative z-10 transition-transform duration-300 group-hover:scale-110 ${activeSection === item.id ? 'text-primary' : 'text-muted-foreground/40 group-hover:text-primary'}`} />
-                      <span className="font-bold text-xs relative z-10 tracking-tight">{item.label}</span>
+                      <item.icon className={`size-3.5 relative z-10 transition-transform duration-300 group-hover:scale-110 ${activeSection === item.id ? 'text-primary' : 'text-muted-foreground/40 group-hover:text-primary'}`} />
+                      <span className="font-bold text-[11px] relative z-10 tracking-tight">{item.label}</span>
                     </button>
                   ))}
                 </div>
@@ -173,15 +169,15 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
             ))}
           </nav>
 
-          <div className="p-4 border-t border-white/5">
-             <div className="bg-white/5 rounded-2xl p-3 flex items-center gap-3 border border-white/5 hover:bg-white/10 transition-colors group cursor-pointer">
-                <Avatar className="size-8 border border-primary/20 group-hover:border-primary transition-colors">
+          <div className="p-3 border-t border-white/5">
+             <div className="bg-white/5 rounded-xl p-2 flex items-center gap-2 border border-white/5 hover:bg-white/10 transition-colors group cursor-pointer">
+                <Avatar className="size-7 border border-primary/20 group-hover:border-primary transition-colors">
                   <AvatarImage src={user?.avatar} />
-                  <AvatarFallback className="bg-primary text-primary-foreground font-black text-[10px]">{user?.name?.[0]}</AvatarFallback>
+                  <AvatarFallback className="bg-primary text-primary-foreground font-black text-[9px]">{user?.name?.[0]}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 overflow-hidden">
-                  <p className="text-[10px] font-black text-white truncate">{user?.name}</p>
-                  <p className="text-[8px] font-bold text-muted-foreground truncate opacity-60">{user?.email}</p>
+                  <p className="text-[9px] font-black text-white truncate">{user?.name}</p>
+                  <p className="text-[7px] font-bold text-muted-foreground truncate opacity-60">{user?.email}</p>
                 </div>
              </div>
           </div>
@@ -189,7 +185,7 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 lg:mr-64 min-h-screen flex flex-col relative">
+      <main className="flex-1 lg:mr-56 min-h-screen flex flex-col relative">
         {/* Animated Background Orbs */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 left-0 w-[30%] h-[30%] bg-primary/5 blur-[100px] rounded-full" />
@@ -197,51 +193,51 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
         </div>
 
         {/* Top Header */}
-        <header className="sticky top-0 z-40 bg-[#020202]/80 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <header className="sticky top-0 z-40 bg-[#020202]/80 backdrop-blur-md border-b border-white/5 px-4 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden text-white"
+              className="lg:hidden text-white h-8 w-8"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
-              <Menu className="size-5" />
+              <Menu className="size-4" />
             </Button>
             <div>
-              <h1 className="text-lg font-black text-white tracking-tighter">
+              <h1 className="text-base font-black text-white tracking-tighter">
                 {navItems.find(i => i.id === activeSection)?.label}
               </h1>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
-              <Search className="size-3.5 text-muted-foreground" />
+          <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+              <Search className="size-3 text-muted-foreground" />
               <input 
                 type="text" 
                 placeholder="بحث سريع..." 
-                className="bg-transparent border-none outline-none text-[10px] font-bold text-white placeholder:text-muted-foreground/40 w-32"
+                className="bg-transparent border-none outline-none text-[9px] font-bold text-white placeholder:text-muted-foreground/40 w-28"
               />
             </div>
-            <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-white transition-colors">
-              <Bell className="size-4" />
-              <span className="absolute top-2 right-2 size-1.5 bg-primary rounded-full" />
+            <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-white transition-colors h-8 w-8">
+              <Bell className="size-3.5" />
+              <span className="absolute top-2 right-2 size-1 bg-primary rounded-full" />
             </Button>
-            <div className="h-6 w-px bg-white/5 mx-1" />
+            <div className="h-5 w-px bg-white/5 mx-1" />
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={onLogout}
-              className="text-red-500 hover:text-red-400 hover:bg-red-500/5 font-black text-[10px] gap-2"
+              className="text-red-500 hover:text-red-400 hover:bg-red-500/5 font-black text-[9px] gap-1.5 h-8 px-2"
             >
-              <LogOut className="size-3.5" />
+              <LogOut className="size-3" />
               خروج
             </Button>
           </div>
         </header>
 
         {/* Content Area */}
-        <div className="p-6 relative z-10 flex-1 overflow-y-auto">
+        <div className="p-4 relative z-10 flex-1 overflow-y-auto">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSection}

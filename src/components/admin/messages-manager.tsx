@@ -2,20 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { 
-  Mail, 
   Trash2, 
-  Clock, 
   Search, 
-  User, 
-  Phone, 
-  Inbox,
-  MessageCircle,
-  Archive
+  Inbox
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
+import { Badge } from '../ui/badge'
+import { ScrollArea } from '../ui/scroll-area'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
@@ -118,7 +112,7 @@ export default function MessagesManager() {
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground" />
             <Input 
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
               placeholder="بحث..."
               className="pr-9 bg-black/40 border-white/10 h-8 text-[10px] font-bold rounded-lg"
             />

@@ -77,10 +77,15 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function formatPrice(product: Product): string | null {
-  if (product.unitType === 'meter') return `${product.price} ج.م/متر`
-  if (product.unitType === 'letter') return `${product.price} ج.م/حرف`
-  return `${product.price} ج.م`
+function formatPrice(product: any): string | null {
+  // Handle both DB product and hardcoded product structures
+  const price = product.price ?? product.pricePerMeter ?? product.pricePerLetter ?? product.pricePerThousand ?? product.priceFlat ?? 0;
+  
+  const unitType = product.unitType || (product.pricePerMeter ? 'meter' : product.pricePerLetter ? 'letter' : 'piece');
+
+  if (unitType === 'meter') return `${price} ج.م/متر`
+  if (unitType === 'letter') return `${price} ج.م/حرف`
+  return `${price} ج.م`
 }
 
 // ─── Loading Skeletons ────────────────────────────────────────────────────────
@@ -167,8 +172,8 @@ const ProductCard: React.FC<{
               src={product.imageUrl || 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=800'}
               alt={product.name}
               fill
-              unoptimized
               className="object-cover transition-transform duration-1000 group-hover:scale-110"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-700" />
             

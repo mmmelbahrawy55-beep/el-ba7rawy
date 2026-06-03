@@ -4,11 +4,11 @@ const prisma = new PrismaClient()
 
 async function main() {
   const teamInfo = JSON.stringify([
-    { id: '1', name: 'أحمد علي', role: 'مدير التسويق', email: 'ahmed@elbahrawy.com', performance: 95, tasks: 12, avatar: 'A' },
-    { id: '2', name: 'سارة حسن', role: 'متخصص تسويق رقمي', email: 'sara@elbahrawy.com', performance: 88, tasks: 8, avatar: 'S' },
-    { id: '3', name: 'محمد خالد', role: 'منسق محتوى', email: 'm.khaled@elbahrawy.com', performance: 92, tasks: 15, avatar: 'M' },
-    { id: '4', name: 'ليلى محمود', role: 'محلل بيانات', email: 'laila@elbahrawy.com', performance: 97, tasks: 5, avatar: 'L' },
-    { id: '5', name: 'ياسين عمر', role: 'مسؤول علاقات عامة', email: 'yassin@elbahrawy.com', performance: 85, tasks: 10, avatar: 'Y' },
+    { id: '1', name: 'البحراوي 1', role: 'مدير التسويق', email: 'admin1@elbahrawy.com', performance: 95 },
+    { id: '2', name: 'البحراوي 2', role: 'متخصص تسويق رقمي', email: 'admin2@elbahrawy.com', performance: 92 },
+    { id: '3', name: 'البحراوي 3', role: 'منسق محتوى', email: 'admin3@elbahrawy.com', performance: 88 },
+    { id: '4', name: 'البحراوي 4', role: 'محلل بيانات', email: 'admin4@elbahrawy.com', performance: 90 },
+    { id: '5', name: 'البحراوي 5', role: 'مسؤول علاقات عامة', email: 'admin5@elbahrawy.com', performance: 85 },
   ])
 
   const strategy = JSON.stringify({

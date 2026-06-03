@@ -51,6 +51,8 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       isActive,
       sortOrder,
       categoryId,
+      isHot,
+      discount,
     } = body as {
       name?: string;
       nameEn?: string;
@@ -62,6 +64,8 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       isActive?: boolean;
       sortOrder?: number;
       categoryId?: string;
+      isHot?: boolean;
+      discount?: string;
     };
 
     const product = await db.product.update({
@@ -77,6 +81,8 @@ export async function PUT(request: NextRequest, context: RouteContext) {
         ...(isActive !== undefined && { isAvailable: isActive }),
         ...(sortOrder !== undefined && { sortOrder }),
         ...(categoryId !== undefined && { categoryId }),
+        ...(isHot !== undefined && { isHot }),
+        ...(discount !== undefined && { discount }),
       },
       include: {
         category: {

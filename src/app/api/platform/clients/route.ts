@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { NextResponse } from "next/server";
+import { db } from "../../../../lib/db";
 
 export async function GET() {
   try {
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Name and phone are required" }, { status: 400 });
     }
 
-    const client = await db.$transaction(async (tx) => {
+    const client = await db.$transaction(async (tx: any) => {
       const c = await tx.client.create({
         data: {
           name,

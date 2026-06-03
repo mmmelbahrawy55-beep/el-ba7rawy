@@ -6,22 +6,22 @@ import { Quote } from 'lucide-react'
 
 const fallbackTestimonials = [
   {
-    name: "أحمد منصور",
+    name: "البحراوي 1",
     role: "مدير تسويق - شركة النور",
     content: "تعاملنا مع البحراوي في تجهيز واجهات معرضنا الجديد، الدقة في المواعيد والجودة في التنفيذ كانت مذهلة.",
-    avatar: "https://i.pravatar.cc/150?u=ahmed"
+    avatar: "https://i.pravatar.cc/150?u=1"
   },
   {
-    name: "سارة الجوهري",
+    name: "البحراوي 2",
     role: "صاحبة مطعم ذا جاردن",
     content: "حاسبة الأسعار في الموقع ساعدتني جداً في تخطيط ميزانية الدعاية، والتنفيذ كان مطابقاً للتوقعات تماماً.",
-    avatar: "https://i.pravatar.cc/150?u=sara"
+    avatar: "https://i.pravatar.cc/150?u=2"
   },
   {
-    name: "محمود إبراهيم",
+    name: "البحراوي 3",
     role: "مهندس ديكور",
     content: "أفضل مكان للحفر بالليزر والتقطيع الرقمي. احترافية عالية جداً في التعامل مع التصاميم المعقدة.",
-    avatar: "https://i.pravatar.cc/150?u=mah"
+    avatar: "https://i.pravatar.cc/150?u=3"
   }
 ]
 

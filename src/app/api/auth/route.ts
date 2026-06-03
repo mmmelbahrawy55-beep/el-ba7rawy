@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from "../../../lib/db";
 
 // Use environment variables for production security
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@elbahrawy.com";
@@ -24,11 +24,11 @@ export async function POST(request: Request) {
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       // Mock user for when database is not ready or fails
       const mockUser = {
-        id: 'admin-id',
+        id: "admin-1",
         email: ADMIN_EMAIL,
-        name: "محمد البحراوي",
+        name: "البحراوي 1",
         role: "admin",
-        avatar: null
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=admin1",
       };
 
       try {
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
             userEmail: mockUser.email,
             userId: mockUser.id
           }
-        }).catch(e => console.error("Activity log failed", e));
+        }).catch((e: any) => console.error("Activity log failed", e));
       } catch (dbError) {
         console.error("Database auth failed, using mock:", dbError);
       }

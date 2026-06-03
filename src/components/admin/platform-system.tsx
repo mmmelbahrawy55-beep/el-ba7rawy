@@ -131,9 +131,37 @@ export default function PlatformSystem() {
     remainingAmount: '',
   })
 
+  // New Supplier Form State
+  const [newSupplier, setNewSupplier] = useState({
+    name: '',
+    phone: '',
+    category: '',
+    paidAmount: '',
+    remainingAmount: '',
+  })
+
+  // New Transaction Form State
+  const [newTransaction, setNewTransaction] = useState({
+    type: 'payment' as 'payment' | 'debt',
+    amount: '',
+    description: '',
+    status: 'completed' as 'completed' | 'pending',
+  })
+
+  // New Order Form State
+  const [newOrder, setNewOrder] = useState({
+    productName: '',
+    categoryName: '',
+    quantity: '',
+    size: '',
+    details: '',
+    estimatedPrice: '',
+  })
+
   // Load data from API
   const fetchClients = async () => {
     try {
+      setLoading(true)
       const [clientsRes, suppliersRes, settingsRes] = await Promise.all([
         fetch('/api/platform/clients'),
         fetch('/api/platform/suppliers'),
@@ -162,6 +190,13 @@ export default function PlatformSystem() {
         const data = await settingsRes.json()
         setSettings(data)
       }
+
+      // Fetch system health separately
+      const healthRes = await fetch('/api/health')
+      if (healthRes.ok) {
+        const healthData = await healthRes.json()
+        setSystemHealth(healthData)
+      }
     } catch (error) {
       toast.error('فشل تحميل بيانات النظام')
     } finally {
@@ -171,9 +206,6 @@ export default function PlatformSystem() {
 
   useEffect(() => {
     fetchClients()
-    
-    // Fetch system health
-    fetch('/api/health').then(res => res.json()).then(data => setSystemHealth(data)).catch(() => {})
   }, [])
 
   if (loading) {
@@ -385,19 +417,6 @@ export default function PlatformSystem() {
     }
   }
 
-  useEffect(() => {
-    const init = async () => {
-      await fetchClients()
-      try {
-        const res = await fetch('/api/health')
-        const data = await res.json()
-        setSystemHealth(data)
-      } catch (err) {
-        // silent
-      }
-    }
-    init()
-  }, [])
 
   const handleDownloadBackup = async () => {
     setIsBackupLoading(true)

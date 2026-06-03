@@ -1,23 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
-import Image from 'next/image';
+import { motion, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { MessageCircle, ChevronDown, Sparkles, Star, Zap } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from './ui/button';
 
 const WHATSAPP_URL = `https://wa.me/201120053007?text=${encodeURIComponent('مرحباً، أريد الاستفسار عن خدماتكم')}`;
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.3,
-    },
-  },
-};
 
 const itemVariants = {
   hidden: { opacity: 0, y: 40, filter: 'blur(10px)' },
@@ -49,7 +37,6 @@ const FloatingElement = ({ children, delay = 0, duration = 5 }: { children: Reac
 
 export default function HeroSection() {
   const [settings, setSettings] = useState<any>(null);
-  const [stats, setStats] = useState<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Mouse Parallax
@@ -69,16 +56,11 @@ export default function HeroSection() {
 
     const fetchData = async () => {
       try {
-        const [settingsRes, statsRes] = await Promise.all([
-          fetch('/api/settings', { signal: controller.signal }),
-          fetch('/api/stats', { signal: controller.signal })
-        ]);
+        const settingsRes = await fetch('/api/settings', { signal: controller.signal });
         
-        if (isMounted) {
+        if (isMounted && settingsRes.ok) {
           const settingsData = await settingsRes.json();
-          const statsData = await statsRes.json();
           setSettings(settingsData);
-          setStats(statsData);
         }
       } catch (err: any) {
         if (err.name !== 'AbortError') {
@@ -213,10 +195,10 @@ export default function HeroSection() {
 
             <div className="flex flex-col items-center gap-4">
               <motion.span 
-                initial={{ opacity: 0, tracking: '0.1em' }}
-                animate={{ opacity: 1, tracking: '0.5em' }}
+                initial={{ opacity: 0, letterSpacing: '0.1em' }}
+                animate={{ opacity: 1, letterSpacing: '0.5em' }}
                 transition={{ duration: 1.5, delay: 0.5 }}
-                className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase tracking-[0.5em] drop-shadow-lg"
+                className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase drop-shadow-lg"
               >
                 ADVERTISING
               </motion.span>
@@ -225,29 +207,6 @@ export default function HeroSection() {
                 {settings?.siteName || "البحراوي للدعاية والإعلان"} - نبتكر لنميزك في سوق العمل
               </p>
             </div>
-          </motion.div>
-              <span className="text-white">ELBA</span>
-              <span className="relative inline-block text-[#fbbf24]">
-                7RAWY
-                <motion.span 
-                  initial={{ width: 0 }}
-                  animate={{ width: '100%' }}
-                  transition={{ delay: 1, duration: 0.8 }}
-                  className="absolute -bottom-3 left-0 h-2 sm:h-3 bg-[#fbbf24] rounded-full shadow-[0_0_20px_rgba(251,191,36,0.6)]" 
-                />
-              </span>
-            </h1>
-
-            <div className="relative inline-block">
-              <h2 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-[0.2em] uppercase text-white drop-shadow-[0_0_30px_rgba(251,191,36,0.5)]">
-                ADVERTISING
-              </h2>
-              <div className="absolute -inset-x-12 -inset-y-6 bg-[#fbbf24]/20 blur-3xl -z-10 rounded-full opacity-40" />
-            </div>
-
-            <p className="max-w-3xl mx-auto text-base sm:text-xl md:text-2xl text-slate-300 font-bold leading-relaxed px-6 drop-shadow-md mt-12">
-              نصنع الهوية، نبني الثقة، ونقود علامتك التجارية نحو التميز من خلال حلول إعلانية مبتكرة ومتكاملة
-            </p>
           </motion.div>
 
           {/* Buttons */}

@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence } from 'framer-motion'
-import { AdminDashboard } from '@/components/admin/admin-dashboard'
-import AdminLogin from '@/components/admin/admin-login'
+import { AdminDashboard } from '../../components/admin/admin-dashboard'
+import AdminLogin from '../../components/admin/admin-login'
 import { Loader2 } from 'lucide-react'
 
 interface AdminUser {
@@ -20,17 +20,21 @@ export default function AdminPage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Check if user is logged in from localStorage/cookies
-    const savedUser = localStorage.getItem('admin_user')
-    if (savedUser) {
-      const userData = JSON.parse(savedUser)
-      setTimeout(() => {
-        setUser(userData)
-      }, 0)
+    const checkAuth = () => {
+      try {
+        const savedUser = localStorage.getItem('admin_user')
+        if (savedUser) {
+          const userData = JSON.parse(savedUser)
+          setUser(userData)
+        }
+      } catch (e) {
+        console.error("Failed to parse admin user", e)
+      } finally {
+        setLoading(false)
+      }
     }
-    setTimeout(() => {
-      setLoading(false)
-    }, 0)
+    
+    checkAuth()
   }, [])
 
   const handleLogin = (userData: AdminUser) => {

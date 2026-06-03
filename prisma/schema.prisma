@@ -59,6 +59,8 @@ model Product {
   isAvailable  Boolean  @default(true)
   deliveryDays Int      @default(3)
   sortOrder    Int      @default(0)
+  isHot        Boolean  @default(false)
+  discount     String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   orders       Order[]

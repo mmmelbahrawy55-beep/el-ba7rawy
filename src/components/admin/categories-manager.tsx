@@ -18,16 +18,15 @@ import {
   Lightbulb,
   Star,
   FolderTree,
-  ShieldCheck,
-  Settings,
   Image as ImageIcon,
   Package,
+  Settings,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
+import { Switch } from '../ui/switch'
+import { Card, CardContent } from '../ui/card'
 import {
   Dialog,
   DialogContent,
@@ -35,8 +34,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { ScrollArea } from '@/components/ui/scroll-area'
+} from '../ui/dialog'
+import { ScrollArea } from '../ui/scroll-area'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,7 +45,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+} from '../ui/alert-dialog'
 import { toast } from 'sonner'
 
 interface Category {
@@ -160,10 +159,10 @@ export default function CategoriesManager() {
     imageUrl: ''
   })
 
-  const fetchData = useCallback(async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       setLoading(true)
-      const res = await fetch('/api/categories')
+      const res = await fetch('/api/categories?admin=true')
       if (res.ok) setCategories(await res.json())
     } catch {
       toast.error('فشل تحميل التصنيفات')
@@ -173,8 +172,8 @@ export default function CategoriesManager() {
   }, [])
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    fetchCategories()
+  }, [fetchCategories])
 
   const handleSave = async () => {
     if (!formData.name || !formData.nameEn) {
@@ -196,7 +195,7 @@ export default function CategoriesManager() {
       if (res.ok) {
         toast.success(editingCategory ? 'تم تحديث التصنيف' : 'تم إضافة التصنيف')
         setDialogOpen(false)
-        fetchData()
+        fetchCategories()
       } else {
         toast.error('فشل الحفظ')
       }
@@ -207,76 +206,21 @@ export default function CategoriesManager() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-6 animate-spin text-primary" />
-      </div>
-    )
-  }
-
-  return (
-    <div className="space-y-4 max-w-6xl mx-auto px-2">
-      {/* Header Actions */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
-        <div>
-          <h2 className="text-xl font-black text-white tracking-tighter">التصنيفات</h2>
-          <p className="text-slate-500 font-bold text-[10px] mt-0.5">إدارة أقسام الموقع الرئيسية</p>
-        </div>
-        <Button
-          size="sm"
-          onClick={() => { setEditingCategory(null); setFormData(emptyForm); setDialogOpen(true); }}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg h-9 px-4 font-black text-xs shadow-lg shadow-primary/20 flex items-center gap-2 group transition-all active:scale-95"
-        >
-          <Plus className="size-3" /> تصنيف جديد
-        </Button>
-      </div>
-
-      {/* Categories Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {categories.map((cat) => (
-          <Card key={cat.id} className="bg-white/5 border-white/5 rounded-xl overflow-hidden group hover:border-primary/30 transition-all flex flex-col">
-            <CardContent className="p-4 flex flex-col h-full">
-              <div className="flex items-center justify-between mb-4">
-                <div className={`p-2.5 rounded-lg bg-white/5 text-primary border border-white/5`}>
-                  <CategoryIcon iconName={cat.icon} className="size-5" />
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <ColorDot color={cat.color} />
-                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{cat._count.products} منتج</span>
-                </div>
-              </div>
-              
-              <div className="flex-1">
-                <h3 className="text-sm font-black text-white truncate">{cat.name}</h3>
-                <p className="text-[10px] text-muted-foreground font-bold tracking-tight mt-0.5">{cat.nameEn}</p>
-              </div>
-
-              <div className="mt-4 flex items-center gap-2 pt-4 border-t border-white/5">
-                <Button variant="ghost" size="sm" onClick={() => { setEditingCategory(cat); setFormData(cat); setDialogOpen(true); }} className="flex-1 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white text-[10px] font-black">
-                  تعديل
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => setDeleteId(cat.id)} className="h-8 w-8 p-0 rounded-lg bg-red-500/5 hover:bg-red-500/10 text-red-500">
-                  <Trash2 className="size-3" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-  )
-}
-
+  const handleDelete = async () => {
+    if (!deleteId) return
+    try {
+      const res = await fetch(`/api/categories/${deleteId}`, { method: 'DELETE' })
       if (res.ok) {
-        toast.success('تم إضافة المنتج للقسم بنجاح')
-        setIsAddProductOpen(false)
-        setNewProduct({ name: '', nameEn: '', price: '', unitType: 'meter', deliveryDays: '3', imageUrl: '' })
-        fetchCategoryProducts(selectedCategory.id)
+        toast.success('تم حذف التصنيف')
         fetchCategories()
+      } else {
+        const data = await res.json()
+        toast.error(data.error || 'فشل حذف التصنيف')
       }
-    } catch (error) {
-      toast.error('حدث خطأ أثناء الإضافة')
+    } catch {
+      toast.error('حدث خطأ في الاتصال')
+    } finally {
+      setDeleteId(null)
     }
   }
 
@@ -323,29 +267,58 @@ export default function CategoriesManager() {
       if (res.ok) {
         setCategoryProducts(prev => prev.filter(p => p.id !== productId))
         toast.success('تم حذف المنتج بنجاح')
-        fetchCategories() // Update product count on card
+        fetchCategories()
       }
     } catch (error) {
       toast.error('فشل حذف المنتج')
     }
   }
-  const fetchCategories = useCallback(async () => {
-    try {
-      const res = await fetch('/api/categories')
-      if (res.ok) setCategories(await res.json())
-    } catch {
-      // silent
-    } finally {
-      setLoading(false)
-    }
-  }, [])
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchCategories()
-    }, 0)
-    return () => clearTimeout(timer)
-  }, [fetchCategories])
+  const handleAddProduct = async () => {
+    if (!selectedCategory || !newProduct.name) return
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...newProduct,
+          categoryId: selectedCategory.id,
+          price: parseFloat(newProduct.price) || 0,
+          deliveryDays: parseInt(newProduct.deliveryDays) || 3
+        })
+      })
+
+      if (res.ok) {
+        toast.success('تم إضافة المنتج للقسم بنجاح')
+        setIsAddProductOpen(false)
+        setNewProduct({ name: '', nameEn: '', price: '', unitType: 'meter', deliveryDays: '3', imageUrl: '' })
+        fetchCategoryProducts(selectedCategory.id)
+        fetchCategories()
+      }
+    } catch (error) {
+      toast.error('حدث خطأ أثناء الإضافة')
+    }
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    const formDataObj = new FormData()
+    formDataObj.append('file', file)
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formDataObj })
+      if (res.ok) {
+        const data = await res.json()
+        setNewProduct(prev => ({ ...prev, imageUrl: data.url }))
+        toast.success('تم رفع الصورة')
+      }
+    } catch {
+      toast.error('فشل الرفع')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const openAddDialog = () => {
     setEditingCategory(null)
@@ -364,76 +337,6 @@ export default function CategoriesManager() {
       sortOrder: cat.sortOrder,
     })
     setDialogOpen(true)
-  }
-
-  const handleSave = async () => {
-    if (!formData.name || !formData.nameEn) {
-      toast.error('يرجى ملء الحقول المطلوبة')
-      return
-    }
-
-    setSaving(true)
-    try {
-      const url = editingCategory
-        ? `/api/categories/${editingCategory.id}`
-        : '/api/categories'
-      const method = editingCategory ? 'PUT' : 'POST'
-
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      })
-
-      if (res.ok) {
-        toast.success(editingCategory ? 'تم تحديث التصنيف' : 'تم إضافة التصنيف')
-        setDialogOpen(false)
-        fetchCategories()
-      } else {
-        const data = await res.json()
-        toast.error(data.error || 'حدث خطأ')
-      }
-    } catch {
-      toast.error('حدث خطأ في الاتصال')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handleDelete = async () => {
-    if (!deleteId) return
-    try {
-      const res = await fetch(`/api/categories/${deleteId}`, { method: 'DELETE' })
-      if (res.ok) {
-        toast.success('تم حذف التصنيف')
-        setCategories((prev) => prev.filter((c) => c.id !== deleteId))
-      } else {
-        const data = await res.json()
-        toast.error(data.error || 'فشل حذف التصنيف')
-      }
-    } catch {
-      toast.error('حدث خطأ في الاتصال')
-    } finally {
-      setDeleteId(null)
-    }
-  }
-
-  const handleToggleActive = async (cat: Category) => {
-    try {
-      const res = await fetch(`/api/categories/${cat.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isActive: !cat.isActive }),
-      })
-      if (res.ok) {
-        setCategories((prev) =>
-          prev.map((c) => (c.id === cat.id ? { ...c, isActive: !c.isActive } : c))
-        )
-        toast.success(cat.isActive ? 'تم إخفاء التصنيف' : 'تم تفعيل التصنيف')
-      }
-    } catch {
-      toast.error('حدث خطأ')
-    }
   }
 
   if (loading) {
@@ -678,7 +581,7 @@ export default function CategoriesManager() {
 
       {/* Delete Confirmation */}
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 shadow-2xl rounded-3xl text-white max-w-sm p-8">
+        <AlertDialogContent className="bg-[#0c0c0c] border border-white/10 shadow-2xl rounded-3xl text-white max-w-sm p-8 font-arabic" dir="rtl">
           <AlertDialogHeader>
             <div className="bg-red-500/10 size-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-500/20">
               <Trash2 className="size-8 text-red-500" />
@@ -761,8 +664,8 @@ export default function CategoriesManager() {
                         <div className="flex flex-col items-end gap-1 ml-4">
                           <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">الحالة</span>
                           <Switch 
-                            checked={product.isActive} 
-                            onCheckedChange={() => handleToggleProductStatus(product.id, product.isActive)}
+                            checked={product.isAvailable} 
+                            onCheckedChange={() => handleToggleProductStatus(product.id, product.isAvailable)}
                             className="data-[state=checked]:bg-emerald-500"
                           />
                         </div>
@@ -804,7 +707,7 @@ export default function CategoriesManager() {
               <Input 
                 placeholder="مثال: لافته فليكس" 
                 value={newProduct.name}
-                onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewProduct({...newProduct, name: e.target.value})}
                 className="font-bold rounded-xl h-12 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/30"
               />
             </div>
@@ -816,7 +719,7 @@ export default function CategoriesManager() {
                   type="number" 
                   placeholder="0.00" 
                   value={newProduct.price}
-                  onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewProduct({...newProduct, price: e.target.value})}
                   className="font-bold rounded-xl h-12 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/30"
                 />
               </div>
@@ -826,7 +729,7 @@ export default function CategoriesManager() {
                   type="number" 
                   placeholder="3" 
                   value={newProduct.deliveryDays}
-                  onChange={(e) => setNewProduct({...newProduct, deliveryDays: e.target.value})}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewProduct({...newProduct, deliveryDays: e.target.value})}
                   className="font-bold rounded-xl h-12 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/30"
                 />
               </div>
@@ -838,18 +741,24 @@ export default function CategoriesManager() {
                 <Input 
                   placeholder="رابط الصورة أو ارفع ملف" 
                   value={newProduct.imageUrl}
-                  onChange={(e) => setNewProduct({...newProduct, imageUrl: e.target.value})}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewProduct({...newProduct, imageUrl: e.target.value})}
                   className="font-bold rounded-xl h-12 flex-1 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/30"
                 />
                 <div className="relative">
-                  <Input 
+                  <input 
                     type="file" 
+                    id="product-img-upload"
                     accept="image/*" 
                     onChange={handleImageUpload}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    className="hidden"
                     disabled={uploading}
                   />
-                  <Button variant="outline" className="h-12 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/10" disabled={uploading}>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => document.getElementById('product-img-upload')?.click()}
+                    className="h-12 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/10" 
+                    disabled={uploading}
+                  >
                     {uploading ? <Loader2 className="size-4 animate-spin" /> : <ImageIcon className="size-4" />}
                   </Button>
                 </div>

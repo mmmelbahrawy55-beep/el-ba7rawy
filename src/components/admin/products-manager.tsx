@@ -9,24 +9,24 @@ import {
   Package,
   Loader2,
   Image as ImageIcon,
-  Layers,
-  Clock,
   DollarSign,
   Settings,
   FileText,
+  Sparkles,
+  Zap,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
+import { Textarea } from '../ui/textarea'
+import { Switch } from '../ui/switch'
+import { Badge } from '../ui/badge'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '../ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,16 +36,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+} from '../ui/alert-dialog'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Card, CardContent } from '@/components/ui/card'
+} from '../ui/select'
+import { Card, CardContent } from '../ui/card'
 import { toast } from 'sonner'
 
 interface Category {
@@ -65,6 +64,8 @@ interface Product {
   deliveryDays: number
   isActive: boolean
   sortOrder: number
+  isHot: boolean
+  discount: string | null
   category: {
     id: string
     name: string
@@ -83,6 +84,8 @@ interface ProductFormData {
   deliveryDays: number
   isActive: boolean
   sortOrder: number
+  isHot: boolean
+  discount: string
 }
 
 const emptyForm: ProductFormData = {
@@ -96,6 +99,8 @@ const emptyForm: ProductFormData = {
   deliveryDays: 3,
   isActive: true,
   sortOrder: 0,
+  isHot: false,
+  discount: '',
 }
 
 const unitTypeLabels: Record<string, string> = {
@@ -103,6 +108,9 @@ const unitTypeLabels: Record<string, string> = {
   piece: 'بالقطعة',
   letter: 'بالحرف',
   sheet: 'بالفرخ',
+  thousand: 'بالألف قطعة',
+  project: 'بالمشروع',
+  car: 'بالسيارة',
 }
 
 export default function ProductsManager() {
@@ -115,6 +123,7 @@ export default function ProductsManager() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [formData, setFormData] = useState<ProductFormData>(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [syncing, setSyncing] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
 
@@ -123,7 +132,7 @@ export default function ProductsManager() {
       setLoading(true)
       const [productsRes, catsRes] = await Promise.all([
         fetch('/api/products'),
-        fetch('/api/categories'),
+        fetch('/api/categories?admin=true'),
       ])
       
       let productsData = []
@@ -152,6 +161,25 @@ export default function ProductsManager() {
     fetchData()
   }, [fetchData])
 
+  const handleSync = async () => {
+    if (!confirm('سيتم حذف جميع المنتجات الحالية واستبدالها بالبيانات الافتراضية. هل أنت متأكد؟')) return
+
+    setSyncing(true)
+    try {
+      const res = await fetch('/api/seed')
+      if (res.ok) {
+        toast.success('تمت مزامنة البيانات بنجاح')
+        fetchData()
+      } else {
+        toast.error('فشل في مزامنة البيانات')
+      }
+    } catch (error) {
+      toast.error('خطأ في الاتصال')
+    } finally {
+      setSyncing(false)
+    }
+  }
+
   const filteredProducts = (Array.isArray(products) ? products : []).filter((p) => {
     const matchesSearch =
       !search ||
@@ -162,119 +190,20 @@ export default function ProductsManager() {
     return matchesSearch && matchesCategory
   }).sort((a, b) => (a?.sortOrder || 0) - (b?.sortOrder || 0))
 
-  const handleSave = async () => {
-    if (!formData.name || !formData.categoryId) {
-      toast.error('يرجى إكمال البيانات الأساسية')
-      return
-    }
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
 
-    setSaving(true)
+    setUploading(true)
+    const formDataObj = new FormData()
+    formDataObj.append('file', file)
+
     try {
-      const url = editingProduct ? `/api/products/${editingProduct.id}` : '/api/products'
-      const method = editingProduct ? 'PUT' : 'POST'
-      
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formDataObj,
       })
 
-      if (res.ok) {
-        toast.success(editingProduct ? 'تم تحديث المنتج' : 'تم إضافة المنتج')
-        setDialogOpen(false)
-        fetchData()
-      } else {
-        toast.error('فشل في حفظ المنتج')
-      }
-    } catch (error) {
-      toast.error('خطأ في الاتصال بالسيرفر')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-6 animate-spin text-primary" />
-      </div>
-    )
-  }
-
-  return (
-    <div className="space-y-4 max-w-6xl mx-auto px-2">
-      {/* Header Actions */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-white/5 p-3 rounded-xl border border-white/5 backdrop-blur-md">
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <div className="relative flex-1 md:w-64">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground" />
-            <Input
-              placeholder="بحث عن منتج..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="bg-black/40 border-white/10 pr-9 h-9 text-xs font-bold rounded-lg"
-            />
-          </div>
-          <Select value={filterCategory} onValueChange={setFilterCategory}>
-            <SelectTrigger className="w-32 h-9 bg-black/40 border-white/10 text-xs font-bold rounded-lg">
-              <SelectValue placeholder="التصنيف" />
-            </SelectTrigger>
-            <SelectContent className="bg-[#0c0c0c] border-white/10 text-white font-arabic">
-              <SelectItem value="all">كل الأقسام</SelectItem>
-              {categories.map(c => (
-                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <Button size="sm" onClick={() => { setEditingProduct(null); setFormData(emptyForm); setDialogOpen(true); }} className="bg-primary hover:bg-primary/90 text-primary-foreground h-9 rounded-lg font-black text-xs px-4 w-full md:w-auto">
-          <Plus className="size-3 ml-1.5" /> إضافة منتج
-        </Button>
-      </div>
-
-      {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredProducts.map((product) => (
-          <Card key={product.id} className="bg-white/5 border-white/5 rounded-xl overflow-hidden group hover:border-primary/30 transition-all flex flex-col">
-            <div className="relative aspect-[16/10] overflow-hidden">
-              {product.imageUrl ? (
-                <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-              ) : (
-                <div className="w-full h-full bg-black/40 flex items-center justify-center">
-                  <ImageIcon className="size-8 text-white/10" />
-                </div>
-              )}
-              <div className="absolute top-2 right-2">
-                <Badge className={product.isActive ? "bg-emerald-500/20 text-emerald-400 border-none text-[8px] font-black" : "bg-red-500/20 text-red-400 border-none text-[8px] font-black"}>
-                  {product.isActive ? "نشط" : "متوقف"}
-                </Badge>
-              </div>
-            </div>
-            <CardContent className="p-3 flex-1 flex flex-col">
-              <div className="flex-1">
-                <p className="text-[8px] font-black text-primary uppercase tracking-widest mb-1">{product.category?.name}</p>
-                <h3 className="text-sm font-black text-white truncate">{product.name}</h3>
-                <div className="flex items-center gap-1.5 mt-2">
-                  <DollarSign className="size-3 text-emerald-500" />
-                  <span className="text-sm font-black text-white">{product.price.toLocaleString()}</span>
-                  <span className="text-[9px] text-muted-foreground font-bold">ج.م / {unitTypeLabels[product.unitType]}</span>
-                </div>
-              </div>
-              <div className="mt-3 flex items-center gap-2 pt-3 border-t border-white/5">
-                <Button variant="ghost" size="sm" onClick={() => { setEditingProduct(product); setFormData({ ...product, categoryId: product.category.id }); setDialogOpen(true); }} className="flex-1 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white text-[10px] font-black">
-                  <Edit2 className="size-3 ml-1.5" /> تعديل
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => setDeleteId(product.id)} className="h-8 w-8 p-0 rounded-lg bg-red-500/5 hover:bg-red-500/10 text-red-500">
-                  <Trash2 className="size-3" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-  )
-}
       if (res.ok) {
         const data = await res.json()
         setFormData((p) => ({ ...p, imageUrl: data.url }))
@@ -338,27 +267,29 @@ export default function ProductsManager() {
     }
   }
 
-  const handleToggleActive = async (product: Product) => {
-    try {
-      const res = await fetch(`/api/products/${product.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isActive: !product.isActive }),
-      })
-      if (res.ok) {
-        setProducts((prev) =>
-          prev.map((p) => (p.id === product.id ? { ...p, isActive: !p.isActive } : p))
-        )
-        toast.success(product.isActive ? 'تم إخفاء المنتج' : 'تم تفعيل المنتج')
-      }
-    } catch {
-      toast.error('حدث خطأ')
-    }
+  const openAddDialog = () => {
+    setEditingProduct(null)
+    setFormData(emptyForm)
+    setDialogOpen(true)
   }
 
-  const getPriceDisplay = (product: Product) => {
-    const unitLabel = unitTypeLabels[product.unitType] || ''
-    return `${product.price} جنيه / ${unitLabel}`
+  const openEditDialog = (product: Product) => {
+    setEditingProduct(product)
+    setFormData({
+      categoryId: product.category.id,
+      name: product.name,
+      nameEn: product.nameEn,
+      description: product.description || '',
+      imageUrl: product.imageUrl || '',
+      unitType: product.unitType,
+      price: product.price,
+      deliveryDays: product.deliveryDays,
+      isActive: product.isActive,
+      sortOrder: product.sortOrder,
+      isHot: product.isHot,
+      discount: product.discount || '',
+    })
+    setDialogOpen(true)
   }
 
   if (loading) {
@@ -370,24 +301,24 @@ export default function ProductsManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header Toolbar */}
-      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between bg-white/5 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/10 shadow-2xl">
-        <div className="flex flex-col sm:flex-row gap-3 flex-1">
+      <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between bg-white/5 backdrop-blur-md p-4 rounded-3xl border border-white/10 shadow-2xl">
+        <div className="flex flex-col sm:flex-row gap-2 flex-1">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
             <Input
               value={search}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
               placeholder="بحث باسم المنتج (عربي أو إنجليزي)..."
-              className="pr-11 bg-white/5 border-white/10 focus:border-primary focus:ring-primary/20 rounded-2xl h-12 font-bold text-white placeholder:text-muted-foreground/50"
+              className="pr-10 bg-white/5 border-white/10 focus:border-primary focus:ring-primary/20 rounded-xl h-10 font-bold text-[11px] text-white placeholder:text-muted-foreground/50"
             />
           </div>
           <Select value={filterCategory} onValueChange={(val: string) => setFilterCategory(val)}>
-            <SelectTrigger className="w-full sm:w-56 bg-white/5 border-white/10 rounded-2xl h-12 font-bold text-foreground">
+            <SelectTrigger className="w-full sm:w-48 bg-white/5 border-white/10 rounded-xl h-10 font-bold text-[11px] text-foreground">
               <SelectValue placeholder="كل التصنيفات" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-white/10 bg-card text-foreground">
+            <SelectContent className="rounded-xl border-white/10 bg-card text-foreground">
               <SelectItem value="all">كل التصنيفات</SelectItem>
               {categories.map((cat) => (
                 <SelectItem key={cat.id} value={cat.id}>
@@ -397,20 +328,36 @@ export default function ProductsManager() {
             </SelectContent>
           </Select>
         </div>
-        <Button
-          onClick={openAddDialog}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl h-12 px-6 font-black shadow-lg shadow-primary/20 flex items-center gap-2 group transition-all active:scale-95"
-        >
-          <Plus className="size-5 group-hover:rotate-90 transition-transform duration-300" />
-          إضافة منتج جديد
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleSync}
+            disabled={syncing}
+            className="border-primary/20 hover:bg-primary/10 text-primary rounded-xl h-10 px-4 font-black flex items-center gap-1.5 transition-all active:scale-95 text-[10px]"
+          >
+            {syncing ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Sparkles className="size-4" />
+            )}
+            مزامنة البيانات
+          </Button>
+          <Button
+            onClick={openAddDialog}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl h-10 px-4 font-black shadow-lg shadow-primary/20 flex items-center gap-1.5 group transition-all active:scale-95 text-[10px]"
+          >
+            <Plus className="size-4 group-hover:rotate-90 transition-transform duration-300" />
+            إضافة منتج
+          </Button>
+        </div>
       </div>
 
       {/* Categories Horizontal Scroll */}
-      <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar no-scrollbar">
+      <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar no-scrollbar">
          <button 
            onClick={() => setFilterCategory('all')}
-           className={`px-6 py-3 rounded-2xl font-black text-xs whitespace-nowrap transition-all border ${
+           className={`px-4 py-2 rounded-xl font-black text-[10px] whitespace-nowrap transition-all border ${
              filterCategory === 'all' 
              ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/10' 
              : 'bg-white/5 text-muted-foreground border-white/5 hover:border-white/10 hover:text-white'
@@ -422,7 +369,7 @@ export default function ProductsManager() {
            <button 
              key={cat.id}
              onClick={() => setFilterCategory(cat.id)}
-             className={`px-6 py-3 rounded-2xl font-black text-xs whitespace-nowrap transition-all border ${
+             className={`px-4 py-2 rounded-xl font-black text-[10px] whitespace-nowrap transition-all border ${
                filterCategory === cat.id 
                ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/10' 
                : 'bg-white/5 text-muted-foreground border-white/5 hover:border-white/10 hover:text-white'
@@ -435,20 +382,20 @@ export default function ProductsManager() {
 
       {/* Products Grid */}
       {filteredProducts.length === 0 ? (
-        <Card className="bg-card/50 backdrop-blur-md border-white/10 rounded-[2.5rem] border-dashed">
-          <CardContent className="p-24 text-center">
-            <div className="bg-white/5 size-24 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-white/5">
-              <Package className="size-12 text-white/10" />
+        <Card className="bg-card/50 backdrop-blur-md border-white/10 rounded-3xl border-dashed">
+          <CardContent className="p-16 text-center">
+            <div className="bg-white/5 size-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
+              <Package className="size-8 text-white/10" />
             </div>
-            <h3 className="text-xl font-black text-white mb-2">لا توجد منتجات</h3>
-            <p className="text-muted-foreground font-bold max-w-xs mx-auto">لم يتم العثور على أي منتجات في هذا التصنيف حالياً</p>
+            <h3 className="text-lg font-black text-white mb-1">لا توجد منتجات</h3>
+            <p className="text-muted-foreground font-bold text-xs max-w-xs mx-auto">لم يتم العثور على أي منتجات في هذا التصنيف حالياً</p>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredProducts.map((product) => (
-            <Card key={product.id} className="group bg-card/50 backdrop-blur-md border-white/10 rounded-[2.5rem] overflow-hidden hover:border-primary/30 transition-all duration-500 shadow-xl">
-              <div className="relative h-56 overflow-hidden">
+            <Card key={product.id} className="group bg-card/50 backdrop-blur-md border-white/10 rounded-3xl overflow-hidden hover:border-primary/30 transition-all duration-500 shadow-xl">
+              <div className="relative h-44 overflow-hidden">
                 {product.imageUrl ? (
                   <img
                     src={product.imageUrl}
@@ -457,41 +404,49 @@ export default function ProductsManager() {
                   />
                 ) : (
                   <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                    <ImageIcon className="size-12 text-white/10" />
+                    <ImageIcon className="size-10 text-white/10" />
                   </div>
                 )}
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <Badge className={`px-3 py-1 rounded-full font-black text-[9px] uppercase tracking-widest border-none ${product.isActive ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-white/10 text-muted-foreground'}`}>
+                <div className="absolute top-3 right-3 flex gap-1.5">
+                  <Badge className={`px-2 py-0.5 rounded-full font-black text-[8px] uppercase tracking-widest border-none ${product.isActive ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-white/10 text-muted-foreground'}`}>
                     {product.isActive ? 'نشط' : 'متوقف'}
                   </Badge>
-                  <Badge className="bg-black/50 backdrop-blur-md text-white px-3 py-1 rounded-full font-black text-[9px] border border-white/10">
+                  <Badge className="bg-black/50 backdrop-blur-md text-white px-2 py-0.5 rounded-full font-black text-[8px] border border-white/10">
                     {product.sortOrder}#
                   </Badge>
                 </div>
+                {product.isHot && (
+                  <div className="absolute top-3 left-3">
+                    <Badge className="bg-primary text-primary-foreground border-none px-2 py-0.5 rounded-full font-black text-[8px] flex items-center gap-1 shadow-lg shadow-primary/20">
+                      <Zap className="size-2 fill-current" />
+                      الأكثر طلباً
+                    </Badge>
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <Badge className="bg-primary/20 text-primary border-none font-black text-[9px] px-3 py-1 rounded-full backdrop-blur-md">
+                <div className="absolute bottom-3 left-3 right-3">
+                  <Badge className="bg-primary/20 text-primary border-none font-black text-[8px] px-2 py-0.5 rounded-full backdrop-blur-md">
                     {product.category?.name}
                   </Badge>
                 </div>
               </div>
               
-              <CardContent className="p-6">
-                <div className="mb-4">
-                  <h3 className="text-lg font-black text-white group-hover:text-primary transition-colors line-clamp-1">{product.name}</h3>
-                  <p className="text-muted-foreground font-bold text-xs uppercase tracking-tight line-clamp-1 mt-1">{product.nameEn}</p>
+              <CardContent className="p-4">
+                <div className="mb-3">
+                  <h3 className="text-base font-black text-white group-hover:text-primary transition-colors line-clamp-1">{product.name}</h3>
+                  <p className="text-muted-foreground font-bold text-[10px] uppercase tracking-tight line-clamp-1 mt-0.5">{product.nameEn}</p>
                 </div>
 
-                <div className="flex items-center justify-between py-4 border-y border-white/5 mb-6">
+                <div className="flex items-center justify-between py-3 border-y border-white/5 mb-4">
                   <div>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">السعر التقريبي</p>
-                    <p className="text-xl font-black text-primary">
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">السعر التقريبي</p>
+                    <p className="text-lg font-black text-primary">
                       {product.price.toLocaleString('ar-EG')} 
-                      <span className="text-[10px] mr-1">ج.م</span>
+                      <span className="text-[9px] mr-1">ج.م</span>
                     </p>
                   </div>
                   <div className="text-left">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">وحدة السعر</p>
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">وحدة السعر</p>
                     <p className="text-xs font-black text-slate-200">{unitTypeLabels[product.unitType]}</p>
                   </div>
                 </div>
@@ -664,7 +619,7 @@ export default function ProductsManager() {
                     <Label className="text-slate-400 font-bold text-xs">طريقة حساب السعر (الوحدة)</Label>
                     <Select 
                       value={formData.unitType} 
-                      onValueChange={(v) => setFormData({ ...formData, unitType: v })}
+                      onValueChange={(v: string) => setFormData({ ...formData, unitType: v })}
                     >
                       <SelectTrigger className="h-12 rounded-xl border-white/10 bg-[#050505] font-bold text-white">
                         <SelectValue placeholder="اختر نوع الوحدة" />
@@ -674,6 +629,9 @@ export default function ProductsManager() {
                         <SelectItem value="piece">بالقطعة</SelectItem>
                         <SelectItem value="letter">بالحرف</SelectItem>
                         <SelectItem value="sheet">بالفرخ</SelectItem>
+                        <SelectItem value="thousand">بالألف قطعة</SelectItem>
+                        <SelectItem value="project">بالمشروع</SelectItem>
+                        <SelectItem value="car">بالسيارة</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -685,25 +643,48 @@ export default function ProductsManager() {
                     <h4 className="font-black text-xs uppercase tracking-widest">إعدادات العرض</h4>
                   </div>
                   
-                  <div className="flex items-center justify-between p-4 bg-[#050505] rounded-2xl border border-white/5">
-                    <div className="space-y-0.5">
-                      <p className="font-black text-sm text-white">حالة المنتج</p>
-                      <p className="text-[10px] font-bold text-slate-500">تفعيل أو إخفاء المنتج من المتجر</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center justify-between p-3 bg-[#050505] rounded-2xl border border-white/5">
+                      <div className="space-y-0.5">
+                        <p className="font-black text-[10px] text-white">الحالة</p>
+                        <p className="text-[8px] font-bold text-slate-500">تفعيل/إخفاء</p>
+                      </div>
+                      <Switch
+                        checked={formData.isActive}
+                        onCheckedChange={(val: boolean) => setFormData({ ...formData, isActive: val })}
+                      />
                     </div>
-                    <Switch
-                      checked={formData.isActive}
-                      onCheckedChange={(val) => setFormData({ ...formData, isActive: val })}
-                    />
+                    <div className="flex items-center justify-between p-3 bg-[#050505] rounded-2xl border border-white/5">
+                      <div className="space-y-0.5">
+                        <p className="font-black text-[10px] text-white">Hot</p>
+                        <p className="text-[8px] font-bold text-slate-500">الأكثر طلباً</p>
+                      </div>
+                      <Switch
+                        checked={formData.isHot}
+                        onCheckedChange={(val: boolean) => setFormData({ ...formData, isHot: val })}
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-slate-400 font-bold text-xs">ترتيب العرض (Sort Order)</Label>
-                    <Input
-                      type="number"
-                      value={formData.sortOrder}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, sortOrder: Number(e.target.value) })}
-                      className="bg-[#050505] border-white/10 rounded-xl h-12 font-bold text-white"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-slate-400 font-bold text-xs">نسبة الخصم</Label>
+                      <Input
+                        value={formData.discount}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, discount: e.target.value })}
+                        placeholder="مثال: 15%"
+                        className="bg-[#050505] border-white/10 rounded-xl h-12 font-bold text-white"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-slate-400 font-bold text-xs">الترتيب</Label>
+                      <Input
+                        type="number"
+                        value={formData.sortOrder}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, sortOrder: Number(e.target.value) })}
+                        className="bg-[#050505] border-white/10 rounded-xl h-12 font-bold text-white"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -744,10 +725,10 @@ export default function ProductsManager() {
 
       {/* Delete Confirmation */}
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent className="bg-white border-neutral-200 text-neutral-900 rounded-[2rem] p-8">
+        <AlertDialogContent className="bg-white border-neutral-200 text-neutral-900 rounded-[2rem] p-8 font-arabic" dir="rtl">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-2xl font-black">حذف المنتج</AlertDialogTitle>
-            <AlertDialogDescription className="text-neutral-500 text-lg">
+            <AlertDialogDescription className="text-neutral-500 text-lg font-bold">
               هل أنت متأكد من رغبتك في حذف هذا المنتج نهائياً؟ هذا الإجراء لا يمكن التراجع عنه.
             </AlertDialogDescription>
           </AlertDialogHeader>

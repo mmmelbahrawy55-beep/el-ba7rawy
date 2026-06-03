@@ -2,21 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
-import { useTheme } from 'next-themes';
-import { Menu, MessageCircle, ShieldCheck, Sun, Moon, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Menu, MessageCircle, ShieldCheck } from 'lucide-react';
+import { Button } from './ui/button';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Separator } from '@/components/ui/separator';
+} from './ui/sheet';
+import { Separator } from './ui/separator';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 const WHATSAPP_URL = `https://wa.me/201120053007?text=${encodeURIComponent('مرحباً، أريد الاستفسار عن خدماتكم')}`;
 
@@ -40,10 +38,7 @@ export default function SiteHeader() {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const { scrollY } = useScroll();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const [settings, setSettings] = useState<any>(null);
-  const router = useRouter();
   const pathname = usePathname();
 
   function handleNavClick(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
@@ -67,7 +62,6 @@ export default function SiteHeader() {
     const controller = new AbortController();
 
     const init = async () => {
-      setMounted(true);
       // Fetch site settings
       try {
         const res = await fetch('/api/settings', { signal: controller.signal })

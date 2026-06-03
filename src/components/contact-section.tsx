@@ -11,12 +11,11 @@ import {
   Twitter,
   Youtube,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Textarea } from './ui/textarea'
+import { Label } from './ui/label'
+import { Card } from './ui/card'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
@@ -37,7 +36,7 @@ export default function ContactSection() {
       .catch(() => {})
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
 
@@ -176,7 +175,7 @@ export default function ContactSection() {
                   <Label className="text-muted-foreground font-black mr-2 text-[10px] uppercase tracking-widest">الاسم</Label>
                   <Input 
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="أدخل اسمك" 
                     className="bg-muted/50 border-border text-foreground rounded-xl h-12 font-bold focus:ring-primary text-right text-sm"
                     required
@@ -186,7 +185,7 @@ export default function ContactSection() {
                   <Label className="text-muted-foreground font-black mr-2 text-[10px] uppercase tracking-widest">رقم الهاتف</Label>
                   <Input 
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="01xxxxxxxxx" 
                     className="bg-muted/50 border-border text-foreground rounded-xl h-12 font-bold focus:ring-primary text-right text-sm"
                     required
@@ -198,7 +197,7 @@ export default function ContactSection() {
                 <Label className="text-muted-foreground font-black mr-2 text-[10px] uppercase tracking-widest">الموضوع</Label>
                 <Input 
                   value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, subject: e.target.value })}
                   placeholder="موضوع الرسالة" 
                   className="bg-muted/50 border-border text-foreground rounded-xl h-12 font-bold focus:ring-primary text-right text-sm"
                   required
@@ -209,7 +208,7 @@ export default function ContactSection() {
                 <Label className="text-muted-foreground font-black mr-2 text-[10px] uppercase tracking-widest">الرسالة</Label>
                 <Textarea 
                   value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, message: e.target.value })}
                   placeholder="كيف يمكننا مساعدتك؟" 
                   className="bg-muted/50 border-border text-foreground rounded-xl min-h-[120px] font-bold focus:ring-primary text-right text-sm resize-none"
                   required

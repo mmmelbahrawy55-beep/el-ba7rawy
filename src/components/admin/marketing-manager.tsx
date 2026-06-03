@@ -2,19 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import { 
-  Plus, 
   Users, 
   Zap, 
   Share2, 
   Target,
   Loader2
 } from 'lucide-react'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Card } from '../ui/card'
+import { Switch } from '../ui/switch'
+import { Label } from '../ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import MarketingAIChat from './marketing-ai-chat'
 import { toast } from 'sonner'
 

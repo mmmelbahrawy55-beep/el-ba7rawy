@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { NextResponse } from "next/server";
+import { db } from "../../../lib/db";
+import { getAllProducts } from "../../../lib/products-data";
 
 export async function GET(request: Request) {
   try {
@@ -17,7 +18,7 @@ export async function GET(request: Request) {
       }),
     };
 
-    const products = await db.product.findMany({
+    let products = await db.product.findMany({
       where,
       include: {
         category: {
@@ -27,13 +28,30 @@ export async function GET(request: Request) {
       orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
     });
 
+    // If DB is empty, return fallback data
+    if (products.length === 0 && !categoryId && !search) {
+      const fallback = getAllProducts().map((p: any) => ({
+        ...p,
+        price: p.pricePerMeter ?? p.pricePerLetter ?? p.pricePerThousand ?? p.priceFlat ?? 0,
+        unitType: p.priceUnit,
+        isAvailable: p.isActive,
+        isActive: p.isActive,
+        category: { id: 'unknown', name: 'عام', nameEn: 'General' }
+      }));
+      return NextResponse.json(fallback);
+    }
+
     // Map isAvailable to isActive for frontend consistency
-    const mappedProducts = products.map(p => ({
+    const mappedProducts = products.map((p: any) => ({
       ...p,
       isActive: p.isAvailable
     }));
 
-    return NextResponse.json(mappedProducts);
+    return NextResponse.json(mappedProducts, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to fetch products";
     return NextResponse.json({ error: message }, { status: 500 });
@@ -55,6 +73,8 @@ export async function POST(request: Request) {
       deliveryDays,
       isActive,
       sortOrder,
+      isHot,
+      discount,
     } = body as {
       categoryId: string;
       name: string;
@@ -66,6 +86,8 @@ export async function POST(request: Request) {
       deliveryDays?: number;
       isActive?: boolean;
       sortOrder?: number;
+      isHot?: boolean;
+      discount?: string;
     };
 
     if (!categoryId || !name || !nameEn) {
@@ -87,6 +109,8 @@ export async function POST(request: Request) {
         deliveryDays: deliveryDays ?? 3,
         isAvailable: isActive ?? true,
         sortOrder: sortOrder ?? 0,
+        isHot: isHot ?? false,
+        discount: discount ?? null,
       },
       include: {
         category: {
