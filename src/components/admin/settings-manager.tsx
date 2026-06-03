@@ -93,45 +93,40 @@ export default function SettingsManager() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    setUploading(true)
-    try {
-      const fd = new FormData()
-      fd.append('file', file)
-      fd.append('folder', 'branding')
-      
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: fd
-      })
-      
-      const data = await res.json()
-      
-      if (res.ok) {
-        const updatedSettings = settings ? { ...settings, logoUrl: data.url } : null
-        if (updatedSettings) {
-          setSettings(updatedSettings)
-          // Save to DB
-          const saveRes = await fetch('/api/settings', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedSettings),
-          })
-          
-          if (saveRes.ok) {
-            toast.success('تم رفع وحفظ الشعار بنجاح')
-          } else {
-            toast.error('تم رفع الشعار ولكن فشل حفظ الإعدادات')
-          }
-        }
-      } else {
-        toast.error(data.error || 'فشل رفع الشعار')
-      }
-    } catch (error) {
-      console.error('Upload error:', error)
-      toast.error('حدث خطأ أثناء الرفع')
-    } finally {
+    // Client-side Base64 conversion
+    const reader = new FileReader()
+    reader.onloadstart = () => setUploading(true)
+    reader.onerror = () => {
+      toast.error('فشل قراءة الملف')
       setUploading(false)
     }
+    reader.onload = async (event) => {
+      const base64Data = event.target?.result as string
+      
+      if (base64Data) {
+        const updatedSettings = settings ? { ...settings, logoUrl: base64Data } : null
+        if (updatedSettings) {
+          setSettings(updatedSettings)
+          try {
+            const saveRes = await fetch('/api/settings', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(updatedSettings),
+            })
+            
+            if (saveRes.ok) {
+              toast.success('تم رفع وحفظ الشعار بنجاح (محلياً)')
+            } else {
+              toast.error('فشل حفظ الإعدادات في قاعدة البيانات')
+            }
+          } catch (err) {
+            toast.error('حدث خطأ أثناء الحفظ')
+          }
+        }
+      }
+      setUploading(false)
+    }
+    reader.readAsDataURL(file)
   }
 
   if (loading) {
