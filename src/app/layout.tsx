@@ -62,6 +62,7 @@ export const metadata: Metadata = {
   },
 };
 
+// Global Layout for El Bahrawy Website - Force Rebuild
 export default function RootLayout({
   children,
 }: Readonly<{
