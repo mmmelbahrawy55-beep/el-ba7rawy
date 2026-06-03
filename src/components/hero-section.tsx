@@ -228,7 +228,7 @@ export default function HeroSection() {
               <a href="/services">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine" />
                 <Zap className="ml-2 sm:ml-3 size-5 sm:size-6 group-hover:rotate-12 transition-transform" />
-                تسوق الآن
+                تسوق الآن - ELBA7RAWY
               </a>
             </Button>
             <Button 
