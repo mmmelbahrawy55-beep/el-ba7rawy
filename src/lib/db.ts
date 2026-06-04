@@ -6,32 +6,14 @@ const globalForPrisma = globalThis as unknown as {
 
 const prismaOptions = {
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] as any : ['error'] as any,
-  errorFormat: 'minimal' as any,
+  errorFormat: 'pretty' as any,
 }
 
-// Create a proxy to prevent errors when database is not available
-const createSafeDb = () => {
-  try {
-    return new PrismaClient(prismaOptions)
-  } catch (e) {
-    console.warn('Database not available, using safe fallback proxy');
-    return new Proxy({} as any, {
-      get: () => {
-        return () => ({
-          findMany: async () => [],
-          findUnique: async () => null,
-          findFirst: async () => null,
-          create: async () => ({}),
-          update: async () => ({}),
-          upsert: async () => ({}),
-          delete: async () => ({}),
-          count: async () => 0,
-        });
-      }
-    });
-  }
+// Ensure DATABASE_URL is present in non-static builds
+if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL) {
+  console.warn('⚠️ WARNING: DATABASE_URL is missing in production environment. Admin features will not work.');
 }
 
-export const db = globalForPrisma.prisma ?? createSafeDb()
+export const db = globalForPrisma.prisma ?? new PrismaClient(prismaOptions)
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
