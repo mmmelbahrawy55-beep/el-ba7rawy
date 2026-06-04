@@ -1,0 +1,166 @@
+[debug] [2026-06-04T04:52:49.137Z] ----------------------------------------------------------------------
+[debug] [2026-06-04T04:52:49.144Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\EL Manara\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2026-06-04T04:52:49.145Z] CLI Version:   15.13.0
+[debug] [2026-06-04T04:52:49.145Z] Platform:      win32
+[debug] [2026-06-04T04:52:49.145Z] Node Version:  v24.14.0
+[debug] [2026-06-04T04:52:49.146Z] Time:          Thu Jun 04 2026 07:52:49 GMT+0300 (توقيت شرق أوروبا الصيفي)
+[debug] [2026-06-04T04:52:49.146Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-04T04:52:56.124Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-04T04:52:56.125Z] > authorizing via signed-in user (m.m.melbahrawy55@gmail.com)
+[debug] [2026-06-04T04:52:56.126Z] [iam] checking project elba7rawy-49a39 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-06-04T04:52:56.129Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:52:56.130Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:52:56.133Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/elba7rawy-49a39:testIamPermissions [none]
+[debug] [2026-06-04T04:52:56.133Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/elba7rawy-49a39:testIamPermissions  x-goog-user-project=elba7rawy-49a39
+[debug] [2026-06-04T04:52:56.134Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/elba7rawy-49a39:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-06-04T04:52:56.543Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/elba7rawy-49a39:testIamPermissions 200
+[debug] [2026-06-04T04:52:56.543Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/elba7rawy-49a39:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-06-04T04:52:56.544Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:52:56.545Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:52:56.545Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/elba7rawy-49a39 [none]
+[debug] [2026-06-04T04:52:56.981Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/elba7rawy-49a39 200
+[debug] [2026-06-04T04:52:56.981Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/elba7rawy-49a39 {"projectId":"elba7rawy-49a39","projectNumber":"240822922643","displayName":"elba7rawy","name":"projects/elba7rawy-49a39","resources":{"hostingSite":"elba7rawy-49a39"},"state":"ACTIVE","etag":"1_ddf8d2e8-4d46-416a-b64b-a3f5a47455a0"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2026-06-04T04:53:51.479Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:53:51.479Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:53:51.479Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/elba7rawy-49a39/sites/elba7rawy-49a39 [none]
+[debug] [2026-06-04T04:53:52.663Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/elba7rawy-49a39/sites/elba7rawy-49a39 200
+[debug] [2026-06-04T04:53:52.664Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/elba7rawy-49a39/sites/elba7rawy-49a39 {"name":"projects/elba7rawy-49a39/sites/elba7rawy-49a39","defaultUrl":"https://elba7rawy-49a39.web.app","type":"DEFAULT_SITE"}
+[info] ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\EL Manara\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\EL Manara\OneDrive\Desktop\elbahrawy-website\package-lock.json
+
+
+[info] ▲ Next.js 16.2.7 (Turbopack)
+
+[info] ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+[info] - Environments: .env
+
+
+[info]   Creating an optimized production build ...
+
+[info] 
+> Build error occurred
+
+[info] Error: Turbopack build failed with 1 errors:
+./OneDrive/Desktop/elbahrawy-website/src/app/globals.css:2:16582
+Module not found: Can't resolve '&#x27;/images/grid.svg&'
+  1 | ...
+> 2 | ...es\/grid\.svg\&\#x27\;\)\]{background-image:url(&#x27;/images/grid.svg&#x27;)}.bg-\[url\...
+    |                                                ^
+  3 | ...
+
+
+
+Import trace:
+  Client Component Browser:
+    ./OneDrive/Desktop/elbahrawy-website/src/app/globals.css [Client Component Browser]
+    ./OneDrive/Desktop/elbahrawy-website/src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./OneDrive/Desktop/elbahrawy-website/src/app/globals.css:2:16582)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+
+[debug] [2026-06-04T04:55:33.332Z] Error: ENOENT: no such file or directory, open 'C:\Users\EL Manara\OneDrive\Desktop\elbahrawy-website\.next\server\middleware-manifest.json'
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-06-04T04:55:37.918Z] ----------------------------------------------------------------------
+[debug] [2026-06-04T04:55:37.925Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\EL Manara\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2026-06-04T04:55:37.926Z] CLI Version:   15.13.0
+[debug] [2026-06-04T04:55:37.926Z] Platform:      win32
+[debug] [2026-06-04T04:55:37.926Z] Node Version:  v24.14.0
+[debug] [2026-06-04T04:55:37.926Z] Time:          Thu Jun 04 2026 07:55:37 GMT+0300 (توقيت شرق أوروبا الصيفي)
+[debug] [2026-06-04T04:55:37.927Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-04T04:55:45.077Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-04T04:55:45.078Z] > authorizing via signed-in user (m.m.melbahrawy55@gmail.com)
+[debug] [2026-06-04T04:55:45.079Z] [iam] checking project elba7rawy-49a39 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-06-04T04:55:45.082Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:55:45.082Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:55:45.087Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/elba7rawy-49a39:testIamPermissions [none]
+[debug] [2026-06-04T04:55:45.088Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/elba7rawy-49a39:testIamPermissions  x-goog-user-project=elba7rawy-49a39
+[debug] [2026-06-04T04:55:45.089Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/elba7rawy-49a39:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-06-04T04:55:45.602Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/elba7rawy-49a39:testIamPermissions 200
+[debug] [2026-06-04T04:55:45.603Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/elba7rawy-49a39:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-06-04T04:55:45.604Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:55:45.604Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:55:45.605Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/elba7rawy-49a39 [none]
+[debug] [2026-06-04T04:55:46.166Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/elba7rawy-49a39 200
+[debug] [2026-06-04T04:55:46.166Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/elba7rawy-49a39 {"projectId":"elba7rawy-49a39","projectNumber":"240822922643","displayName":"elba7rawy","name":"projects/elba7rawy-49a39","resources":{"hostingSite":"elba7rawy-49a39"},"state":"ACTIVE","etag":"1_ddf8d2e8-4d46-416a-b64b-a3f5a47455a0"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2026-06-04T04:56:48.904Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:56:48.905Z] Checked if tokens are valid: true, expires at: 1780552310543
+[debug] [2026-06-04T04:56:48.905Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/elba7rawy-49a39/sites/elba7rawy-49a39 [none]
+[debug] [2026-06-04T04:56:50.625Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/elba7rawy-49a39/sites/elba7rawy-49a39 200
+[debug] [2026-06-04T04:56:50.625Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/elba7rawy-49a39/sites/elba7rawy-49a39 {"name":"projects/elba7rawy-49a39/sites/elba7rawy-49a39","defaultUrl":"https://elba7rawy-49a39.web.app","type":"DEFAULT_SITE"}
+[info] ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\EL Manara\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\EL Manara\OneDrive\Desktop\elbahrawy-website\package-lock.json
+
+
+[info] ▲ Next.js 16.2.7 (Turbopack)
+
+[info] ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+[info] - Environments: .env
+
+
+[info]   Creating an optimized production build ...
+
+[info] 
+> Build error occurred
+
+[info] Error: Turbopack build failed with 1 errors:
+./OneDrive/Desktop/elbahrawy-website/src/app/globals.css:2:16582
+Module not found: Can't resolve '&#x27;/images/grid.svg&'
+  1 | ...
+> 2 | ...es\/grid\.svg\&\#x27\;\)\]{background-image:url(&#x27;/images/grid.svg&#x27;)}.bg-\[url\...
+    |                                                ^
+  3 | ...
+
+
+
+Import trace:
+  Client Component Browser:
+    ./OneDrive/Desktop/elbahrawy-website/src/app/globals.css [Client Component Browser]
+    ./OneDrive/Desktop/elbahrawy-website/src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./OneDrive/Desktop/elbahrawy-website/src/app/globals.css:2:16582)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+
+[debug] [2026-06-04T04:58:14.965Z] Error: ENOENT: no such file or directory, open 'C:\Users\EL Manara\OneDrive\Desktop\elbahrawy-website\.next\server\middleware-manifest.json'
+[error] 
+[error] Error: An unexpected error has occurred.

@@ -31,8 +31,8 @@ export async function GET(request: Request) {
       orderBy: { sortOrder: "asc" },
     });
 
-    // If DB is empty and not admin, return fallback data
-    if (categories.length === 0 && !isAdmin) {
+    // Always return fallback data if DB fails or is empty
+    if (categories.length === 0) {
       // Map fallback categories to the expected format
       return NextResponse.json(fallbackCategories.map(cat => ({
         ...cat,
@@ -43,7 +43,11 @@ export async function GET(request: Request) {
           unitType: p.priceUnit,
           isAvailable: p.isActive,
         }))
-      })));
+      })), {
+        headers: {
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        },
+      });
     }
 
     // Transform to include parentCategoryId safely if it exists in the model
