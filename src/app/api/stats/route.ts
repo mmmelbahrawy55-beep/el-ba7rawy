@@ -135,7 +135,7 @@ export const GET = withErrorHandling(async (request: Request) => {
     recentTransactions,
     marketingStats: {
       publishedPosts: publishedMarketingPosts,
-      aiEnabled: !!marketingConfig?.isActive,
+      aiEnabled: !!marketingConfig?.isEnabled,
       lastRun: marketingConfig?.updatedAt || null
     }
   }, {
