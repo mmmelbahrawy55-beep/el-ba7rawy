@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../lib/db";
 import { categories as fallbackCategories } from "../../../lib/products-data";
+import { withErrorHandling } from "@/lib/api-utils";
 
-export async function GET(request: Request) {
+export const GET = withErrorHandling(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const isAdmin = searchParams.get("admin") === "true";
@@ -31,9 +32,9 @@ export async function GET(request: Request) {
       orderBy: { sortOrder: "asc" },
     });
 
-    // Always return fallback data if DB fails or is empty
-    if (categories.length === 0) {
-      // Map fallback categories to the expected format
+    // If DB has no categories, it might be uninitialized. 
+    // Return empty array for admin to allow adding, or fallback for public.
+    if (categories.length === 0 && !isAdmin) {
       return NextResponse.json(fallbackCategories.map(cat => ({
         ...cat,
         _count: { products: cat.products.length },
@@ -44,65 +45,62 @@ export async function GET(request: Request) {
           isAvailable: p.isActive,
         }))
       })), {
-        headers: {
-          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
-        },
+        headers: { 'Cache-Control': 'no-store, max-age=0' },
       });
     }
 
-    // Transform to include parentCategoryId safely if it exists in the model
     const transformed = categories.map(cat => ({
       ...cat,
       parentCategoryId: (cat as any).parentCategoryId || null
     }));
 
     return NextResponse.json(transformed, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
-      },
+      headers: { 'Cache-Control': 'no-store, max-age=0' },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to fetch categories";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("API Categories GET Error:", error);
+    return NextResponse.json(fallbackCategories.map(cat => ({
+      ...cat,
+      _count: { products: cat.products.length },
+      products: cat.products.map(p => ({
+        ...p,
+        price: p.pricePerMeter ?? p.pricePerLetter ?? p.pricePerThousand ?? p.priceFlat ?? 0,
+        unitType: p.priceUnit,
+        isAvailable: p.isActive,
+      }))
+    })), {
+      headers: { 'Cache-Control': 'no-store' },
+    });
   }
-}
+});
 
-export async function POST(req: Request) {
-  try {
-    const body = await req.json()
-    const { id, ...data } = body
-    
-    if (id) {
-      const category = await db.category.update({
-        where: { id },
-        data: {
-          name: data.name,
-          nameEn: data.nameEn,
-          icon: data.icon,
-          color: data.color,
-          sortOrder: Number(data.sortOrder) || 0,
-          isActive: data.isActive ?? true,
-        }
-      })
-      return NextResponse.json(category)
+export const POST = withErrorHandling(async (req: Request) => {
+  console.log("POST /api/categories - Start (withErrorHandling)");
+  const body = await req.json()
+  console.log("POST /api/categories - Body:", body);
+  const { name, nameEn, icon, color, sortOrder, isActive } = body
+  
+  if (!name) {
+    console.log("POST /api/categories - Missing name");
+    return NextResponse.json({ error: "الاسم بالعربية مطلوب" }, { status: 400 })
+  }
+
+  const finalNameEn = nameEn || name;
+
+  console.log("POST /api/categories - Attempting DB create");
+  const category = await db.category.create({ 
+    data: {
+      name: name,
+      nameEn: finalNameEn,
+      icon: icon || "Printer",
+      color: color || "blue",
+      sortOrder: Number(sortOrder) || 0,
+      isActive: isActive !== false,
     }
-
-    const category = await db.category.create({ 
-      data: {
-        name: data.name,
-        nameEn: data.nameEn,
-        icon: data.icon ?? "Printer",
-        color: data.color ?? "blue",
-        sortOrder: Number(data.sortOrder) || 0,
-        isActive: data.isActive ?? true,
-      }
-    })
-    return NextResponse.json(category)
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to save category";
-    return NextResponse.json({ error: message }, { status: 500 })
-  }
-}
+  })
+  console.log("POST /api/categories - DB create success:", category.id);
+  return NextResponse.json(category)
+});
 
 export async function DELETE(request: Request) {
   try {
@@ -110,7 +108,6 @@ export async function DELETE(request: Request) {
     const id = searchParams.get('id')
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
     
-    // Check if category has products
     const productCount = await db.product.count({ where: { categoryId: id } })
     if (productCount > 0) {
       return NextResponse.json({ error: 'لا يمكن حذف تصنيف يحتوي على منتجات. قم بنقل المنتجات أولاً.' }, { status: 400 })

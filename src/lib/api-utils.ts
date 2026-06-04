@@ -15,9 +15,12 @@ export function withErrorHandling(handler: (request: Request, ...args: any[]) =>
         url: request.url,
       });
 
+      const isDev = process.env.NODE_ENV === 'development';
+
       return NextResponse.json({
-        error: 'Internal Server Error',
-        message: 'حدث خطأ في النظام، يرجى المحاولة لاحقاً',
+        error: error instanceof Error ? error.message : 'Internal Server Error',
+        message: isDev && error instanceof Error ? error.message : 'حدث خطأ في النظام، يرجى المحاولة لاحقاً',
+        stack: isDev && error instanceof Error ? error.stack : undefined,
         requestId,
         timestamp,
       }, { status: 500 });

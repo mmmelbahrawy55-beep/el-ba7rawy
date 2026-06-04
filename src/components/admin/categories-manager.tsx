@@ -194,9 +194,15 @@ export default function CategoriesManager() {
       const url = editingCategory ? `/api/categories/${editingCategory.id}` : '/api/categories'
       const method = editingCategory ? 'PUT' : 'POST'
       
+      const adminUser = localStorage.getItem('admin_user')
+      const token = adminUser ? JSON.parse(adminUser).token : null
+
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
         body: JSON.stringify(formData),
       })
 
@@ -205,10 +211,25 @@ export default function CategoriesManager() {
         setDialogOpen(false)
         fetchCategories()
       } else {
-        toast.error('فشل الحفظ')
+        let errorMessage = 'فشل الحفظ'
+        try {
+          const text = await res.text()
+          console.log("Server response text:", text)
+          try {
+            const data = JSON.parse(text)
+            errorMessage = data.error || data.message || errorMessage
+            if (data.details) console.error("Server error details:", data.details)
+          } catch (e) {
+            errorMessage = `خطأ غير متوقع: ${text.substring(0, 50)}...`
+          }
+        } catch (e) {
+          // Fallback if response cannot be read
+        }
+        toast.error(errorMessage)
       }
-    } catch {
-      toast.error('خطأ في الاتصال')
+    } catch (err) {
+      console.error('Save error:', err)
+      toast.error('خطأ في الاتصال بالسيرفر')
     } finally {
       setSaving(false)
     }
@@ -283,7 +304,10 @@ export default function CategoriesManager() {
   }
 
   const handleAddProduct = async () => {
-    if (!selectedCategory || !newProduct.name) return
+    if (!selectedCategory || !newProduct.name || !newProduct.nameEn) {
+      toast.error('يرجى إدخال اسم المنتج بالعربي والإنجليزي')
+      return
+    }
     try {
       const res = await fetch('/api/products', {
         method: 'POST',
@@ -302,9 +326,13 @@ export default function CategoriesManager() {
         setNewProduct({ name: '', nameEn: '', price: '', unitType: 'meter', deliveryDays: '3', imageUrl: '' })
         fetchCategoryProducts(selectedCategory.id)
         fetchCategories()
+      } else {
+        const data = await res.json()
+        toast.error(data.error || 'حدث خطأ أثناء الإضافة')
       }
     } catch (error) {
-      toast.error('حدث خطأ أثناء الإضافة')
+      console.error("Product add error:", error)
+      toast.error('حدث خطأ في الاتصال بالسيرفر')
     }
   }
 
@@ -717,6 +745,17 @@ export default function CategoriesManager() {
                 value={newProduct.name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewProduct({...newProduct, name: e.target.value})}
                 className="font-bold rounded-xl h-12 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/30"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="font-black">اسم المنتج (إنجليزي)</Label>
+              <Input 
+                placeholder="Example: Flex Sign" 
+                value={newProduct.nameEn}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewProduct({...newProduct, nameEn: e.target.value})}
+                className="font-bold rounded-xl h-12 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/30"
+                dir="ltr"
               />
             </div>
             

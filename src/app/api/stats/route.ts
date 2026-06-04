@@ -7,80 +7,6 @@ export const GET = withErrorHandling(async (request: Request) => {
   const limitError = rateLimit(request, 50, 60000); // 50 requests per minute
   if (limitError) return limitError;
 
-  let statsResults: any[] = [];
-  try {
-    statsResults = await Promise.all([
-      db.product.count(),
-      db.category.count(),
-      db.order.count(),
-      db.order.count({ where: { status: "pending" } }),
-      db.order.count({ where: { status: "in-progress" } }),
-      db.order.count({ where: { status: "completed" } }),
-      db.client.aggregate({
-        _sum: {
-          totalPaid: true,
-          totalDebt: true,
-        },
-      }),
-      db.order.findMany({
-        take: 5,
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          customerName: true,
-          productName: true,
-          status: true,
-          createdAt: true,
-          estimatedPrice: true
-        }
-      }),
-      db.transaction.findMany({
-        take: 5,
-        orderBy: { date: 'desc' },
-        include: {
-          client: {
-            select: { name: true }
-          }
-        }
-      }),
-      db.marketingPost.count({ where: { status: 'published' } }),
-      db.marketingAIConfig.findUnique({ where: { id: 'marketing-ai-config' } }),
-      db.project.count(),
-      db.client.count(),
-      db.user.findMany({ 
-        where: { role: 'admin' },
-        select: { id: true, name: true, avatar: true, email: true }
-      }),
-    ]);
-  } catch (error) {
-    console.error("Stats fetch error:", error);
-    // Return empty stats if DB fails
-    return NextResponse.json({
-      totalOrders: 0,
-      pendingOrders: 0,
-      inProgressOrders: 0,
-      completedOrders: 0,
-      totalProducts: 0,
-      totalCategories: 0,
-      totalProjects: 0,
-      totalClients: 0,
-      totalExperts: 0,
-      admins: [],
-      yearsOfExperience: new Date().getFullYear() - 2011,
-      revenue: 0,
-      totalDebts: 0,
-      categoryStats: [],
-      chartData: [],
-      recentOrders: [],
-      recentTransactions: [],
-      marketingStats: {
-        publishedPosts: 0,
-        aiEnabled: false,
-        lastRun: null
-      }
-    });
-  }
-
   const [
     totalProducts,
     totalCategories,
@@ -96,7 +22,49 @@ export const GET = withErrorHandling(async (request: Request) => {
     totalProjects,
     totalClients,
     admins,
-  ] = statsResults;
+  ] = await Promise.all([
+    db.product.count(),
+    db.category.count(),
+    db.order.count(),
+    db.order.count({ where: { status: "pending" } }),
+    db.order.count({ where: { status: "in-progress" } }),
+    db.order.count({ where: { status: "completed" } }),
+    db.client.aggregate({
+      _sum: {
+        totalPaid: true,
+        totalDebt: true,
+      },
+    }),
+    db.order.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        customerName: true,
+        productName: true,
+        status: true,
+        createdAt: true,
+        estimatedPrice: true
+      }
+    }),
+    db.transaction.findMany({
+      take: 5,
+      orderBy: { date: 'desc' },
+      include: {
+        client: {
+          select: { name: true }
+        }
+      }
+    }),
+    db.marketingPost.count({ where: { status: 'published' } }),
+    db.marketingAIConfig.findUnique({ where: { id: 'marketing-ai-config' } }),
+    db.project.count(),
+    db.client.count(),
+    db.user.findMany({ 
+      where: { role: 'admin' },
+      select: { id: true, name: true, avatar: true, email: true }
+    }),
+  ]);
 
   const revenue = platformStats?._sum?.totalPaid ?? 0;
   const totalDebts = platformStats?._sum?.totalDebt ?? 0;
@@ -167,8 +135,10 @@ export const GET = withErrorHandling(async (request: Request) => {
     recentTransactions,
     marketingStats: {
       publishedPosts: publishedMarketingPosts,
-      aiEnabled: marketingConfig?.isEnabled ?? false,
-      lastRun: marketingConfig?.lastRun
+      aiEnabled: !!marketingConfig?.isActive,
+      lastRun: marketingConfig?.updatedAt || null
     }
+  }, {
+    headers: { 'Cache-Control': 'no-store, max-age=0' }
   });
 });

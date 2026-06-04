@@ -6,13 +6,11 @@ import {
   CheckCircle2,
   Clock,
   Loader2,
-  ArrowLeft,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import {
   Select,
@@ -67,9 +65,11 @@ export default function QuoteCalculator() {
 
   // Fetch categories from API
   useEffect(() => {
+    const controller = new AbortController()
+    
     async function fetchCategories() {
       try {
-        const res = await fetch('/api/categories')
+        const res = await fetch('/api/categories', { signal: controller.signal })
         const data = await res.json()
         if (data && data.length > 0) {
           const mapped = data.map((c: any) => ({
@@ -79,26 +79,30 @@ export default function QuoteCalculator() {
           setCategories(mapped)
           if (mapped.length > 0) setSelectedCategory(mapped[0])
         }
-      } catch (error) {
-        console.error('Failed to fetch categories:', error)
+      } catch (error: any) {
+        // Silent error for non-critical categories fetch
       } finally {
         setLoading(false)
       }
     }
     fetchCategories()
+
+    return () => controller.abort()
   }, [])
 
   // Reset product when category changes
   useEffect(() => {
-    const updateProduct = async () => {
-      if (selectedCategory && (selectedCategory as any).products?.length > 0) {
-        setSelectedProduct((selectedCategory as any).products[0])
+    if (selectedCategory && categories.length > 0) {
+      const fullCategory = categories.find(c => c.id === selectedCategory.id)
+      if (fullCategory && (fullCategory as any).products?.length > 0) {
+        setSelectedProduct((fullCategory as any).products[0])
       } else {
         setSelectedProduct(null)
       }
+    } else if (!selectedCategory) {
+      setSelectedProduct(null)
     }
-    updateProduct()
-  }, [selectedCategory])
+  }, [selectedCategory?.id, categories])
 
   // Calculate total whenever inputs change
   useEffect(() => {
@@ -206,7 +210,7 @@ export default function QuoteCalculator() {
                     <div className="space-y-4 text-right">
                       <Label className="text-slate-500 font-black text-sm uppercase tracking-widest mr-3">اختر القسم</Label>
                       <Select 
-                        value={selectedCategory?.id} 
+                        value={selectedCategory?.id || ""} 
                         onValueChange={(val: string) => {
                           const cat = categories.find(c => c.id === val)
                           if (cat) setSelectedCategory(cat)
@@ -228,9 +232,10 @@ export default function QuoteCalculator() {
                     <div className="space-y-4 text-right">
                       <Label className="text-slate-500 font-black text-sm uppercase tracking-widest mr-3">نوع الخدمة</Label>
                       <Select 
-                        value={selectedProduct?.id} 
+                        value={selectedProduct?.id || ""} 
                         onValueChange={(val: string) => {
-                          const prod = (selectedCategory as any)?.products?.find((p: any) => p.id === val)
+                          const fullCategory = categories.find(c => c.id === selectedCategory?.id)
+                          const prod = (fullCategory as any)?.products?.find((p: any) => p.id === val)
                           if (prod) setSelectedProduct(prod)
                         }}
                       >
@@ -238,7 +243,7 @@ export default function QuoteCalculator() {
                           <SelectValue placeholder="اختر الخدمة..." />
                         </SelectTrigger>
                         <SelectContent className="bg-[#0c0c0c] border-white/10 text-white font-arabic" dir="rtl">
-                          {(selectedCategory as any)?.products?.map((prod: any) => (
+                          {(categories.find(c => c.id === selectedCategory?.id) as any)?.products?.map((prod: any) => (
                             <SelectItem key={prod.id} value={prod.id} className="font-bold py-4 cursor-pointer text-white hover:bg-white/5">
                               {prod.name}
                             </SelectItem>

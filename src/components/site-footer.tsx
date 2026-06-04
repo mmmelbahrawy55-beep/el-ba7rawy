@@ -75,12 +75,11 @@ export default function SiteFooter() {
           {/* Brand Card - Bento Large */}
           <div className="lg:col-span-2 bg-card/50 p-5 sm:p-6 rounded-xl border border-border backdrop-blur-sm flex flex-col justify-between group hover:border-primary/20 transition-all duration-500 shadow-xl shadow-black/10">
             <div>
-              <div className="relative h-12 w-auto mb-4 flex items-center justify-start group-hover:scale-105 transition-transform duration-500">
+              <div className="relative h-20 w-auto mb-6 flex items-center justify-start group-hover:scale-105 transition-transform duration-500">
                 <img
-                  src={logoSource}
+                  src="/uploads/branding/1780350697096-766422623.jpeg"
                   alt="El Bahrawy"
-                  onError={() => setLogoSource('/images/logo.png')}
-                  className="h-full w-auto object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]"
+                  className="h-full w-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] rounded-sm"
                 />
               </div>
               <h3 className="text-xl font-black mb-2 tracking-tighter text-foreground">
@@ -178,12 +177,8 @@ export default function SiteFooter() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden">
-               {settings?.logoUrl ? (
-                 <img src={settings.logoUrl} alt="Small Logo" className="w-5 h-5 object-contain brightness-0 invert opacity-50" />
-               ) : (
-                 <img src="/images/logo.png" alt="Small Logo" className="w-5 h-5 object-contain opacity-50" />
-               )}
+            <div className="size-10 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
+               <img src="/uploads/branding/1780350697096-766422623.jpeg" alt="Small Logo" className="w-8 h-8 object-contain" />
             </div>
             <p className="text-muted-foreground text-xs font-bold tracking-tight">
               © {new Date().getFullYear()} {settings?.siteName || 'البحراوي للدعاية والإعلان'}. جميع الحقوق محفوظة.

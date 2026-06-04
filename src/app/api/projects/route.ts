@@ -1,48 +1,39 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withErrorHandling } from "@/lib/api-utils";
 
-export async function GET() {
-  try {
-    const projects = await db.project.findMany({
-      orderBy: { createdAt: 'desc' }
-    });
-    return NextResponse.json(projects);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch projects" }, { status: 500 });
-  }
-}
+export const GET = withErrorHandling(async () => {
+  const projects = await db.project.findMany({
+    orderBy: { createdAt: 'desc' }
+  });
+  return NextResponse.json(projects, {
+    headers: { 'Cache-Control': 'no-store, max-age=0' }
+  });
+});
 
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    const { id, ...data } = body;
+export const POST = withErrorHandling(async (req: Request) => {
+  const body = await req.json();
+  const { id, ...data } = body;
 
-    if (id) {
-      const project = await db.project.update({
-        where: { id },
-        data,
-      });
-      return NextResponse.json(project);
-    }
-
-    const project = await db.project.create({
+  if (id) {
+    const project = await db.project.update({
+      where: { id },
       data,
     });
     return NextResponse.json(project);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to save project" }, { status: 500 });
   }
-}
 
-export async function DELETE(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-    if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
+  const project = await db.project.create({
+    data,
+  });
+  return NextResponse.json(project);
+});
 
-    await db.project.delete({ where: { id } });
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to delete project" }, { status: 500 });
-  }
-}
+export const DELETE = withErrorHandling(async (req: Request) => {
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
+
+  await db.project.delete({ where: { id } });
+  return NextResponse.json({ success: true });
+});

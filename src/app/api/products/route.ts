@@ -1,22 +1,23 @@
 import { NextResponse } from "next/server";
 import { db } from "../../../lib/db";
+import { withErrorHandling } from "@/lib/api-utils";
 
-export async function GET(request: Request) {
+export const GET = withErrorHandling(async (request: Request) => {
+  const { searchParams } = new URL(request.url);
+  const categoryId = searchParams.get("categoryId");
+  const search = searchParams.get("search");
+
+  const where: Record<string, unknown> = {
+    ...(categoryId && { categoryId }),
+    ...(search && {
+      OR: [
+        { name: { contains: search } },
+        { nameEn: { contains: search, mode: "insensitive" } },
+      ],
+    }),
+  };
+
   try {
-    const { searchParams } = new URL(request.url);
-    const categoryId = searchParams.get("categoryId");
-    const search = searchParams.get("search");
-
-    const where: Record<string, unknown> = {
-      ...(categoryId && { categoryId }),
-      ...(search && {
-        OR: [
-          { name: { contains: search } },
-          { nameEn: { contains: search, mode: "insensitive" } },
-        ],
-      }),
-    };
-
     let products = await db.product.findMany({
       where,
       include: {
@@ -66,7 +67,7 @@ export async function GET(request: Request) {
 
       return NextResponse.json(allProducts, { 
         headers: {
-          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+          'Cache-Control': 'no-store, max-age=0',
         },
       });
     }
@@ -79,18 +80,31 @@ export async function GET(request: Request) {
 
     return NextResponse.json(mappedProducts, {
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'no-store, max-age=0',
       },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to fetch products";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("API Products Error:", error);
+    // Return fallback data on error
+    const { categories } = await import("../../../lib/products-data");
+    let allProducts: any[] = [];
+    categories.forEach(cat => {
+      const catProds = cat.products.map(p => ({
+        ...p,
+        price: p.pricePerMeter ?? p.pricePerLetter ?? p.pricePerThousand ?? p.priceFlat ?? 0,
+        unitType: p.priceUnit,
+        isAvailable: p.isActive,
+        category: { id: cat.id, name: cat.name, nameEn: cat.nameEn, icon: cat.icon, color: cat.color }
+      }));
+      allProducts = [...allProducts, ...catProds];
+    });
+    if (categoryId) allProducts = allProducts.filter(p => p.categoryId === categoryId);
+    return NextResponse.json(allProducts, { headers: { 'Cache-Control': 'no-store' } });
   }
-}
+});
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
+export const POST = withErrorHandling(async (request: Request) => {
+  const body = await request.json();
 
     const {
       categoryId,
@@ -120,18 +134,20 @@ export async function POST(request: Request) {
       discount?: string;
     };
 
-    if (!categoryId || !name || !nameEn) {
+    if (!categoryId || !name) {
       return NextResponse.json(
-        { error: "categoryId, name, and nameEn are required" },
+        { error: "categoryId and name are required" },
         { status: 400 }
       );
     }
+
+    const finalNameEn = nameEn || name;
 
     const product = await db.product.create({
       data: {
         categoryId,
         name,
-        nameEn: nameEn ?? "",
+        nameEn: finalNameEn,
         description: description ?? "",
         imageUrl: imageUrl ?? "",
         price: Number(price) || 0,
@@ -150,8 +166,23 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(product, { status: 201 });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to create product";
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
-}
+});
+
+export const PATCH = withErrorHandling(async (request: Request) => {
+  const body = await request.json();
+  const { id, ...data } = body;
+  
+  if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
+
+  const product = await db.product.update({
+    where: { id },
+    data,
+    include: {
+      category: {
+        select: { id: true, name: true, nameEn: true, icon: true, color: true },
+      },
+    },
+  });
+
+  return NextResponse.json(product);
+});

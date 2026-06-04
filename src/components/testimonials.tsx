@@ -9,19 +9,19 @@ const fallbackTestimonials = [
     name: "أحمد منصور",
     role: "المدير التنفيذي - جراند ستورز",
     content: "تعاملنا مع البحراوي في تجهيز واجهات فروعنا الجديدة، الدقة في المواعيد والجودة في التنفيذ كانت تفوق التوقعات.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&h=200&auto=format&fit=crop"
+    avatar: "/images/logo.png"
   },
   {
     name: "سارة الجوهري",
     role: "مؤسسة مطاعم فليفرز",
     content: "حاسبة الأسعار في الموقع ساعدتني جداً في تخطيط ميزانية الدعاية، والنتيجة النهائية للمطبوعات كانت مبهرة.",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&h=200&auto=format&fit=crop"
+    avatar: "/images/logo.png"
   },
   {
     name: "م. هشام السويفي",
     role: "رئيس مجلس إدارة إنفينيتي ديزاين",
     content: "أفضل مكان للحفر بالليزر والتقطيع الرقمي. احترافية عالية جداً في التعامل مع التصاميم المعقدة والخامات المتنوعة.",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&h=200&auto=format&fit=crop"
+    avatar: "/images/logo.png"
   }
 ]
 

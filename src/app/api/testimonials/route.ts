@@ -7,9 +7,19 @@ export async function GET() {
       where: { isActive: true },
       orderBy: { createdAt: 'desc' }
     })
-    return NextResponse.json(testimonials)
+    return NextResponse.json(testimonials, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+      }
+    })
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch testimonials' }, { status: 500 })
+    console.error("API Testimonials Error:", error);
+    // Return empty array instead of 500 error
+    return NextResponse.json([], {
+      headers: {
+        'Cache-Control': 'no-store',
+      }
+    });
   }
 }
 

@@ -3,7 +3,6 @@ import { Geist, Cairo } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from '@/components/theme-provider';
-import { SvgFilters } from '@/components/ui/svg-filters';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +28,11 @@ export const metadata: Metadata = {
   authors: [{ name: "ELBA7RAWY Team" }],
   creator: "ELBA7RAWY",
   publisher: "ELBA7RAWY",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/images/logo.png",
+  },
   formatDetection: {
     email: false,
     address: false,
@@ -72,6 +76,7 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${cairo.variable} font-arabic antialiased bg-background text-foreground`}
+        style={{ fontFamily: 'var(--font-cairo), sans-serif' }}
       >
         <ThemeProvider
           attribute="class"

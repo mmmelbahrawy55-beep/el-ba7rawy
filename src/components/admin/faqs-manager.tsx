@@ -46,9 +46,13 @@ export default function FAQsManager() {
       if (res.ok) {
         toast.success('تم الحفظ بنجاح')
         fetchFaqs()
+      } else {
+        const data = await res.json()
+        toast.error(data.error || 'فشل الحفظ')
       }
-    } catch {
-      toast.error('فشل الحفظ')
+    } catch (err) {
+      console.error('Save error:', err)
+      toast.error('خطأ في الاتصال')
     } finally {
       setSaving(false)
     }

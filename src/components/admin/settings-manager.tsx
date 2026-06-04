@@ -49,7 +49,6 @@ export default function SettingsManager() {
           throw new Error('API error')
         }
       } catch (err) {
-        console.error('Settings fetch error:', err)
         // Fallback settings if API fails
         setSettings({
           siteName: "البحراوي للدعاية والإعلان",

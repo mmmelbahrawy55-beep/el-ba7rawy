@@ -1,44 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withErrorHandling } from "@/lib/api-utils";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
 
-export async function GET(_request: NextRequest, context: RouteContext) {
-  try {
-    const { id } = await context.params;
+export const GET = withErrorHandling(async (_request: Request, context: RouteContext) => {
+  const { id } = await context.params;
 
-    const product = await db.product.findUnique({
-      where: { id },
-      include: {
-        category: {
-          select: { id: true, name: true, nameEn: true, icon: true, color: true },
-        },
-        _count: {
-          select: { orders: true },
-        },
+  const product = await db.product.findUnique({
+    where: { id },
+    include: {
+      category: {
+        select: { id: true, name: true, nameEn: true, icon: true, color: true },
       },
-    });
+      _count: {
+        select: { orders: true },
+      },
+    },
+  });
 
-    if (!product) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({
-      ...product,
-      isActive: product.isAvailable
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to fetch product";
-    return NextResponse.json({ error: message }, { status: 500 });
+  if (!product) {
+    return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
-}
 
-export async function PUT(request: NextRequest, context: RouteContext) {
-  try {
-    const { id } = await context.params;
-    const body = await request.json();
+  return NextResponse.json({
+    ...product,
+    isActive: product.isAvailable
+  }, {
+    headers: { 'Cache-Control': 'no-store, max-age=0' }
+  });
+});
+
+export const PUT = withErrorHandling(async (request: Request, context: RouteContext) => {
+  const { id } = await context.params;
+  const body = await request.json();
 
     const {
       name,
@@ -92,23 +89,14 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     });
 
     return NextResponse.json(product);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update product";
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
-}
+});
 
-export async function DELETE(_request: NextRequest, context: RouteContext) {
-  try {
-    const { id } = await context.params;
+export const DELETE = withErrorHandling(async (_request: Request, context: RouteContext) => {
+  const { id } = await context.params;
 
-    await db.product.delete({
-      where: { id },
-    });
+  await db.product.delete({
+    where: { id },
+  });
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to delete product";
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
-}
+  return NextResponse.json({ success: true });
+});

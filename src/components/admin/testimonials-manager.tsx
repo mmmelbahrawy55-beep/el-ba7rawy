@@ -46,9 +46,13 @@ export default function TestimonialsManager() {
       if (res.ok) {
         toast.success('تم الحفظ بنجاح')
         fetchTestimonials()
+      } else {
+        const data = await res.json()
+        toast.error(data.error || 'فشل الحفظ')
       }
-    } catch {
-      toast.error('فشل الحفظ')
+    } catch (err) {
+      console.error('Save error:', err)
+      toast.error('خطأ في الاتصال')
     } finally {
       setSaving(false)
     }

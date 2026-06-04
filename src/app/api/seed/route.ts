@@ -1,12 +1,12 @@
 import { db } from "../../../lib/db";
 import { NextResponse } from "next/server";
 import { categories } from "../../../lib/products-data";
+import { withErrorHandling } from "@/lib/api-utils";
 
-export async function GET() {
-  try {
-    // Clear existing data
-    await db.product.deleteMany();
-    await db.category.deleteMany();
+export const GET = withErrorHandling(async () => {
+  // Clear existing data
+  await db.product.deleteMany();
+  await db.category.deleteMany();
 
     // Create Main Categories first
     const mainCategories = categories.filter(c => !c.parentCategoryId);
@@ -66,8 +66,4 @@ export async function GET() {
     }
 
     return NextResponse.json({ success: true, message: "تم تحديث البيانات بنجاح من ملف البيانات المدمج!" });
-  } catch (error: any) {
-    console.error("Seed error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-}
+});

@@ -9,7 +9,12 @@ export async function GET() {
     })
     return NextResponse.json(faqs)
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch faqs' }, { status: 500 })
+    console.error("API FAQs Error:", error);
+    return NextResponse.json([], {
+      headers: {
+        'Cache-Control': 'no-store',
+      }
+    });
   }
 }
 

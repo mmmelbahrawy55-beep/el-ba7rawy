@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withErrorHandling } from "@/lib/api-utils";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
 
-export async function PUT(request: NextRequest, context: RouteContext) {
-  try {
-    const { id } = await context.params;
-    const body = await request.json();
+export const PUT = withErrorHandling(async (request: Request, context: RouteContext) => {
+  const { id } = await context.params;
+  const body = await request.json();
 
     const {
       customerName,
@@ -70,23 +70,14 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     });
 
     return NextResponse.json(order);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update order";
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
-}
+});
 
-export async function DELETE(_request: NextRequest, context: RouteContext) {
-  try {
-    const { id } = await context.params;
+export const DELETE = withErrorHandling(async (_request: Request, context: RouteContext) => {
+  const { id } = await context.params;
 
-    await db.order.delete({
-      where: { id },
-    });
+  await db.order.delete({
+    where: { id },
+  });
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to delete order";
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
-}
+  return NextResponse.json({ success: true });
+});

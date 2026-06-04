@@ -68,9 +68,7 @@ export default function HeroSection() {
           }
         }
       } catch (err: any) {
-        if (err.name !== 'AbortError') {
-          console.error('Fetch error:', err);
-        }
+        // Silent error for non-critical settings fetch
       }
     };
 
@@ -155,28 +153,24 @@ export default function HeroSection() {
       {/* Main Hero Content */}
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
+          initial="hidden"
+          animate="visible"
           style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
           className="flex flex-col items-center text-center"
         >
           {/* Logo Section */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="relative mb-12 mt-16 sm:mt-20 flex items-center justify-center w-full"
-          >
-            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-[400px] md:h-[400px]">
+          <div className="relative mb-12 mt-16 sm:mt-20 flex items-center justify-center w-full">
+            <div className="relative w-72 h-72 sm:w-96 sm:h-96 md:w-[500px] md:h-[500px]">
               <img
-                src={logoSource}
-                alt={settings?.siteName || "ELBA7RAWY Logo"}
-                onError={() => setLogoSource('/images/logo.png')}
-                className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(251,191,36,0.5)] block brightness-110"
+                src="/uploads/branding/1780350697096-766422623.jpeg"
+                alt="ELBA7RAWY Logo"
+                className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)] rounded-lg"
                 loading="eager"
               />
             </div>
             {/* Background Glow behind logo */}
-            <div className="absolute inset-0 bg-primary/10 blur-[100px] -z-10 rounded-full scale-150 opacity-50" />
-          </motion.div>
+            <div className="absolute inset-0 bg-red-600/5 blur-[100px] -z-10 rounded-full scale-150 opacity-30" />
+          </div>
 
           {/* Hero Title */}
           <motion.div variants={itemVariants} className="relative mb-12 flex flex-col items-center">

@@ -49,6 +49,12 @@ export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
       }
 
       toast.success(`مرحباً ${data.name}!`)
+      
+      // Force cookie sync
+      if (data.token) {
+        document.cookie = `admin_token=${data.token}; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`;
+      }
+
       onLogin({
         id: data.id,
         email: data.email,

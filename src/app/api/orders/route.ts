@@ -1,32 +1,27 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendTelegramMessage } from "@/lib/telegram";
+import { withErrorHandling } from "@/lib/api-utils";
 
-export async function GET() {
-  try {
-    const orders = await db.order.findMany({
-      include: {
-        product: {
-          select: {
-            id: true,
-            name: true,
-            imageUrl: true,
-          },
+export const GET = withErrorHandling(async () => {
+  const orders = await db.order.findMany({
+    include: {
+      product: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
         },
       },
-      orderBy: { createdAt: "desc" },
-    });
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
-    return NextResponse.json(orders);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to fetch orders";
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
-}
+  return NextResponse.json(orders);
+});
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
+export const POST = withErrorHandling(async (request: Request) => {
+  const body = await request.json();
 
     const {
       customerName,
@@ -106,50 +101,41 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(order, { status: 201 });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to create order";
-    return NextResponse.json({ error: message }, { status: 500 });
+});
+
+export const PATCH = withErrorHandling(async (request: Request) => {
+  const body = await request.json();
+
+  const { id, status } = body as {
+    id: string;
+    status: string;
+  };
+
+  if (!id || !status) {
+    return NextResponse.json(
+      { error: "id and status are required" },
+      { status: 400 }
+    );
   }
-}
 
-export async function PATCH(request: Request) {
-  try {
-    const body = await request.json();
+  const validStatuses = ["pending", "in-progress", "completed", "cancelled"];
+  if (!validStatuses.includes(status)) {
+    return NextResponse.json({ error: "Invalid status value" }, { status: 400 });
+  }
 
-    const { id, status } = body as {
-      id: string;
-      status: string;
-    };
-
-    if (!id || !status) {
-      return NextResponse.json(
-        { error: "id and status are required" },
-        { status: 400 }
-      );
-    }
-
-    const validStatuses = ["pending", "in-progress", "completed", "cancelled"];
-    if (!validStatuses.includes(status)) {
-      return NextResponse.json({ error: "Invalid status value" }, { status: 400 });
-    }
-
-    const order = await db.order.update({
-      where: { id },
-      data: { status },
-      include: {
-        product: {
-          select: {
-            id: true,
-            name: true,
-            imageUrl: true,
-          },
+  const order = await db.order.update({
+    where: { id },
+    data: { status },
+    include: {
+      product: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
         },
       },
-    });
+    },
+  });
 
-    return NextResponse.json(order);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update order";
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
-}
+  return NextResponse.json(order);
+});

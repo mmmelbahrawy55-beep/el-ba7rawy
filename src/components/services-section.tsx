@@ -169,7 +169,7 @@ const ProductCard: React.FC<{
 
           <div className="relative aspect-[16/10] overflow-hidden">
             <Image
-              src={product.imageUrl || 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=800'}
+              src={product.imageUrl || '/images/service-3d.png'}
               alt={product.name}
               fill
               priority={index < 3}
