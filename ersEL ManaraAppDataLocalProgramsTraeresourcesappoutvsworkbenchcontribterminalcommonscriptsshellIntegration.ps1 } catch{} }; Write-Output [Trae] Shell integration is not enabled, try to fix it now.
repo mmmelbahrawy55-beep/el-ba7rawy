@@ -1,0 +1,29 @@
+[33mcommit 79a9b81520848ec1e54010ddf43b2468d62e6546[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: mmelbahrawy55 <mmelbahrawy55@gmail.com>
+Date:   Wed Jun 3 23:59:29 2026 +0300
+
+    Final: Deploy all updates and verify logo responsive placement across all interfaces
+
+[33mcommit af39f242b2c6578002716c0c032566985c0c1456[m
+Author: mmelbahrawy55 <mmelbahrawy55@gmail.com>
+Date:   Wed Jun 3 23:55:39 2026 +0300
+
+    Fix: Fully dynamic product and category management linked to shop pages
+
+[33mcommit aa44593c2fe61de3989a7608a377a9e235706550[m
+Author: mmelbahrawy55 <mmelbahrawy55@gmail.com>
+Date:   Wed Jun 3 23:37:27 2026 +0300
+
+    Feat: Implement shopping cart, product configurator, and hero section updates
+
+[33mcommit 32ea972dd930382897a20f9a595145c911813cc3[m
+Author: mmelbahrawy55 <mmelbahrawy55@gmail.com>
+Date:   Wed Jun 3 23:12:23 2026 +0300
+
+    Security: Patch CVE-2025-66478 by upgrading Next.js to 16.2.7 and migrate middleware to proxy
+
+[33mcommit 6cef927e7d95f8c620b4a172a77cd371668a76d2[m
+Author: mmelbahrawy55 <mmelbahrawy55@gmail.com>
+Date:   Wed Jun 3 22:04:17 2026 +0300
+
+    Fix: comprehensive platform audit, logo integration, and admin dashboard fixes
