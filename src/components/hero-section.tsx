@@ -160,7 +160,7 @@ export default function HeroSection() {
         >
           {/* Logo Section */}
           <div className="relative mb-12 mt-16 sm:mt-20 flex items-center justify-center w-full">
-            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-[400px] md:h-[400px]">
+            <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-[350px] md:h-[350px]">
               <img
                 src="/uploads/branding/1780350697096-766422623.jpeg"
                 alt="ELBA7RAWY Logo"
@@ -204,7 +204,7 @@ export default function HeroSection() {
               </motion.span>
               <div className="h-px w-32 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
               <p className="text-lg sm:text-xl font-bold text-slate-400 max-w-2xl mx-auto leading-relaxed px-4">
-                {settings?.siteName || "البحراوي للدعاية والإعلان"} - نبتكر لنميزك في سوق العمل
+                {settings?.siteName || "البحراوي للدعاية والإعلان"} - إبداع يتخطى الحدود.. لتميز لا يُنسى
               </p>
             </div>
           </motion.div>
