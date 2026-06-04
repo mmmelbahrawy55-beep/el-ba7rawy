@@ -56,7 +56,7 @@ interface AdminDashboardProps {
   onLogout: () => void
 }
 
-type Section = 'dashboard' | 'products' | 'categories' | 'orders' | 'settings' | 'projects' | 'platform' | 'messages' | 'partners' | 'activity' | 'marketing' | 'image-optimizer' | 'faqs' | 'testimonials'
+type Section = 'dashboard' | 'products' | 'categories' | 'orders' | 'projects' | 'platform' | 'messages' | 'partners' | 'activity' | 'marketing' | 'image-optimizer' | 'faqs' | 'testimonials'
 
 interface NavItem {
   id: Section | 'logout'
@@ -77,7 +77,6 @@ const navItems: NavItem[] = [
   { id: 'marketing', label: 'التسويق الذكي', icon: Megaphone, category: 'التسويق' },
   { id: 'orders', label: 'الطلبات', icon: ShoppingCart, category: 'المبيعات' },
   { id: 'messages', label: 'الرسائل', icon: Bell, category: 'المبيعات' },
-  { id: 'settings', label: 'إعدادات المنصة', icon: Settings, category: 'النظام' },
   { id: 'faqs', label: 'الأسئلة الشائعة', icon: HelpCircle, category: 'الإدارة' },
   { id: 'testimonials', label: 'آراء العملاء', icon: MessageSquare, category: 'المبيعات' },
   { id: 'logout', label: 'تسجيل خروج', icon: LogOut, category: 'أخرى' },

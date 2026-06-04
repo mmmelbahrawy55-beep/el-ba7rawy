@@ -87,7 +87,26 @@ export default function StatsCards() {
     )
   }
 
-  if (!stats) return null
+  if (!stats) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-4">
+        <div className="size-20 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20">
+          <PieChartIcon className="size-10 text-red-500" />
+        </div>
+        <div>
+          <h3 className="text-xl font-black text-white">فشل تحميل البيانات</h3>
+          <p className="text-muted-foreground text-sm font-bold mt-1">تأكد من اتصال قاعدة البيانات بشكل صحيح على فيرسل</p>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={() => window.location.reload()}
+          className="border-white/10 bg-white/5 hover:bg-white/10 text-white font-black"
+        >
+          إعادة المحاولة
+        </Button>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-3 animate-in fade-in duration-700">

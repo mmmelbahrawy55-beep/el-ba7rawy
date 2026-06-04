@@ -12,15 +12,13 @@ const prismaOptions: any = {
 
 // Add fallback for DATABASE_URL if missing
 if (!process.env.DATABASE_URL) {
-  // On Windows, sometimes 'file:./prisma/dev.db' or absolute paths work better
-  // Let's try the most robust way for Next.js on Windows
-  const dbPath = path.join(process.cwd(), 'prisma', 'dev.db').replace(/\\/g, '/')
+  // Use absolute path for SQLite to avoid issues on Vercel/Windows
+  const dbPath = path.resolve(process.cwd(), 'prisma/dev.db')
   prismaOptions.datasources = {
     db: {
       url: `file:${dbPath}`
     }
   }
-  console.log(`Prisma initialized with DB path: ${dbPath}`);
 }
 
 // Ensure DATABASE_URL is present in non-static builds
