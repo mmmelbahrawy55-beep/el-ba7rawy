@@ -16,9 +16,21 @@ export function withErrorHandling(handler: (request: Request, ...args: any[]) =>
       });
 
       const isDev = process.env.NODE_ENV === 'development';
+      const errorMessage = error instanceof Error ? error.message : 'Internal Server Error';
+
+      // Special handling for database connection errors
+      if (errorMessage.includes('prisma') || errorMessage.includes('database')) {
+        return NextResponse.json({
+          error: "Database Connection Error",
+          message: "فشل الاتصال بقاعدة البيانات. تأكد من صحة رابط DATABASE_URL في إعدادات فيرسل.",
+          details: isDev ? errorMessage : undefined,
+          requestId,
+          timestamp,
+        }, { status: 500 });
+      }
 
       return NextResponse.json({
-        error: error instanceof Error ? error.message : 'Internal Server Error',
+        error: errorMessage,
         message: isDev && error instanceof Error ? error.message : 'حدث خطأ في النظام، يرجى المحاولة لاحقاً',
         stack: isDev && error instanceof Error ? error.stack : undefined,
         requestId,

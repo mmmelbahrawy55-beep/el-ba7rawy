@@ -8,7 +8,10 @@ const globalForPrisma = globalThis as unknown as {
 const prismaOptions: any = {
   log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   errorFormat: 'pretty',
-  datasources: {
+}
+
+if (process.env.DATABASE_URL) {
+  prismaOptions.datasources = {
     db: {
       url: process.env.DATABASE_URL
     }
