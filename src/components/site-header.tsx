@@ -76,9 +76,7 @@ export default function SiteHeader() {
           }
         }
       } catch (err: any) {
-        if (err.name !== 'AbortError') {
-          console.error('Settings fetch error:', err);
-        }
+        // Silent error for non-critical settings fetch
       }
     }
     init()
@@ -139,7 +137,7 @@ export default function SiteHeader() {
             <div className="flex items-center justify-between h-16 sm:h-20">
               {/* Left side: Navigation links for desktop */}
               <nav className="hidden lg:flex items-center gap-1 flex-1">
-                {navLinks.slice(0, 3).map((link, index) => (
+                {navLinks.slice(0, 4).map((link, index) => (
                   <motion.div
                     key={link.href}
                     initial={{ opacity: 0, y: -10 }}
@@ -160,23 +158,31 @@ export default function SiteHeader() {
                 ))}
               </nav>
 
-              {/* Center: Brand Logo */}
-              <div className="flex justify-center flex-1 lg:flex-none">
+              {/* Center: Brand Name & Logo */}
+              <div className="flex justify-center flex-1 lg:flex-none mx-4">
                 <Link href="/" className="relative group">
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="flex items-center gap-3"
                   >
-                    <div className="relative h-12 w-auto flex items-center justify-center">
+                    <div className="relative size-10 sm:size-12 flex items-center justify-center bg-white rounded-xl p-1.5 shadow-xl shadow-black/20 border border-white/10 overflow-hidden">
                       <img
                         src={logoSource}
                         alt="ELBA7RAWY Logo"
+                        className="w-full h-full object-contain"
                         onError={() => setLogoSource('/images/logo.png')}
-                        className="h-full w-auto object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)] brightness-125 contrast-125"
                       />
                     </div>
-                    <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
+                    <div className="flex flex-col items-start">
+                      <h1 className="text-xl sm:text-2xl font-black tracking-tighter text-white leading-none">
+                        ELBA<span className="text-primary">7RAWY</span>
+                      </h1>
+                      <span className="text-[8px] sm:text-[10px] font-black tracking-[0.2em] uppercase text-white mt-1">
+                        Advertising
+                      </span>
+                    </div>
+                    <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-primary scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
                   </motion.div>
                 </Link>
               </div>
@@ -184,12 +190,12 @@ export default function SiteHeader() {
               {/* Right side: Action buttons and mobile menu */}
               <div className="flex items-center justify-end flex-1 gap-3">
                 <div className="hidden lg:flex items-center gap-3">
-                  {navLinks.slice(3).map((link, index) => (
+                  {navLinks.slice(4).map((link, index) => (
                     <motion.div
                       key={link.href}
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: (index + 3) * 0.1 }}
+                      transition={{ delay: (index + 4) * 0.1 }}
                     >
                       <Link
                         href={link.href}

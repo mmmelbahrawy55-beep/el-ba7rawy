@@ -94,22 +94,12 @@ export default function AboutPage() {
               className="relative aspect-square order-1 lg:order-2 max-w-[400px] mx-auto lg:ml-0 lg:mr-auto"
             >
               <div className="absolute inset-0 bg-primary/10 blur-[100px] rounded-full animate-pulse" />
-              <div className="relative h-full w-full rounded-[1.5rem] overflow-hidden flex items-center justify-center bg-transparent border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] group">
-                {settings?.logoUrl ? (
-                  <img
-                    src={settings.logoUrl}
-                    alt={settings?.siteName || "البحراوي للدعاية والإعلان"}
-                    className="w-full h-full object-contain p-4"
-                  />
-                ) : (
-                  <div className="relative w-full h-full p-8">
-                    <img
-                      src="/images/logo.png"
-                      alt="البحراوي للدعاية والإعلان"
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                )}
+              <div className="relative h-full w-full rounded-[2rem] overflow-hidden flex items-center justify-center bg-[#0a0a0a] border-2 border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] group p-6">
+                <img
+                  src="/uploads/branding/1780350697096-766422623.jpeg"
+                  alt="ELBA7RAWY Logo"
+                  className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
+                />
               </div>
             </motion.div>
           </div>
