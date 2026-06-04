@@ -109,7 +109,7 @@ export default function HeroSection() {
       className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-[#050505] transition-colors duration-500 selection:bg-primary selection:text-primary-foreground"
     >
       {/* Noise Overlay */}
-      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none" style={{ backgroundImage: "url(https://grainy-gradients.vercel.app/noise.svg)" }} />
 
       {/* Dynamic Background Elements */}
       <div className="absolute inset-0 z-0 overflow-hidden">
@@ -124,7 +124,7 @@ export default function HeroSection() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.08)_0%,transparent_70%)]" />
         
         {/* Animated Grid */}
-        <div className="absolute inset-0 bg-[url('/images/grid.svg')] opacity-[0.05] [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]" />
+        <div className="absolute inset-0 opacity-[0.05] [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]" />
       </div>
 
       {/* Floating Decorative Elements */}

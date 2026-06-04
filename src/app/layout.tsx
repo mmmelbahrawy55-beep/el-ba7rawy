@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Cairo } from "next/font/google";
-import "./globals.css";
+import "./app.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from '@/components/theme-provider';
 import { SvgFilters } from '@/components/ui/svg-filters';

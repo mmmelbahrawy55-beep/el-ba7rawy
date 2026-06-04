@@ -295,7 +295,7 @@ export default function PortfolioGallery() {
   return (
     <section id="portfolio" className="py-20 sm:py-32 bg-[#050505] relative overflow-hidden transition-colors duration-500">
       {/* Noise Overlay */}
-      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none" />
 
       {/* Background Decor */}
       <div className="absolute top-1/2 left-0 w-64 h-64 bg-primary/5 blur-[120px] rounded-full pointer-events-none" />

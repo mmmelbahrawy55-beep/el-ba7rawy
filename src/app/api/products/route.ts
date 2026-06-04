@@ -27,103 +27,48 @@ export async function GET(request: Request) {
       orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
     });
 
-    // If DB is empty and no filters, auto-seed or return fallback
-    if (products.length === 0 && !categoryId && !search) {
-      try {
-        // Only auto-seed if we are in admin mode or explicitly requested
-        const isAdmin = searchParams.get("admin") === "true";
-        if (isAdmin) {
-          console.log("Auto-seeding products as DB is empty...");
-          const { categories } = await import("../../../lib/products-data");
-          
-          for (const cat of categories) {
-            // Check if category exists
-            let dbCat = await db.category.findUnique({ where: { id: cat.id } });
-            if (!dbCat) {
-              dbCat = await db.category.create({
-                data: {
-                  id: cat.id,
-                  name: cat.name,
-                  nameEn: cat.nameEn,
-                  icon: cat.icon,
-                  color: cat.color,
-                  sortOrder: cat.sortOrder,
-                  isActive: cat.isActive,
-                }
-              });
-              
-              // Log category creation
-              await db.activityLog.create({
-                data: {
-                  action: 'AUTO_SEED_CATEGORY',
-                  details: `تم إنشاء تصنيف تلقائياً: ${cat.name}`,
-                  userEmail: 'System'
-                }
-              }).catch(() => {});
-            }
-
-            for (const prod of cat.products) {
-              const price = prod.pricePerMeter ?? prod.pricePerLetter ?? prod.pricePerThousand ?? prod.priceFlat ?? 0;
-              const isNew = !(await db.product.findUnique({ where: { id: prod.id } }));
-              
-              await db.product.upsert({
-                where: { id: prod.id },
-                update: {},
-                create: {
-                  id: prod.id,
-                  name: prod.name,
-                  nameEn: prod.nameEn,
-                  description: prod.description,
-                  price: price,
-                  unitType: prod.priceUnit,
-                  deliveryDays: prod.deliveryDays,
-                  imageUrl: prod.imageUrl,
-                  categoryId: cat.id,
-                  isAvailable: prod.isActive,
-                  sortOrder: prod.sortOrder,
-                  isHot: prod.isHot ?? false,
-                  discount: prod.discount ?? null,
-                }
-              });
-
-              if (isNew) {
-                // Log product creation
-                await db.activityLog.create({
-                  data: {
-                    action: 'AUTO_SEED_PRODUCT',
-                    details: `تم إنشاء منتج تلقائياً: ${prod.name}`,
-                    userEmail: 'System'
-                  }
-                }).catch(() => {});
-              }
-            }
+    // If DB is empty, return fallback data
+    if (products.length === 0) {
+      const { categories } = await import("../../../lib/products-data");
+      let allProducts: any[] = [];
+      
+      categories.forEach(cat => {
+        const catProds = cat.products.map(p => ({
+          ...p,
+          price: p.pricePerMeter ?? p.pricePerLetter ?? p.pricePerThousand ?? p.priceFlat ?? 0,
+          unitType: p.priceUnit,
+          isAvailable: p.isActive,
+          category: {
+            id: cat.id,
+            name: cat.name,
+            nameEn: cat.nameEn,
+            icon: cat.icon,
+            color: cat.color
           }
-          
-          // Re-fetch products after seeding
-          products = await db.product.findMany({
-            where,
-            include: {
-              category: {
-                select: { id: true, name: true, nameEn: true, icon: true, color: true },
-              },
-            },
-            orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-          });
-        } else {
-          const { getAllProducts } = await import("../../../lib/products-data");
-          const fallback = getAllProducts().map((p: any) => ({
-            ...p,
-            price: p.pricePerMeter ?? p.pricePerLetter ?? p.pricePerThousand ?? p.priceFlat ?? 0,
-            unitType: p.priceUnit,
-            isAvailable: p.isActive,
-            isActive: p.isActive,
-            category: { id: 'unknown', name: 'عام', nameEn: 'General' }
-          }));
-          return NextResponse.json(fallback);
-        }
-      } catch (seedError) {
-        console.error("Auto-seed error:", seedError);
+        }));
+        allProducts = [...allProducts, ...catProds];
+      });
+
+      // Filter by category if requested
+      if (categoryId) {
+        allProducts = allProducts.filter(p => p.categoryId === categoryId);
       }
+
+      // Filter by search if requested
+      if (search) {
+        const s = search.toLowerCase();
+        allProducts = allProducts.filter(p => 
+          p.name.includes(s) || 
+          p.nameEn.toLowerCase().includes(s) ||
+          p.description?.toLowerCase().includes(s)
+        );
+      }
+
+      return NextResponse.json(allProducts, { 
+        headers: {
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        },
+      });
     }
 
     // Map isAvailable to isActive for frontend consistency

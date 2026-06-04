@@ -177,7 +177,7 @@ export default function QuoteCalculator() {
   return (
     <section id="quote-calculator" className="py-32 sm:py-48 bg-[#050505] relative overflow-hidden transition-colors duration-500">
       {/* Noise Overlay */}
-      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none" />
 
       <div className="absolute bottom-0 right-0 w-[60%] h-[60%] bg-primary/10 blur-[180px] rounded-full pointer-events-none" />
       

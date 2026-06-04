@@ -368,7 +368,7 @@ export default function ServicesSection() {
   return (
     <section id="services" className="py-20 sm:py-32 bg-[#050505] relative overflow-hidden transition-colors duration-500">
       {/* Noise Overlay */}
-      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none" />
 
       {/* Background patterns */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40">

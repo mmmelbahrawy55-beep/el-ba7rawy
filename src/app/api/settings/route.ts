@@ -2,18 +2,26 @@ import { NextResponse } from "next/server";
 import { db } from "../../../lib/db";
 
 export async function GET() {
+  const fallbackSettings = {
+    id: "site-settings",
+    siteName: "البحراوي للدعاية والإعلان",
+    siteNameEn: "El Bahrawy Advertising",
+    logoUrl: "/images/logo.png",
+    whatsapp: "201120053007",
+    email: "info@elbahrawy.com",
+    address: "مصر، البحيرة",
+    facebook: "https://facebook.com/elbahrawy",
+    instagram: "https://instagram.com/elbahrawy",
+    geminiKey: null
+  };
+
   try {
     let setting = await db.setting.findUnique({
       where: { id: "site-settings" },
     });
 
     if (!setting) {
-      setting = await db.setting.create({
-        data: {
-          id: "site-settings",
-          siteName: "ELBA7RAWY",
-        },
-      });
+      return NextResponse.json(fallbackSettings);
     }
 
     // Fetch AI config for Gemini Key
@@ -26,11 +34,11 @@ export async function GET() {
       geminiKey: aiConfig?.keywords || null,
     }, {
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
       }
     });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch settings" }, { status: 500 });
+    return NextResponse.json(fallbackSettings);
   }
 }
 

@@ -9,15 +9,29 @@ const prismaOptions = {
   errorFormat: 'minimal' as any,
 }
 
-export const db =
-  globalForPrisma.prisma ??
-  new PrismaClient(prismaOptions)
+// Create a proxy to prevent errors when database is not available
+const createSafeDb = () => {
+  try {
+    return new PrismaClient(prismaOptions)
+  } catch (e) {
+    console.warn('Database not available, using safe fallback proxy');
+    return new Proxy({} as any, {
+      get: () => {
+        return () => ({
+          findMany: async () => [],
+          findUnique: async () => null,
+          findFirst: async () => null,
+          create: async () => ({}),
+          update: async () => ({}),
+          upsert: async () => ({}),
+          delete: async () => ({}),
+          count: async () => 0,
+        });
+      }
+    });
+  }
+}
+
+export const db = globalForPrisma.prisma ?? createSafeDb()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
-
-// Optional: Test connection on startup in development
-if (process.env.NODE_ENV === 'development') {
-  db.$connect()
-    .then(() => console.log('Successfully connected to the database'))
-    .catch((err) => console.error('Failed to connect to the database on startup:', err))
-}

@@ -140,7 +140,7 @@ export default function WhyChooseUs() {
   return (
     <section id="why-choose-us" className="py-20 sm:py-32 bg-[#050505] relative overflow-hidden transition-colors duration-500">
       {/* Noise Overlay */}
-      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none" />
 
       {/* Background elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">

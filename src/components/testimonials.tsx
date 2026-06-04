@@ -43,7 +43,7 @@ export default function Testimonials() {
   return (
     <section className="py-32 sm:py-48 bg-[#050505] relative overflow-hidden transition-colors duration-500">
       {/* Noise Overlay */}
-      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none" />
 
       {/* Background Decor */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary/10 blur-[180px] rounded-full pointer-events-none" />
