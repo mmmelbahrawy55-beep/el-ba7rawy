@@ -166,7 +166,7 @@ export default function SiteHeader() {
                     whileTap={{ scale: 0.95 }}
                     className="flex items-center gap-3"
                   >
-                    <div className="relative size-10 sm:size-12 flex items-center justify-center bg-white rounded-xl p-1.5 shadow-xl shadow-black/20 border border-white/10 overflow-hidden">
+                    <div className="relative size-8 sm:size-9 flex items-center justify-center">
                       <img
                         src={logoSource}
                         alt="ELBA7RAWY Logo"

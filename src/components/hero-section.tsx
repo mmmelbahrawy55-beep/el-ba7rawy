@@ -160,7 +160,7 @@ export default function HeroSection() {
         >
           {/* Logo Section */}
           <div className="relative mb-12 mt-16 sm:mt-20 flex items-center justify-center w-full">
-            <div className="relative w-72 h-72 sm:w-96 sm:h-96 md:w-[500px] md:h-[500px]">
+            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-[400px] md:h-[400px]">
               <img
                 src="/uploads/branding/1780350697096-766422623.jpeg"
                 alt="ELBA7RAWY Logo"
