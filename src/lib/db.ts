@@ -5,13 +5,11 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
+// Initializing Prisma Client for Cloud Database (PostgreSQL)
 const prismaOptions: any = {
   log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   errorFormat: 'pretty',
-}
-
-if (process.env.DATABASE_URL) {
-  prismaOptions.datasources = {
+  datasources: {
     db: {
       url: process.env.DATABASE_URL
     }
