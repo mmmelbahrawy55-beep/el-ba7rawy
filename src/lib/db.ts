@@ -12,15 +12,19 @@ const prismaOptions: any = {
   errorFormat: 'pretty',
 }
 
+const dbUrl = process.env.DATABASE_URL;
+
 // Add connection pooling and timeout settings for stability
-export const db = globalForPrisma.prisma ?? new PrismaClient({
+const baseClient = new PrismaClient({
   ...prismaOptions,
-  datasources: {
+  datasources: dbUrl ? {
     db: {
-      url: process.env.DATABASE_URL
+      url: dbUrl
     }
-  }
-})
+  } : undefined
+});
+
+export const db = (globalForPrisma.prisma ?? baseClient)
 .$extends({
   query: {
     $allModels: {
