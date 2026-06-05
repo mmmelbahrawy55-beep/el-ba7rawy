@@ -56,7 +56,7 @@ interface AdminDashboardProps {
   onLogout: () => void
 }
 
-type Section = 'dashboard' | 'products' | 'categories' | 'orders' | 'projects' | 'platform' | 'messages' | 'partners' | 'activity' | 'marketing' | 'image-optimizer' | 'faqs' | 'testimonials'
+type Section = 'dashboard' | 'products' | 'categories' | 'orders' | 'projects' | 'platform' | 'messages' | 'partners' | 'activity' | 'marketing' | 'image-optimizer' | 'faqs' | 'testimonials' | 'settings'
 
 interface NavItem {
   id: Section | 'logout'

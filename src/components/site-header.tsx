@@ -105,7 +105,7 @@ export default function SiteHeader() {
     setLastScrollY(latest);
   });
 
-  const cartItems = useCartStore((state) => state.items);
+  const cartItems = useCartStore((state: any) => state.items);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {

@@ -291,7 +291,7 @@ export async function POST(req: Request) {
         try {
           sendData({ status: 'connected', agent: agentId });
 
-          const zaiMessages = [
+          const zaiMessages: any[] = [
             { role: 'system', content: systemInstruction },
             ...messages.map(m => ({
               role: m.role === 'model' ? 'assistant' : m.role,
@@ -327,23 +327,6 @@ export async function POST(req: Request) {
         }
       }
     });
-
-    return new Response(stream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-      },
-    });
-
-  } catch (error: any) {
-    console.error('Unified Stream Error:', error);
-    return new Response(JSON.stringify({ error: `خطأ في السيرفر: ${error.message}` }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
 
     return new Response(stream, {
       headers: {
