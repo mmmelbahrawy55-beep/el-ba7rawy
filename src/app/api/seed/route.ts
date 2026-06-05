@@ -1,7 +1,7 @@
 import { db } from "../../../lib/db";
 import { NextResponse } from "next/server";
 import { categories } from "../../../lib/products-data";
-import { withErrorHandling } from "@/lib/api-utils";
+import { withErrorHandling } from "../../../lib/api-utils";
 
 export const GET = withErrorHandling(async () => {
   // Clear existing data

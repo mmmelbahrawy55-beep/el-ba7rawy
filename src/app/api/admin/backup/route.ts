@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { logger } from '@/lib/logger';
-import { withErrorHandling } from '@/lib/api-utils';
+import { db } from '../../../../lib/db';
+import { logger } from '../../../../lib/logger';
+import { withErrorHandling } from '../../../../lib/api-utils';
 
 export const GET = withErrorHandling(async () => {
   const [

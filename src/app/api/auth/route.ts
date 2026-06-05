@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "../../../lib/db";
-import { withErrorHandling } from "@/lib/api-utils";
+import { withErrorHandling } from "../../../lib/api-utils";
 
 // Use environment variables for production security
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@elbahrawy.com";

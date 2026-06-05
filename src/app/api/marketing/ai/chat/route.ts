@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import ZAI from "z-ai-web-dev-sdk"
-import { db } from '@/lib/db'
-import { memoryCache } from '@/lib/cache-utils'
+import { db } from '../../../../../lib/db'
+import { memoryCache } from '../../../../../lib/cache-utils'
 import { z } from 'zod'
 
 // --- 1. Security & Validation Schema ---
@@ -253,6 +253,10 @@ export async function POST(req: Request) {
     const { config, knowledgeBase, socialAccount, stats } = await getCachedMarketingContext();
 
     // 🧠 AI ENGINE: Professional Senior Intelligence Initialization
+    const knowledgeBaseContent = knowledgeBase.length > 0 
+      ? `\nقاعدة المعرفة الخاصة بك:\n${knowledgeBase.map((k: any) => `- ${k.topic}: ${k.content}`).join('\n')}`
+      : '';
+
     const systemInstruction = `أنت "الذكاء المركزي الخارق" (Central Super-Intelligence) لمنصة "البحراوي".
 هويتك الحالية هي: ${agentPrompt || 'الذكاء الشامل'}.
 أنت نظام تنفيذ حقيقي (Real-world Execution System) قادر على إدارة الوكالة بالكامل.
@@ -262,6 +266,7 @@ export async function POST(req: Request) {
 2. اللغة: تحدث دائماً باللغة العربية بأسلوب احترافي وفخم.
 3. التنفيذ: عندما يطلب منك المستخدم شيئاً، نفذه فوراً باستخدام الأدوات.
 4. البيانات: استخدم الأرقام الحقيقية المتاحة لك في السياق لتعزيز مصداقيتك.
+${knowledgeBaseContent}
 
 بيانات المنصة الحقيقية الحالية:
 - إجمالي الطلبات: ${stats?.totalOrders || 0}

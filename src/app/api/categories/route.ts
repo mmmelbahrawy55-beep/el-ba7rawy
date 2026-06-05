@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../lib/db";
 import { categories as fallbackCategories } from "../../../lib/products-data";
-import { withErrorHandling } from "@/lib/api-utils";
+import { withErrorHandling } from "../../../lib/api-utils";
 
 export const GET = withErrorHandling(async (request: Request) => {
   try {

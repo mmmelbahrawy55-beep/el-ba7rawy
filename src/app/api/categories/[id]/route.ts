@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/db'
-import { withErrorHandling } from '@/lib/api-utils'
+import { db } from '../../../lib/db'
+import { withErrorHandling } from '../../../lib/api-utils'
 
 type RouteContext = {
   params: Promise<{ id: string }>

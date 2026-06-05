@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { withErrorHandling } from "@/lib/api-utils";
+import { db } from "../../../lib/db";
+import { withErrorHandling } from "../../../lib/api-utils";
 
 export const GET = withErrorHandling(async (request: Request) => {
   const { searchParams } = new URL(request.url);

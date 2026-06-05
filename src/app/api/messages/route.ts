@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { withErrorHandling } from "@/lib/api-utils";
+import { db } from '../../../lib/db';
+import { withErrorHandling } from "../../../lib/api-utils";
 
 export const GET = withErrorHandling(async () => {
   const messages = await db.message.findMany({
