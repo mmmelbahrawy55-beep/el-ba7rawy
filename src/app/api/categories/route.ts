@@ -101,15 +101,14 @@ export const POST = withErrorHandling(async (req: Request) => {
   } catch (error: any) {
     console.error("CRITICAL: Category Creation Error:", error);
     
-    let detailedError = "حدث خطأ أثناء الاتصال بقاعدة البيانات";
-    if (error.code === 'P1001') detailedError = "لا يمكن الوصول لسيرفر قاعدة البيانات (Supabase). يرجى التأكد من تشغيل المشروع في Supabase.";
-    if (error.code === 'P2002') detailedError = "هذا الاسم موجود بالفعل في قاعدة البيانات.";
-    if (error.message?.includes("authentication failed")) detailedError = "فشل التحقق من كلمة سر قاعدة البيانات. يرجى مراجعة DATABASE_URL في Vercel.";
+    // Return the actual error message to the UI for debugging
+    const errorMessage = error.message || "Unknown DB Error";
+    const errorCode = error.code || "No Code";
     
     return NextResponse.json({ 
-      error: detailedError,
-      technical: error.message,
-      code: error.code 
+      error: `فشل الاتصال: ${errorMessage}`,
+      technical: errorMessage,
+      code: errorCode 
     }, { status: 500 });
   }
 });
