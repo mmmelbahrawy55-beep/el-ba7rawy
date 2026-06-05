@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
-import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai'
+import ZAI from "z-ai-web-dev-sdk"
 import { db } from '@/lib/db'
-import { getFacebookComments, replyToFacebookComment, publishToFacebook, publishToInstagram } from '@/lib/social-apis'
 import { memoryCache } from '@/lib/cache-utils'
 import { z } from 'zod'
 
@@ -47,168 +46,183 @@ async function getCachedMarketingContext() {
   }
 }
 
-// --- 3. Optimized AI Engine & Tools ---
-const tools = [
+// --- 3. Optimized AI Engine & Tools (OpenAI Style for ZAI) ---
+const zaiTools = [
   {
-    functionDeclarations: [
-      {
-        name: 'get_marketing_insights',
-        description: 'Get advanced analytics and insights for marketing performance.',
-      },
-      {
-        name: 'generate_daily_marketing_plan',
-        description: 'Generate a daily marketing plan with tasks, goals, and KPIs.',
-      },
-      {
-        name: 'analyze_market_trends',
-        description: 'Analyze market trends, competitors, or user behavior patterns.',
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            topic: { type: SchemaType.STRING, description: 'Topic to analyze' },
-            modelType: { type: SchemaType.STRING, description: 'SWOT, PESTEL, etc.' }
-          },
-          required: ['topic']
-        }
-      },
-      {
-        name: 'create_social_post',
-        description: 'Create and optionally publish a marketing post.',
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            content: { type: SchemaType.STRING },
-            platform: { type: SchemaType.STRING },
-            status: { type: SchemaType.STRING },
-            imageUrl: { type: SchemaType.STRING }
-          },
-          required: ['content', 'platform']
-        }
-      },
-      {
-        name: 'manage_social_interactions',
-        description: 'Fetch or reply to social media comments.',
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            action: { type: SchemaType.STRING },
-            platform: { type: SchemaType.STRING },
-            postId: { type: SchemaType.STRING },
-            commentId: { type: SchemaType.STRING },
-            message: { type: SchemaType.STRING }
-          },
-          required: ['action', 'platform']
-        }
-      },
-      {
-        name: 'manage_knowledge_base',
-        description: 'Manage entries in the long-term knowledge base.',
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            action: { type: SchemaType.STRING },
-            category: { type: SchemaType.STRING },
-            topic: { type: SchemaType.STRING },
-            content: { type: SchemaType.STRING }
-          },
-          required: ['action']
-        }
-      },
-      {
-        name: 'system_self_optimize',
-        description: 'Self-improve the system rules or knowledge.',
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            reason: { type: SchemaType.STRING },
-            newRule: { type: SchemaType.STRING }
-          },
-          required: ['reason', 'newRule']
-        }
-      },
-      {
-        name: 'delegate_task',
-        description: 'Delegate task to specialized agents.',
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            agentId: { type: SchemaType.STRING },
-            taskDescription: { type: SchemaType.STRING }
-          },
-          required: ['agentId', 'taskDescription']
-        }
-      },
-      {
-        name: 'audit_platform_content',
-        description: 'Perform a marketing and SEO audit of platform products or posts.',
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            type: { type: SchemaType.STRING, description: 'Target: products, posts' },
-            id: { type: SchemaType.STRING, description: 'Optional specific ID to audit' }
-          },
-          required: ['type']
-        }
-      },
-      {
-        name: 'generate_marketing_image',
-        description: 'Generate a high-quality professional marketing image based on a detailed prompt.',
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            prompt: { type: SchemaType.STRING, description: 'Detailed visual description for the AI image generator' },
-            aspectRatio: { type: SchemaType.STRING, description: '1:1, 16:9, or 4:5' }
-          },
-          required: ['prompt']
-        }
-      },
-      {
-        name: 'run_autonomous_marketing_loop',
-        description: 'Start an autonomous loop to handle a complete campaign: idea -> post -> publish -> monitor -> report.',
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: {
-            goal: { type: SchemaType.STRING, description: 'The main goal: sales, branding, etc.' },
-            durationDays: { type: SchemaType.NUMBER, description: 'How long the loop should run' }
-          },
-          required: ['goal']
-        }
+    type: 'function',
+    function: {
+      name: 'get_marketing_insights',
+      description: 'Get advanced analytics and insights for marketing performance.',
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'generate_daily_marketing_plan',
+      description: 'Generate a daily marketing plan with tasks, goals, and KPIs.',
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'analyze_market_trends',
+      description: 'Analyze market trends, competitors, or user behavior patterns.',
+      parameters: {
+        type: 'object',
+        properties: {
+          topic: { type: 'string', description: 'Topic to analyze' },
+          modelType: { type: 'string', description: 'SWOT, PESTEL, etc.' }
+        },
+        required: ['topic']
       }
-    ]
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'create_social_post',
+      description: 'Create and optionally publish a marketing post.',
+      parameters: {
+        type: 'object',
+        properties: {
+          content: { type: 'string' },
+          platform: { type: 'string' },
+          status: { type: 'string' },
+          imageUrl: { type: 'string' }
+        },
+        required: ['content', 'platform']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'manage_social_interactions',
+      description: 'Fetch or reply to social media comments.',
+      parameters: {
+        type: 'object',
+        properties: {
+          action: { type: 'string' },
+          platform: { type: 'string' },
+          postId: { type: 'string' },
+          commentId: { type: 'string' },
+          message: { type: 'string' }
+        },
+        required: ['action', 'platform']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'manage_knowledge_base',
+      description: 'Manage entries in the long-term knowledge base.',
+      parameters: {
+        type: 'object',
+        properties: {
+          action: { type: 'string' },
+          category: { type: 'string' },
+          topic: { type: 'string' },
+          content: { type: 'string' }
+        },
+        required: ['action']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'system_self_optimize',
+      description: 'Self-improve the system rules or knowledge.',
+      parameters: {
+        type: 'object',
+        properties: {
+          reason: { type: 'string' },
+          newRule: { type: 'string' }
+        },
+        required: ['reason', 'newRule']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'delegate_task',
+      description: 'Delegate task to specialized agents.',
+      parameters: {
+        type: 'object',
+        properties: {
+          agentId: { type: 'string' },
+          taskDescription: { type: 'string' }
+        },
+        required: ['agentId', 'taskDescription']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'audit_platform_content',
+      description: 'Perform a marketing and SEO audit of platform products or posts.',
+      parameters: {
+        type: 'object',
+        properties: {
+          type: { type: 'string', description: 'Target: products, posts' },
+          id: { type: 'string', description: 'Optional specific ID to audit' }
+        },
+        required: ['type']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'generate_marketing_image',
+      description: 'Generate a high-quality professional marketing image based on a detailed prompt.',
+      parameters: {
+        type: 'object',
+        properties: {
+          prompt: { type: 'string', description: 'Detailed visual description for the AI image generator' },
+          aspectRatio: { type: 'string', description: '1:1, 16:9, or 4:5' }
+        },
+        required: ['prompt']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'run_autonomous_marketing_loop',
+      description: 'Start an autonomous loop to handle a complete campaign: idea -> post -> publish -> monitor -> report.',
+      parameters: {
+        type: 'object',
+        properties: {
+          goal: { type: 'string', description: 'The main goal: sales, branding, etc.' },
+          durationDays: { type: 'number', description: 'How long the loop should run' }
+        },
+        required: ['goal']
+      }
+    }
   }
 ]
 
-// --- 4. Main API Handler (Streaming Optimized) ---
+// --- 4. Main API Handler (Streaming Optimized with ZAI) ---
 export async function POST(req: Request) {
   const encoder = new TextEncoder();
   
-  // الحل البديل: استخدام مكتبة fetch مباشرة لتجاوز أي مشاكل في SDK
   const marketingConfig = await db.marketingAIConfig.findUnique({
     where: { id: 'marketing-ai-config' }
   });
   
-  let apiKey = marketingConfig?.keywords?.trim() || process.env.GEMINI_API_KEY;
-  
-  if (apiKey && !apiKey.startsWith('AIzaSy')) {
-    // محاولة ذكية لإضافة البادئة إذا كانت مفقودة وكان المفتاح يبدو كـ Google API Key
-    if (apiKey.length > 20 && !apiKey.includes('.')) {
-      apiKey = 'AIzaSy' + apiKey;
-    }
-  }
+  let apiKey = marketingConfig?.keywords?.trim() || process.env.ZAI_API_KEY;
 
-  if (!apiKey || apiKey.length < 20) {
-    return new Response(JSON.stringify({ error: 'يرجى التأكد من وضع مفتاح API الصحيح في الإعدادات.' }), {
+  if (!apiKey) {
+    return new Response(JSON.stringify({ error: 'يرجى التأكد من وضع مفتاح Z.AI API الصحيح في الإعدادات.' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });
   }
 
-  if (!apiKey && process.env.NODE_ENV === 'production') {
-    console.error('GEMINI_API_KEY is missing');
-  }
-
-  const genAI = new GoogleGenerativeAI(apiKey || 'fake_key')
-  
   try {
     // 🛡️ SECURITY: Rate Limiting
     const ip = req.headers.get('x-forwarded-for') || 'anon';
@@ -234,7 +248,6 @@ export async function POST(req: Request) {
     }
 
     const { messages, agentPrompt, agentId } = validation.data;
-    const lastUserMsg = messages[messages.length - 1];
 
     // ⚡ PERFORMANCE: Parallel Context Retrieval
     const { config, knowledgeBase, socialAccount, stats } = await getCachedMarketingContext();
@@ -263,11 +276,9 @@ export async function POST(req: Request) {
 
 الحالة الحالية: فيسبوك (${socialAccount ? 'متصل' : 'غير متصل'}) | استراتيجية (${config ? 'موجودة' : 'مفقودة'}).`;
 
-    // Start Chat session
-    const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-flash',
-      systemInstruction
-    });
+    // Initialize ZAI
+    if (apiKey) process.env.ZAI_API_KEY = apiKey;
+    const zai = await ZAI.create();
 
     const stream = new ReadableStream({
       async start(controller) {
@@ -277,56 +288,62 @@ export async function POST(req: Request) {
           } catch (e) {}
         };
 
-    try {
-      sendData({ status: 'connected', agent: agentId });
+        try {
+          sendData({ status: 'connected', agent: agentId });
 
-      // --- تنظيف وتنسيق سجل المحادثة ---
-      // Gemini يتطلب أن يبدأ السجل دائماً بـ user وأن يكون هناك تبادل بين user و model
-      const history = messages.slice(0, -1)
-        .filter(m => m.content && m.content.trim() !== "")
-        .map(m => ({
-          role: (m.role === 'assistant' || m.role === 'model') ? 'model' : 'user',
-          parts: [{ text: m.content }]
-        }));
+          const zaiMessages = [
+            { role: 'system', content: systemInstruction },
+            ...messages.map(m => ({
+              role: m.role === 'model' ? 'assistant' : m.role,
+              content: m.content
+            }))
+          ];
 
-      // البحث عن أول رسالة من المستخدم للبدء بها
-      const firstUserIdx = history.findIndex(m => m.role === 'user');
-      const validHistory = firstUserIdx !== -1 ? history.slice(firstUserIdx) : [];
-      
-      // دمج الرسائل المتتالية من نفس النوع (تجنب خطأ Consecutive roles)
-      const filteredHistory: any[] = [];
-      for (const msg of validHistory) {
-        if (filteredHistory.length === 0 || filteredHistory[filteredHistory.length - 1].role !== msg.role) {
-          filteredHistory.push(msg);
-        } else {
-          filteredHistory[filteredHistory.length - 1].parts[0].text += "\n" + msg.parts[0].text;
-        }
-      }
+          const completion = await zai.chat.completions.create({
+            messages: zaiMessages,
+            model: "gpt-4o",
+            stream: true,
+            tools: zaiTools as any
+          });
 
-      // البدء بجلسة شات مع التاريخ المنظم
-      const chat = model.startChat({
-        history: filteredHistory,
-      });
-
-      const result = await chat.sendMessageStream(lastUserMsg.content);
-
-      let fullResponseContent = "";
-      for await (const chunk of result.stream) {
-        const chunkText = chunk.text();
-        if (chunkText) {
-          fullResponseContent += chunkText;
-          sendData({ text: chunkText });
-        }
-      }
-      
-      controller.close();
-    } catch (err: any) {
-          console.error('Gemini Stream Error:', err);
-          sendData({ error: `خطأ في الذكاء الاصطناعي: ${err.message}` });
+          for await (const chunk of completion) {
+            const content = chunk.choices[0]?.delta?.content;
+            if (content) {
+              sendData({ text: content });
+            }
+            
+            // Handle tool calls if any
+            const toolCalls = chunk.choices[0]?.delta?.tool_calls;
+            if (toolCalls) {
+              sendData({ tool_calls: toolCalls });
+            }
+          }
+          
+          controller.close();
+        } catch (err: any) {
+          console.error('ZAI Stream Error:', err);
+          sendData({ error: `خطأ في Z.AI: ${err.message}` });
           controller.close();
         }
       }
     });
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
+
+  } catch (error: any) {
+    console.error('Unified Stream Error:', error);
+    return new Response(JSON.stringify({ error: `خطأ في السيرفر: ${error.message}` }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
 
     return new Response(stream, {
       headers: {
