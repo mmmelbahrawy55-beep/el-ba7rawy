@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db } from '../../../../lib/db'
 import { startOfDay, subDays, format } from 'date-fns'
 
 export async function GET() {
@@ -7,7 +7,7 @@ export async function GET() {
     const today = startOfDay(new Date())
     
     const [
-      totalClients,
+      _totalClients,
       totalOrders,
       totalMessages,
       publishedPosts,

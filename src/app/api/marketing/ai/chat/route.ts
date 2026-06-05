@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import ZAI from "z-ai-web-dev-sdk"
-import { db } from '../../../../../lib/db'
-import { memoryCache } from '../../../../../lib/cache-utils'
+import { db } from '@/lib/db'
+import { memoryCache } from '@/lib/cache-utils'
 import { z } from 'zod'
 
 // --- 1. Security & Validation Schema ---

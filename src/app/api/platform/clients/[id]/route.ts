@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { NextResponse } from "next/server";
+import { db } from "../../../../../lib/db";
+import { withErrorHandling } from "../../../../../lib/api-utils";
 
 export async function DELETE(
   request: Request,

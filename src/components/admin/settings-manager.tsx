@@ -331,15 +331,15 @@ export default function SettingsManager() {
               <h3 className="text-sm font-black text-white">إعدادات الذكاء الاصطناعي</h3>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest">Gemini API Key</Label>
+              <Label className="text-muted-foreground font-black text-[9px] uppercase tracking-widest">Z.AI API Key</Label>
               <Input
                 type="password"
                 value={settings.geminiKey || ''}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSettings({ ...settings, geminiKey: e.target.value })}
-                placeholder="AIzaSy..."
+                placeholder="أدخل مفتاح Z.AI هنا..."
                 className="bg-white/5 border-white/10 rounded-lg h-9 font-bold text-xs focus:ring-primary/20 text-white"
               />
-              <p className="text-[8px] text-muted-foreground">يستخدم لتوليد المنشورات التسويقية والردود الذكية</p>
+              <p className="text-[8px] text-muted-foreground">يستخدم لتشغيل الشات الذكي وتوليد المنشورات التسويقية</p>
             </div>
           </CardContent>
         </Card>

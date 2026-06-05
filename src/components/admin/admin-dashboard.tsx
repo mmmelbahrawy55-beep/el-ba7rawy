@@ -68,6 +68,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: 'dashboard', label: 'لوحة التحكم', icon: LayoutDashboard, category: 'عام' },
   { id: 'platform', label: 'سيستم المنصة', icon: ShieldCheck, category: 'النظام' },
+  { id: 'settings', label: 'إعدادات المنصة', icon: Settings, category: 'النظام' },
   { id: 'activity', label: 'سجل النشاطات', icon: Clock, category: 'النظام' },
   { id: 'products', label: 'المنتجات والأسعار', icon: Package, category: 'الإدارة' },
   { id: 'image-optimizer', label: 'تحسين صور المنتجات', icon: Sparkles, category: 'الإدارة' },

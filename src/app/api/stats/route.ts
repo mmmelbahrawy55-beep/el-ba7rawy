@@ -74,7 +74,7 @@ export const GET = withErrorHandling(async (request: Request) => {
     const yearsOfExperience = new Date().getFullYear() - 2011;
 
     // Per-category order breakdown
-    const categoryStats = [];
+    const categoryStats: any[] = [];
     try {
       const categoryBreakdown = await db.order.groupBy({
         by: ["categoryName"],
@@ -93,7 +93,7 @@ export const GET = withErrorHandling(async (request: Request) => {
     }
 
     // Daily sales for the last 30 days
-    const chartData = [];
+    const chartData: any[] = [];
     try {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
