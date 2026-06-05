@@ -32,8 +32,6 @@ export const GET = withErrorHandling(async (request: Request) => {
       orderBy: { sortOrder: "asc" },
     });
 
-    // If DB has no categories, it might be uninitialized. 
-    // Return empty array for admin to allow adding, or fallback for public.
     if (categories.length === 0 && !isAdmin) {
       return NextResponse.json(fallbackCategories.map(cat => ({
         ...cat,
@@ -75,48 +73,43 @@ export const GET = withErrorHandling(async (request: Request) => {
 });
 
 export const POST = withErrorHandling(async (req: Request) => {
-  console.log("POST /api/categories - Start (withErrorHandling)");
-  const body = await req.json()
-  console.log("POST /api/categories - Body:", body);
-  const { name, nameEn, icon, color, sortOrder, isActive } = body
-  
-  if (!name) {
-    console.log("POST /api/categories - Missing name");
-    return NextResponse.json({ error: "الاسم بالعربية مطلوب" }, { status: 400 })
-  }
-
-  const finalNameEn = nameEn || name;
-
-  console.log("POST /api/categories - Attempting DB create");
-  const category = await db.category.create({ 
-    data: {
-      name: name,
-      nameEn: finalNameEn,
-      icon: icon || "Printer",
-      color: color || "blue",
-      sortOrder: Number(sortOrder) || 0,
-      isActive: isActive !== false,
-    }
-  })
-  console.log("POST /api/categories - DB create success:", category.id);
-  return NextResponse.json(category)
-});
-
-export async function DELETE(request: Request) {
   try {
-    const { searchParams } = new URL(request.url)
-    const id = searchParams.get('id')
-    if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
+    console.log("POST /api/categories - Start");
+    const body = await req.json()
+    console.log("POST /api/categories - Body:", body);
+    const { name, nameEn, icon, color, sortOrder, isActive } = body
     
-    const productCount = await db.product.count({ where: { categoryId: id } })
-    if (productCount > 0) {
-      return NextResponse.json({ error: 'لا يمكن حذف تصنيف يحتوي على منتجات. قم بنقل المنتجات أولاً.' }, { status: 400 })
+    if (!name) {
+      return NextResponse.json({ error: "الاسم بالعربية مطلوب" }, { status: 400 })
     }
 
-    await db.category.delete({ where: { id } })
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to delete category";
-    return NextResponse.json({ error: message }, { status: 500 })
+    const finalNameEn = nameEn || name;
+
+    console.log("POST /api/categories - Attempting DB create");
+    const category = await db.category.create({ 
+      data: {
+        name: name,
+        nameEn: finalNameEn,
+        icon: icon || "Printer",
+        color: color || "blue",
+        sortOrder: Number(sortOrder) || 0,
+        isActive: isActive !== false,
+      }
+    })
+    console.log("POST /api/categories - Success:", category.id);
+    return NextResponse.json(category)
+  } catch (error: any) {
+    console.error("CRITICAL: Category Creation Error:", error);
+    
+    let detailedError = "حدث خطأ أثناء الاتصال بقاعدة البيانات";
+    if (error.code === 'P1001') detailedError = "لا يمكن الوصول لسيرفر قاعدة البيانات (Supabase). يرجى التأكد من تشغيل المشروع في Supabase.";
+    if (error.code === 'P2002') detailedError = "هذا الاسم موجود بالفعل في قاعدة البيانات.";
+    if (error.message?.includes("authentication failed")) detailedError = "فشل التحقق من كلمة سر قاعدة البيانات. يرجى مراجعة DATABASE_URL في Vercel.";
+    
+    return NextResponse.json({ 
+      error: detailedError,
+      technical: error.message,
+      code: error.code 
+    }, { status: 500 });
   }
-}
+});

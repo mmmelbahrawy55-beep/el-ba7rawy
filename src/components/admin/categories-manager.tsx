@@ -328,7 +328,8 @@ export default function CategoriesManager() {
         fetchCategories()
       } else {
         const data = await res.json()
-        toast.error(data.error || 'حدث خطأ أثناء الإضافة')
+        toast.error(data.error || 'فشل إضافة المنتج - تحقق من قاعدة البيانات')
+        console.error('Product creation error:', data)
       }
     } catch (error) {
       console.error("Product add error:", error)
