@@ -4,16 +4,16 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-// Support for Vercel Neon Postgres and other environments
-const dbUrl = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL || process.env.NEON_URL;
+// Support all possible Vercel/Neon variable names
+const dbUrl = process.env.DATABASE_URL || process.env.NEON_URL || process.env.POSTGRES_PRISMA_URL;
 
 export const db = globalForPrisma.prisma ?? new PrismaClient({
   log: ['error'],
-  datasources: dbUrl ? {
+  datasources: {
     db: {
       url: dbUrl
     }
-  } : undefined
+  }
 })
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db as any;
