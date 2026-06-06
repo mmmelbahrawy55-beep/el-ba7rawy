@@ -4,18 +4,15 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-// Robust DB initialization with error handling
-const getPrismaClient = () => {
-  try {
-    return new PrismaClient({
-      log: ['error'],
-    });
-  } catch (error) {
-    console.error("Prisma Initialization Failed:", error);
-    return null;
-  }
-};
+const dbUrl = process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
 
-export const db = globalForPrisma.prisma ?? getPrismaClient()!;
+export const db = globalForPrisma.prisma ?? new PrismaClient({
+  log: ['error'],
+  datasources: dbUrl ? {
+    db: {
+      url: dbUrl
+    }
+  } : undefined
+})
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db as any;
