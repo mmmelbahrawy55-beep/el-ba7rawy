@@ -1,3 +1,4 @@
+// Universal Database Client - Final Production Build
 import { PrismaClient } from '@prisma/client'
 
 const globalForPrisma = globalThis as unknown as {
