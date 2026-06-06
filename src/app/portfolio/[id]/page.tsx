@@ -1,5 +1,5 @@
 import { Metadata, ResolvingMetadata } from 'next'
-import { db } from '../../../lib/db'
+import { db } from '@/lib/db'
 
 type Props = {
   params: Promise<{ id: string }>

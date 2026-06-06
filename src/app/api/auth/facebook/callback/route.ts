@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { db } from '../../../../../lib/db';
-import { encrypt } from '../../../../../lib/encryption';
+import { db } from '@/lib/db';
+import { encrypt } from '@/lib/encryption';
 import axios from 'axios';
 
 export async function GET(req: Request) {

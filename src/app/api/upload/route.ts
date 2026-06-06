@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { withErrorHandling } from "../../../lib/api-utils";
+import { withErrorHandling } from "@/lib/api-utils";
 
 // API Version: 1.1.0 - Base64 Only to support Vercel EROFS
 export const POST = withErrorHandling(async (request: Request) => {

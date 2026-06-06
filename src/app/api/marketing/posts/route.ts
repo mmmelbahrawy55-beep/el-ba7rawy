@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
-import { db } from '../../../../lib/db'
-import { publishToFacebook, publishToInstagram } from '../../../../lib/social-apis'
-import { withErrorHandling } from "../../../../lib/api-utils";
+import { db } from '@/lib/db'
+import { publishToFacebook, publishToInstagram } from '@/lib/social-apis'
+import { withErrorHandling } from "@/lib/api-utils";
 
 export async function GET() {
   try {

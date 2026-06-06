@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { db } from "../../../lib/db";
-import { withErrorHandling } from "../../../lib/api-utils";
-import { rateLimit } from "../../../lib/rate-limit";
+import { db } from "@/lib/db";
+import { withErrorHandling } from "@/lib/api-utils";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const GET = withErrorHandling(async (request: Request) => {
   const limitError = rateLimit(request, 50, 60000); // 50 requests per minute
