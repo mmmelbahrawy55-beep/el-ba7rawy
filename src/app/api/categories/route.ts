@@ -98,17 +98,5 @@ export const POST = withErrorHandling(async (req: Request) => {
     })
     console.log("POST /api/categories - Success:", category.id);
     return NextResponse.json(category)
-  } catch (error: any) {
-    console.error("CRITICAL: Category Creation Error:", error);
-    
-    // Return the actual error message to the UI for debugging
-    const errorMessage = error.message || "Unknown DB Error";
-    const errorCode = error.code || "No Code";
-    
-    return NextResponse.json({ 
-      error: `فشل الاتصال: ${errorMessage}`,
-      technical: errorMessage,
-      code: errorCode 
-    }, { status: 500 });
   }
 });

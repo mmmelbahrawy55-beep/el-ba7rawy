@@ -19,10 +19,13 @@ export function withErrorHandling(handler: (request: Request, ...args: any[]) =>
       const errorMessage = error instanceof Error ? error.message : 'Internal Server Error';
 
       // Special handling for database connection errors
-      if (errorMessage.includes('prisma') || errorMessage.includes('database')) {
+      if (errorMessage.includes('prisma') || errorMessage.includes('database') || errorMessage.includes('Can\'t reach database server')) {
+        const isPaused = errorMessage.includes('Can\'t reach database server');
         return NextResponse.json({
           error: "Database Connection Error",
-          message: "فشل الاتصال بقاعدة البيانات. تأكد من صحة رابط DATABASE_URL في إعدادات فيرسل.",
+          message: isPaused 
+            ? "فشل الاتصال بقاعدة البيانات. يبدو أن مشروع Supabase متوقف (Paused) أو أن هناك مشكلة في الشبكة. يرجى التأكد من تشغيل قاعدة البيانات من لوحة تحكم Supabase."
+            : "فشل الاتصال بقاعدة البيانات. تأكد من صحة رابط DATABASE_URL في إعدادات فيرسل.",
           details: isDev ? errorMessage : undefined,
           requestId,
           timestamp,
