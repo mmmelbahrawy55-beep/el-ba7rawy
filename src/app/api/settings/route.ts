@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withErrorHandling } from "@/lib/api-utils";
 
-export async function GET() {
+export const GET = withErrorHandling(async () => {
   const fallbackSettings = {
     id: "site-settings",
     siteName: "البحراوي للدعاية والإعلان",
@@ -40,9 +41,9 @@ export async function GET() {
   } catch (error) {
     return NextResponse.json(fallbackSettings);
   }
-}
+});
 
-export async function PUT(request: Request) {
+export const PUT = withErrorHandling(async (request: Request) => {
   try {
     const body = await request.json();
     console.log("Saving settings with body size:", JSON.stringify(body).length);
@@ -112,4 +113,4 @@ export async function PUT(request: Request) {
       code: error?.code 
     }, { status: 500 });
   }
-}
+});

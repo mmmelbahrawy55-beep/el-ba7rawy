@@ -97,6 +97,9 @@ export const POST = withErrorHandling(async (req: Request) => {
       }
     })
     console.log("POST /api/categories - Success:", category.id);
-    return NextResponse.json(category)
+    return NextResponse.json(category);
+  } catch (error) {
+    console.error("POST /api/categories - Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 });
