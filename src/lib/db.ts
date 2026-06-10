@@ -1,6 +1,6 @@
 'use server';
 
-import { db as firestore } from './firebase-admin';
+import { db as firestore } from './server/firebase-admin';
 
 // Check for Firebase environment variables proactively
 const isFirebaseConfigured = !!(
