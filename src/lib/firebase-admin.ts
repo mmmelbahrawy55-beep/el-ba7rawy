@@ -1,7 +1,8 @@
 import * as admin from 'firebase-admin';
 
-if (!admin.apps.length) {
-  try {
+// Initialize Firebase Admin SDK only once
+try {
+  if (!admin.apps || admin.apps.length === 0) {
     admin.initializeApp({
       credential: admin.credential.cert({
         projectId: process.env.FIREBASE_PROJECT_ID || "elba7rawy-49a39",
@@ -10,9 +11,9 @@ if (!admin.apps.length) {
       }),
       storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "elba7rawy-49a39.firebasestorage.app",
     });
-  } catch (error) {
-    console.error('Firebase admin initialization error', error);
   }
+} catch (error) {
+  console.error('Firebase admin initialization error:', error);
 }
 
 const db = admin.firestore();
