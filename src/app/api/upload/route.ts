@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { withErrorHandling } from "@/lib/api-utils";
-import { storage } from "@/lib/firebase-admin";
+import { storage } from "@/lib/server/firebase-admin";
 import { v4 as uuidv4 } from 'uuid';
 
 // API Version: 2.0.0 - Firebase Storage Integration
