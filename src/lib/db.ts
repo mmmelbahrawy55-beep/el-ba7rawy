@@ -12,8 +12,9 @@ if (!isFirebaseConfigured && process.env.NODE_ENV === 'production') {
 
 // Helper to convert Firestore docs to Prisma-like objects
 const docToData = (doc: any) => {
-  if (!doc.exists) return null;
+  if (!doc || !doc.exists) return null;
   const data = doc.data();
+  if (!data) return { id: doc.id };
   // Convert Firestore Timestamps to Dates
   for (const key in data) {
     if (data[key]?.toDate && typeof data[key].toDate === 'function') {
@@ -28,44 +29,53 @@ class FirestoreCollection {
 
   async findMany(args: any = {}) {
     try {
+      if (!firestore || !firestore.collection) {
+        console.warn(`Firestore not initialized for ${this.collectionName}`);
+        return [];
+      }
+      
       let ref: any = firestore.collection(this.collectionName);
       let clientSideFilter: ((item: any) => boolean) | null = null;
 
       // Simple where clause handling (Prisma where: { key: value })
       if (args.where) {
-        const filters = Object.entries(args.where);
-        for (const [key, value] of filters) {
-          if (value === undefined) continue;
+        const entries = Object.entries(args.where);
+        if (entries.length > 0) {
+          for (const [key, value] of entries) {
+            if (value === undefined) continue;
 
-          if (key === 'OR' && Array.isArray(value)) {
-            // Firestore doesn't support OR natively for different fields easily
-            // We'll fetch all and filter in memory if OR is used
-            clientSideFilter = (item) => {
-              return value.some((condition: any) => {
-                return Object.entries(condition).every(([cKey, cValue]: [string, any]) => {
-                  if (cValue?.contains) {
-                    const search = cValue.contains.toLowerCase();
-                    return item[cKey]?.toLowerCase().includes(search);
-                  }
-                  return item[cKey] === cValue;
-                });
-              });
-            };
-          } else if (typeof value === 'object' && value !== null) {
-            const valObj = value as any;
-            if (valObj.contains) {
-              // Handle contains via client-side filter
-              const search = valObj.contains.toLowerCase();
-              const oldFilter = clientSideFilter;
+            if (key === 'OR' && Array.isArray(value)) {
+              // Firestore doesn't support OR natively for different fields easily
+              // We'll fetch all and filter in memory if OR is used
               clientSideFilter = (item) => {
-                const match = item[key]?.toLowerCase().includes(search);
-                return oldFilter ? oldFilter(item) && match : match;
+                return value.some((condition: any) => {
+                  const condEntries = Object.entries(condition);
+                  if (!condEntries.length) return true;
+                  return condEntries.every(([cKey, cValue]: [string, any]) => {
+                    if (cValue?.contains && item[cKey]) {
+                      const search = cValue.contains.toLowerCase();
+                      return item[cKey].toString().toLowerCase().includes(search);
+                    }
+                    return item[cKey] === cValue;
+                  });
+                });
               };
-            } else if (valObj.in) {
-              ref = ref.where(key, 'in', valObj.in);
+            } else if (typeof value === 'object' && value !== null) {
+              const valObj = value as any;
+              if (valObj.contains) {
+                // Handle contains via client-side filter
+                const search = valObj.contains.toLowerCase();
+                const oldFilter = clientSideFilter;
+                clientSideFilter = (item) => {
+                  const match = item[key]?.toString().toLowerCase().includes(search);
+                  return oldFilter ? oldFilter(item) && match : match;
+                };
+              } else if (valObj.in && Array.isArray(valObj.in)) {
+                ref = ref.where(key, 'in', valObj.in);
+              }
+            } else {
+              ref = ref.where(key, '==', value);
             }
-          } else {
-            ref = ref.where(key, '==', value);
           }
         }
       }
@@ -74,7 +84,8 @@ class FirestoreCollection {
       if (args.orderBy) {
         const orderByArr = Array.isArray(args.orderBy) ? args.orderBy : [args.orderBy];
         for (const orderBy of orderByArr) {
-          for (const [key, direction] of Object.entries(orderBy)) {
+          const entries = Object.entries(orderBy);
+          for (const [key, direction] of entries) {
             ref = ref.orderBy(key, direction === 'desc' ? 'desc' : 'asc');
           }
         }
@@ -86,10 +97,10 @@ class FirestoreCollection {
       }
 
       const snapshot = await ref.get();
-      let results = snapshot.docs.map(docToData);
+      let results = snapshot.docs ? snapshot.docs.map(docToData) : [];
 
       // Apply client-side filter if needed
-      if (clientSideFilter) {
+      if (clientSideFilter && results.length > 0) {
         results = results.filter(clientSideFilter);
         if (args.take) {
           results = results.slice(0, args.take);
@@ -98,16 +109,21 @@ class FirestoreCollection {
 
       // Handle Prisma "include" (manual join because Firestore doesn't support joins)
       if (args.include && results.length > 0) {
-        for (const [relation, includeVal] of Object.entries(args.include)) {
+        const includeEntries = Object.entries(args.include);
+        for (const [relation, includeVal] of includeEntries) {
           if (includeVal) {
             // Very basic implementation for specific relations
             // In a real scenario, this would need to be more robust
             if (relation === 'category' || relation === 'parentCategory') {
               for (const item of results) {
-                const foreignId = item[`${relation}Id` as keyof typeof item];
+                const foreignId = item[`${relation}Id`];
                 if (foreignId) {
-                  const relDoc = await firestore.collection(relation === 'category' ? 'Category' : 'Category').doc(foreignId).get();
-                  item[relation] = docToData(relDoc);
+                  try {
+                    const relDoc = await firestore.collection(relation === 'category' ? 'Category' : 'Category').doc(foreignId).get();
+                    item[relation] = docToData(relDoc);
+                  } catch (e) {
+                    console.warn(`Failed to load ${relation} for item ${item.id}`, e);
+                  }
                 }
               }
             }
@@ -124,31 +140,46 @@ class FirestoreCollection {
 
   async findUnique(args: any) {
     try {
-      if (args.where.id) {
+      if (!firestore || !firestore.collection) {
+        console.warn(`Firestore not initialized for ${this.collectionName}`);
+        return null;
+      }
+      
+      if (args.where && args.where.id) {
         const doc = await firestore.collection(this.collectionName).doc(args.where.id).get();
         return docToData(doc);
       }
-      // Handle unique fields like email
-      const snapshot = await firestore.collection(this.collectionName)
-        .where(Object.keys(args.where)[0], '==', Object.values(args.where)[0])
-        .limit(1)
-        .get();
       
-      if (snapshot.empty) return null;
-      return docToData(snapshot.docs[0]);
+      // Handle unique fields like email
+      const whereEntries = Object.entries(args.where || {});
+      if (whereEntries.length > 0) {
+        const [key, value] = whereEntries[0];
+        const snapshot = await firestore.collection(this.collectionName)
+          .where(key, '==', value)
+          .limit(1)
+          .get();
+      
+        if (!snapshot.empty && snapshot.docs) return docToData(snapshot.docs[0]);
+      }
+      
+      return null;
     } catch (error) {
       console.error(`Firestore findUnique error (${this.collectionName}):`, error);
       return null;
     }
   }
 
-  async findFirst(args: any) {
+  async findFirst(args: any = {}) {
     const results = await this.findMany({ ...args, take: 1 });
     return results.length > 0 ? results[0] : null;
   }
 
   async create(args: any) {
     try {
+      if (!firestore || !firestore.collection) {
+        throw new Error('Firestore not initialized');
+      }
+      
       const data = {
         ...args.data,
         createdAt: new Date(),
@@ -173,6 +204,10 @@ class FirestoreCollection {
 
   async update(args: any) {
     try {
+      if (!firestore || !firestore.collection) {
+        throw new Error('Firestore not initialized');
+      }
+      
       const data = {
         ...args.data,
         updatedAt: new Date(),
@@ -189,6 +224,10 @@ class FirestoreCollection {
 
   async delete(args: any) {
     try {
+      if (!firestore || !firestore.collection) {
+        throw new Error('Firestore not initialized');
+      }
+      
       const id = args.where.id;
       const doc = await firestore.collection(this.collectionName).doc(id).get();
       const data = docToData(doc);
@@ -202,8 +241,13 @@ class FirestoreCollection {
 
   async deleteMany(args: any = {}) {
     try {
+      if (!firestore || !firestore.collection) {
+        console.warn(`Firestore not initialized for ${this.collectionName}`);
+        return { count: 0 };
+      }
+      
       const snapshot = await firestore.collection(this.collectionName).get();
-      if (snapshot.empty) return { count: 0 };
+      if (!snapshot || !snapshot.docs || snapshot.empty) return { count: 0 };
       
       const batch = firestore.batch();
       snapshot.docs.forEach((doc) => {
@@ -219,6 +263,10 @@ class FirestoreCollection {
 
   async upsert(args: any) {
     try {
+      if (!firestore || !firestore.collection) {
+        throw new Error('Firestore not initialized');
+      }
+      
       const existing = await this.findUnique({ where: args.where });
       if (existing) {
         return await this.update({ where: args.where, data: args.update });
@@ -233,6 +281,11 @@ class FirestoreCollection {
 
   async count(args: any = {}) {
     try {
+      if (!firestore || !firestore.collection) {
+        console.warn(`Firestore not initialized for ${this.collectionName}`);
+        return 0;
+      }
+      
       let ref: any = firestore.collection(this.collectionName);
       if (args.where) {
         for (const [key, value] of Object.entries(args.where)) {
