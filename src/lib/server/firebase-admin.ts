@@ -1,14 +1,11 @@
-'use server';
-
-import * as admin from 'firebase-admin';
-
-// Check if admin is valid before using it (safety for client-side accidental imports)
+// Check if we are on the server side
 let db: any;
 let auth: any;
 let storage: any;
 
-try {
-  if (admin && admin.apps) {
+if (typeof window === 'undefined') {
+  const admin = require('firebase-admin');
+  try {
     if (!admin.apps.length) {
       admin.initializeApp({
         credential: admin.credential.cert({
@@ -22,9 +19,9 @@ try {
     db = admin.firestore();
     auth = admin.auth();
     storage = admin.storage();
+  } catch (error) {
+    console.error('Firebase admin initialization error:', error);
   }
-} catch (error) {
-  console.error('Firebase admin initialization error:', error);
 }
 
 export { db, auth, storage };
