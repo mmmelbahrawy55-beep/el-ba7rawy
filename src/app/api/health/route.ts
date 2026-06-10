@@ -4,22 +4,25 @@ import { logger } from '@/lib/logger';
 
 export async function GET() {
   try {
-    // 1. Check Database Connection
+    // 1. Check Firestore Connection
     const startTime = Date.now();
     let dbStatus = 'disconnected';
     let dbLatency = 0;
     
     try {
-      await db.$queryRaw`SELECT 1`;
+      await db.setting.findFirst();
       dbStatus = 'connected';
       dbLatency = Date.now() - startTime;
     } catch (e: any) {
       dbStatus = `error: ${e.message}`;
     }
     
-    // 2. Check Environment Variables
+    // 2. Check Environment Variables (Firebase only now)
     const requiredEnv = [
-      'DATABASE_URL',
+      'FIREBASE_PROJECT_ID',
+      'FIREBASE_CLIENT_EMAIL',
+      'FIREBASE_PRIVATE_KEY',
+      'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET',
       'ADMIN_EMAIL',
       'ADMIN_PASSWORD',
       'GEMINI_API_KEY'
@@ -43,12 +46,13 @@ export async function GET() {
     const isHealthy = dbStatus === 'connected';
 
     if (!isHealthy) {
-      logger.error('System Health Check: Database connection failed');
+      logger.error('System Health Check: Firestore connection failed');
     }
 
     return NextResponse.json({
       status: isHealthy ? 'healthy' : 'unhealthy',
       database: {
+        type: 'firebase-firestore',
         status: dbStatus,
         latency: `${dbLatency}ms`
       },
