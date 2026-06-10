@@ -67,4 +67,8 @@ export const GET = withErrorHandling(async () => {
     }
 
     return NextResponse.json({ success: true, message: "تم تحديث البيانات بنجاح من ملف البيانات المدمج!" });
+  } catch (error) {
+    console.error("Seed error:", error);
+    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
+  }
 });
