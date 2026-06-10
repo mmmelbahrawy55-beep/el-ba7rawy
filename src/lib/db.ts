@@ -1,3 +1,5 @@
+'use server';
+
 import { db as firestore } from './firebase-admin';
 
 // Check for Firebase environment variables proactively
