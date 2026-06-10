@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server'
 import { withErrorHandling } from "@/lib/api-utils";
+import { storage } from "@/lib/firebase-admin";
+import { v4 as uuidv4 } from 'uuid';
 
-// API Version: 1.1.0 - Base64 Only to support Vercel EROFS
+// API Version: 2.0.0 - Firebase Storage Integration
 export const POST = withErrorHandling(async (request: Request) => {
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
+  const folder = formData.get("folder") as string || "uploads";
 
   if (!file) {
     return NextResponse.json(
@@ -22,26 +25,46 @@ export const POST = withErrorHandling(async (request: Request) => {
     );
   }
 
-  // Validate file size (max 2MB for Base64 to avoid DB/Payload issues)
-  if (file.size > 2 * 1024 * 1024) {
+  // Validate file size (max 5MB for Firebase Storage)
+  if (file.size > 5 * 1024 * 1024) {
     return NextResponse.json(
-      { error: "File size exceeds 2MB limit for Vercel uploads." },
+      { error: "File size exceeds 5MB limit." },
       { status: 400 }
     );
   }
 
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
+  try {
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    
+    const fileName = `${uuidv4()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+    const filePath = `${folder}/${fileName}`;
+    const bucket = storage.bucket();
+    const fileRef = bucket.file(filePath);
 
-  // Convert to Base64 to support Vercel (Read-only filesystem)
-  // This bypasses the need for disk access (EROFS)
-  const base64Image = `data:${file.type};base64,${buffer.toString('base64')}`;
+    await fileRef.save(buffer, {
+      metadata: {
+        contentType: file.type,
+      },
+    });
 
-  return NextResponse.json({
-    url: base64Image,
-    filename: file.name,
-    size: file.size,
-    type: file.type,
-    version: "1.1.0"
-  });
+    // Make the file public (optional, depending on bucket settings)
+    await fileRef.makePublic();
+
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filePath}`;
+
+    return NextResponse.json({
+      url: publicUrl,
+      filename: file.name,
+      size: file.size,
+      type: file.type,
+      version: "2.0.0"
+    });
+  } catch (error) {
+    console.error("Firebase Storage Upload Error:", error);
+    return NextResponse.json(
+      { error: "Failed to upload file to storage" },
+      { status: 500 }
+    );
+  }
 });

@@ -4,9 +4,10 @@ import { categories } from "@/lib/products-data";
 import { withErrorHandling } from "@/lib/api-utils";
 
 export const GET = withErrorHandling(async () => {
-  // Clear existing data
-  await db.product.deleteMany();
-  await db.category.deleteMany();
+  try {
+    // Clear existing data safely
+    await db.product.deleteMany().catch(() => ({ count: 0 }));
+    await db.category.deleteMany().catch(() => ({ count: 0 }));
 
     // Create Main Categories first
     const mainCategories = categories.filter(c => !c.parentCategoryId);
