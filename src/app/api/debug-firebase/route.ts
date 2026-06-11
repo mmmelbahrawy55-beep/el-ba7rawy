@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db, auth, storage } from "@/lib/server/firebase-admin";
+import { db, auth, storage, initError } from "@/lib/server/firebase-admin";
 
 export async function GET() {
   const diagnostics: any = {
@@ -14,15 +14,16 @@ export async function GET() {
       db_initialized: !!db,
       auth_initialized: !!auth,
       storage_initialized: !!storage,
+      init_error: initError,
     },
     errors: []
   };
 
   try {
-    if (db) {
+    if (db && typeof db.collection === 'function') {
       const snapshot = await db.collection('Category').limit(1).get();
       diagnostics.firestore = {
-        status: "connected",
+        status: snapshot.empty ? "connected_empty" : "connected",
         count: snapshot.size,
         readable: true
       };
