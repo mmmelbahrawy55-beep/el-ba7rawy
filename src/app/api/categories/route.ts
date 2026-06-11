@@ -32,29 +32,17 @@ export const GET = withErrorHandling(async (request: Request) => {
       orderBy: { sortOrder: "asc" },
     });
 
-    if (categories.length === 0 && !isAdmin) {
-      return NextResponse.json(fallbackCategories.map(cat => ({
-        ...cat,
-        _count: { products: cat.products.length },
-        products: cat.products.map(p => ({
-          ...p,
-          price: p.pricePerMeter ?? p.pricePerLetter ?? p.pricePerThousand ?? p.priceFlat ?? 0,
-          unitType: p.priceUnit,
-          isAvailable: p.isActive,
-        }))
-      })), {
-        headers: { 'Cache-Control': 'no-store, max-age=0' },
-      });
-    }
-
-    const transformed = categories.map(cat => ({
+    // Always fall back to the default data for now (for admin and users)
+    return NextResponse.json(fallbackCategories.map(cat => ({
       ...cat,
-      parentCategoryId: (cat as any).parentCategoryId || null,
-      products: cat.products || [],
-      _count: cat._count || { products: (cat.products || []).length }
-    }));
-
-    return NextResponse.json(transformed, {
+      _count: { products: cat.products.length },
+      products: cat.products.map(p => ({
+        ...p,
+        price: p.pricePerMeter ?? p.pricePerLetter ?? p.pricePerThousand ?? p.priceFlat ?? 0,
+        unitType: p.priceUnit,
+        isAvailable: p.isActive,
+      }))
+    })), {
       headers: { 'Cache-Control': 'no-store, max-age=0' },
     });
   } catch (error) {
@@ -101,7 +89,7 @@ export const POST = withErrorHandling(async (req: Request) => {
     console.log("POST /api/categories - Success:", category.id);
     return NextResponse.json(category);
   } catch (error) {
-    console.error("POST /api/categories - Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("POST /api/categories Error:", error);
+    return NextResponse.json({ error: "فشل إضافة التصنيف" }, { status: 500 });
   }
-});
+})
