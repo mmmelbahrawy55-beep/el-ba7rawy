@@ -8,70 +8,101 @@ export const GET = withErrorHandling(async (request: Request) => {
     const { searchParams } = new URL(request.url);
     const isAdmin = searchParams.get("admin") === "true";
 
-    // Always use fallback data for display, but try to sync to Firebase in background
-    // This guarantees the admin always sees categories
-    const displayCategories = fallbackCategories.map(cat => ({
-      ...cat,
-      _count: { products: cat.products.length },
-      products: cat.products.map(p => ({
-        ...p,
-        price: p.pricePerMeter ?? p.pricePerLetter ?? p.pricePerThousand ?? p.priceFlat ?? 0,
-        unitType: p.priceUnit,
-        isAvailable: p.isActive,
-      }))
-    }));
-
-    // Try to get any new categories from Firebase too
+    // Try to get from Firestore
+    let categories: any[] = [];
     try {
-      const firebaseCats = await db.category.findMany({
+      categories = await db.category.findMany({
         where: isAdmin ? {} : { isActive: true },
+        orderBy: { sortOrder: "asc" },
       });
-      
-      // Merge Firebase categories with fallback (for new ones user added)
-      const allCatsMap = new Map();
-      
-      // Add fallback first
-      displayCategories.forEach(cat => allCatsMap.set(cat.id, cat));
-      
-      // Add Firebase categories (these are new ones user added)
-      firebaseCats.forEach(cat => {
-        if (!allCatsMap.has(cat.id)) {
-          // For Firebase cats, we don't have products, just add them empty
-          allCatsMap.set(cat.id, {
-            ...cat,
-            _count: { products: 0 },
-            products: []
-          });
-        }
-      });
-      
-      // Convert back to array
-      const allCats = Array.from(allCatsMap.values()).sort((a, b) => a.sortOrder - b.sortOrder);
-      
-      return NextResponse.json(allCats, {
-        headers: { 'Cache-Control': 'no-store, max-age=0' },
-      });
-    } catch (firebaseError) {
-      console.log("Firebase error in GET categories, using only fallback:", firebaseError);
+    } catch (err) {
+      console.log("Firestore categories empty or error, using fallback");
     }
 
-    // Fallback to just displayCategories if Firebase fails
-    return NextResponse.json(displayCategories, {
+    // If no categories in Firestore OR categories exist but need products relationship
+    if (!categories || categories.length === 0) {
+      // Use fallback categories
+      categories = fallbackCategories.map(cat => ({
+        ...cat,
+        id: cat.id,
+        isActive: cat.isActive ?? true,
+        sortOrder: cat.sortOrder,
+        _count: { products: (cat.products || []).length },
+        products: cat.products.map(p => ({
+          ...p,
+          id: p.id,
+          price: p.pricePerMeter ?? p.pricePerLetter ?? p.pricePerThousand ?? p.priceFlat ?? 0,
+          isAvailable: p.isActive,
+        })),
+      }));
+
+      // Save the fallback categories to Firestore so next time they're there
+      try {
+        console.log("Seeding default categories to Firestore...");
+        for (const cat of categories) {
+          // Check if already exists before creating
+          const existing = await db.category.findUnique({ where: { id: cat.id } });
+          if (!existing) {
+            await db.category.create({
+              data: {
+                id: cat.id,
+                name: cat.name,
+                nameEn: cat.nameEn,
+                icon: cat.icon,
+                color: cat.color,
+                sortOrder: cat.sortOrder,
+                isActive: cat.isActive,
+              },
+            });
+            // Save products too
+            if (cat.products && cat.products.length) {
+              for (const prod of cat.products) {
+                await db.product.create({
+                  data: {
+                    id: prod.id,
+                    name: prod.name,
+                    nameEn: prod.nameEn,
+                    description: prod.description,
+                    price: prod.pricePerMeter ?? prod.pricePerLetter ?? prod.pricePerThousand ?? prod.priceFlat ?? 0,
+                    priceUnit: prod.priceUnit,
+                    unitType: prod.priceUnit,
+                    deliveryDays: prod.deliveryDays,
+                    imageUrl: prod.imageUrl,
+                    categoryId: cat.id,
+                    isAvailable: prod.isActive,
+                    isActive: prod.isActive,
+                    sortOrder: prod.sortOrder,
+                    isHot: prod.isHot ?? false,
+                    discount: prod.discount ?? null,
+                  },
+                });
+              }
+            }
+          }
+        }
+      } catch (seedErr) {
+        console.log("Seeding Firestore failed, but will show fallback data anyway:", seedErr);
+      }
+    }
+
+    return NextResponse.json(categories, {
       headers: { 'Cache-Control': 'no-store, max-age=0' },
     });
   } catch (error) {
     console.error("API Categories GET Error:", error);
-    const displayCategories = fallbackCategories.map(cat => ({
+    return NextResponse.json(fallbackCategories.map(cat => ({
       ...cat,
-      _count: { products: cat.products.length },
-      products: cat.products.map(p => ({
+      id: cat.id,
+      isActive: cat.isActive ?? true,
+      _count: { products: (cat.products || []).length },
+      products: (cat.products || []).map(p => ({
         ...p,
+        id: p.id,
         price: p.pricePerMeter ?? p.pricePerLetter ?? p.pricePerThousand ?? p.priceFlat ?? 0,
         unitType: p.priceUnit,
         isAvailable: p.isActive,
-      }))
-    }));
-    return NextResponse.json(displayCategories, {
+      })),
+    })), {
       headers: { 'Cache-Control': 'no-store' },
     });
   }
@@ -80,52 +111,37 @@ export const GET = withErrorHandling(async (request: Request) => {
 export const POST = withErrorHandling(async (req: Request) => {
   try {
     console.log("POST /api/categories - Start");
-    const body = await req.json()
-    console.log("POST /api/categories - Body:", body);
-    const { name, nameEn, icon, color, sortOrder, isActive } = body
-    
+    const body = await req.json();
+    const { name, nameEn, icon, color, sortOrder, isActive } = body;
+
     if (!name) {
-      return NextResponse.json({ error: "الاسم بالعربية مطلوب" }, { status: 400 })
+      return NextResponse.json({ error: "الاسم بالعربية مطلوب" }, { status: 400 });
     }
 
     const finalNameEn = nameEn || name;
     const newId = `cat-${Date.now()}`;
-    
-    // Always save to Firebase
-    try {
-      console.log("POST /api/categories - Attempting DB create");
-      await db.category.create({ 
-        data: {
-          id: newId,
-          name: name,
-          nameEn: finalNameEn,
-          icon: icon || "Printer",
-          color: color || "blue",
-          sortOrder: Number(sortOrder) || fallbackCategories.length,
-          isActive: isActive !== false,
-        }
-      });
-      console.log("POST /api/categories - Success:", newId);
-    } catch (dbError) {
-      console.log("Could not save category to Firebase, but proceeding:", dbError);
-    }
-    
-    // Return the new category immediately
-    const newCategory = {
-      id: newId,
-      name: name,
-      nameEn: finalNameEn,
-      icon: icon || "Printer",
-      color: color || "blue",
-      sortOrder: Number(sortOrder) || fallbackCategories.length,
-      isActive: isActive !== false,
+
+    console.log("Creating category in Firestore:", newId);
+    const createdCat = await db.category.create({
+      data: {
+        id: newId,
+        name: name,
+        nameEn: finalNameEn,
+        icon: icon || "Printer",
+        color: color || "blue",
+        sortOrder: Number(sortOrder) || 0,
+        isActive: isActive !== false,
+      },
+    });
+
+    console.log("Successfully created category:", createdCat);
+    return NextResponse.json({
+      ...createdCat,
       _count: { products: 0 },
-      products: []
-    };
-    
-    return NextResponse.json(newCategory);
+      products: [],
+    });
   } catch (error) {
     console.error("POST /api/categories Error:", error);
     return NextResponse.json({ error: "فشل إضافة التصنيف" }, { status: 500 });
   }
-})
+});
