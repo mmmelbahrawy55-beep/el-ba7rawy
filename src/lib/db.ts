@@ -100,7 +100,15 @@ class FirestoreCollection {
       // Handle Includes
       if (args.include && results.length > 0) {
         for (const [relation, includeVal] of Object.entries(args.include)) {
-            if (relation === 'category' || relation === 'parentCategory') {
+            // Special handling for products relation in Category
+            if (this.collectionName === 'Category' && relation === 'products') {
+              for (const item of results) {
+                const productsSnapshot = await firestore.collection('Product').where('categoryId', '==', item.id).get();
+                item.products = productsSnapshot.docs.map(docToData);
+                item._count = { products: item.products.length };
+              }
+            }
+            else if (relation === 'category' || relation === 'parentCategory') {
               for (const item of results) {
                 const foreignId = item[`${relation}Id` as keyof typeof item];
                 if (foreignId) {

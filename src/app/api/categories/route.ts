@@ -49,7 +49,9 @@ export const GET = withErrorHandling(async (request: Request) => {
 
     const transformed = categories.map(cat => ({
       ...cat,
-      parentCategoryId: (cat as any).parentCategoryId || null
+      parentCategoryId: (cat as any).parentCategoryId || null,
+      products: cat.products || [],
+      _count: cat._count || { products: (cat.products || []).length }
     }));
 
     return NextResponse.json(transformed, {
